@@ -1,40 +1,42 @@
-# ─── Privacy: source research with personal contact info — NEVER publish ───
-/data/
-*.xlsx
-*.docx
+# ─────────────────────────────────────────────────────────────────────────
+# Whitelist strategy: ignore EVERYTHING, then re-include only what we track.
+# We commit project meta + wp-content/themes + wp-content/uploads.
+# WP core, database, secrets, and /data (personal info) stay out by default.
+# ─────────────────────────────────────────────────────────────────────────
 
-# ─── Secrets & environment ───
+# 1. Ignore everything at the repo root...
+/*
+
+# 2. ...but keep project meta files & dirs.
+!.gitignore
+!.github/
+!docs/
+!README.md
+!CLAUDE.md
+
+# 3. WordPress: descend into wp-content, ignore its contents, re-include the
+#    directories we want.
+!wp-content/
+wp-content/*
+!wp-content/themes/
+!wp-content/uploads/
+
+# 4. Custom plugins — when we build one, add an exception like:
+#    !wp-content/plugins/
+#    wp-content/plugins/*
+#    !wp-content/plugins/nqa-<name>/
+
+# ─── Always ignore these, even inside tracked dirs (last match wins) ───
+.DS_Store
+Thumbs.db
+*.swp
+node_modules/
+vendor/
+*.log
+*.sql
+*.sql.gz
 .env
 .env.*
 wp-config.php
 wp-config-local.php
 auth.json
-
-# ─── Local by Flywheel / WP runtime ───
-*.sql
-*.sql.gz
-/app/sql/
-conf/
-logs/
-/wp/            # WP core, if pulled in — managed, not versioned
-wp-content/uploads/
-wp-content/upgrade/
-wp-content/cache/
-wp-content/backup*/
-wp-content/blogs.dir/
-wp-content/advanced-cache.php
-wp-content/wp-cache-config.php
-sitemap.xml
-sitemap.xml.gz
-
-# ─── Dependencies / build ───
-node_modules/
-vendor/
-*.log
-
-# ─── OS / editor ───
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/
-*.swp
