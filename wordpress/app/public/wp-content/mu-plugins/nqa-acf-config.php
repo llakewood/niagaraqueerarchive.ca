@@ -16,3 +16,14 @@ add_action( 'acf/init', function () {
 		acf_update_setting( 'google_api_key', NQA_GOOGLE_MAPS_KEY );
 	}
 } );
+
+// Default the ACF Google Map "location" field to centre on the Niagara region
+// (approx. regional centroid) at a zoom that frames the 12 municipalities.
+add_filter( 'acf/load_field/name=location', function ( $field ) {
+	if ( ( $field['type'] ?? '' ) === 'google_map' ) {
+		$field['center_lat'] = '43.10';
+		$field['center_lng'] = '-79.20';
+		$field['zoom']       = '10';
+	}
+	return $field;
+} );

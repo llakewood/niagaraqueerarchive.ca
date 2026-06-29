@@ -39,17 +39,31 @@ function nqa_render_item_details( $post_id ) {
 		$add( 'Location', esc_html( $loc ) );
 	}
 
-	foreach ( array( 'source' => 'Source', 'publisher' => 'Publisher', 'citation' => 'Citation' ) as $field => $label ) {
-		$val = get_field( $field, $post_id );
-		if ( is_string( $val ) && trim( $val ) !== '' ) {
-			$add( $label, esc_html( $val ) );
-		}
+	// Render a URL value as a tidy external link (host + path, no scheme).
+	$as_link = function ( $url ) {
+		$display = preg_replace( '#^https?://#', '', untrailingslashit( $url ) );
+		return '<a href="' . esc_url( $url ) . '" rel="noopener nofollow" target="_blank">' . esc_html( $display ) . '</a>';
+	};
+
+	$source = get_field( 'source', $post_id );
+	if ( is_string( $source ) && trim( $source ) !== '' ) {
+		$add( 'Source', esc_html( $source ) );
+	}
+
+	// `publisher` is stored as a URL — link it (fall back to plain text).
+	$pub = get_field( 'publisher', $post_id );
+	if ( is_string( $pub ) && trim( $pub ) !== '' ) {
+		$add( 'Publisher', preg_match( '#^https?://#', $pub ) ? $as_link( $pub ) : esc_html( $pub ) );
+	}
+
+	$citation = get_field( 'citation', $post_id );
+	if ( is_string( $citation ) && trim( $citation ) !== '' ) {
+		$add( 'Citation', esc_html( $citation ) );
 	}
 
 	$link = get_field( 'link', $post_id );
 	if ( is_string( $link ) && trim( $link ) !== '' ) {
-		$display = preg_replace( '#^https?://#', '', untrailingslashit( $link ) );
-		$add( 'Link', '<a href="' . esc_url( $link ) . '" rel="noopener nofollow" target="_blank">' . esc_html( $display ) . '</a>' );
+		$add( 'Link', $as_link( $link ) );
 	}
 
 	$cp = get_field( 'contact_person', $post_id );
