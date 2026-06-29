@@ -1,0 +1,40 @@
+# ─── Privacy: source research with personal contact info — NEVER publish ───
+/data/
+*.xlsx
+*.docx
+
+# ─── Secrets & environment ───
+.env
+.env.*
+wp-config.php
+wp-config-local.php
+auth.json
+
+# ─── Local by Flywheel / WP runtime ───
+*.sql
+*.sql.gz
+/app/sql/
+conf/
+logs/
+/wp/            # WP core, if pulled in — managed, not versioned
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/cache/
+wp-content/backup*/
+wp-content/blogs.dir/
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+sitemap.xml
+sitemap.xml.gz
+
+# ─── Dependencies / build ───
+node_modules/
+vendor/
+*.log
+
+# ─── OS / editor ───
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

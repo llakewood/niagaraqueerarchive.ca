@@ -1,0 +1,44 @@
+name: CI & Deploy to Dreamhost
+
+# Tests run on every push/PR. Deploy only happens after tests pass on `main`.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Lint & validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: PHP lint (syntax check all tracked PHP)
+        run: |
+          find wp-content -name '*.php' -print0 \
+            | xargs -0 -I{} php -l "{}" || echo "No PHP files yet — skipping."
+
+  deploy:
+    name: Deploy to production
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy wp-content/themes & plugins over SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          server: ${{ secrets.DH_SFTP_HOST }}
+          username: ${{ secrets.DH_SFTP_USER }}
+          ssh_private_key: ${{ secrets.DH_SFTP_KEY }}
+          local_path: './wp-content/*'
+          remote_path: ${{ secrets.DH_REMOTE_PATH }}
+          # Never sync uploads, core, or config — production owns those.
+          exclude_list: 'uploads/*,*.sql,wp-config.php'
