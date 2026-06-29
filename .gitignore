@@ -1,7 +1,8 @@
 # ─────────────────────────────────────────────────────────────────────────
 # Whitelist strategy: ignore EVERYTHING, then re-include only what we track.
-# We commit project meta + wp-content/themes only.
-# WP core, database, secrets, and /data (personal info) stay out by default.
+# The WP site lives under Local's layout: wordpress/app/public/wp-content/.
+# We track project meta + that wp-content/themes only. WP core, plugins,
+# uploads, db, Local logs/conf, secrets, and /data all stay out by default.
 # ─────────────────────────────────────────────────────────────────────────
 
 # 1. Ignore everything at the repo root...
@@ -14,16 +15,22 @@
 !README.md
 !CLAUDE.md
 
-# 3. WordPress: descend into wp-content, ignore its contents, re-include the
-#    directories we want.
-!wp-content/
-wp-content/*
-!wp-content/themes/
+# 3. Descend through Local's nesting to reach wp-content/themes.
+#    Each level: re-include the dir, then ignore its contents, then go deeper.
+!wordpress/
+wordpress/*
+!wordpress/app/
+wordpress/app/*
+!wordpress/app/public/
+wordpress/app/public/*
+!wordpress/app/public/wp-content/
+wordpress/app/public/wp-content/*
+!wordpress/app/public/wp-content/themes/
 
 # 4. Custom plugins — when we build one, add an exception like:
-#    !wp-content/plugins/
-#    wp-content/plugins/*
-#    !wp-content/plugins/nqa-<name>/
+#    !wordpress/app/public/wp-content/plugins/
+#    wordpress/app/public/wp-content/plugins/*
+#    !wordpress/app/public/wp-content/plugins/nqa-<name>/
 
 # ─── Always ignore these, even inside tracked dirs (last match wins) ───
 .DS_Store

@@ -23,10 +23,11 @@ jobs:
 
       - name: PHP lint (syntax check all tracked PHP)
         run: |
-          if [ -d wp-content ]; then
-            find wp-content -name '*.php' -print0 | xargs -0 -r -I{} php -l "{}"
+          THEMES=wordpress/app/public/wp-content/themes
+          if [ -d "$THEMES" ]; then
+            find "$THEMES" -name '*.php' -print0 | xargs -0 -r -I{} php -l "{}"
           else
-            echo "No wp-content yet — nothing to lint."
+            echo "No theme files yet — nothing to lint."
           fi
 
   deploy:
@@ -53,7 +54,8 @@ jobs:
       - name: Check for a theme to deploy
         id: check
         run: |
-          if [ -d wp-content/themes ] && [ -n "$(ls -A wp-content/themes 2>/dev/null)" ]; then
+          THEMES=wordpress/app/public/wp-content/themes
+          if [ -d "$THEMES" ] && [ -n "$(ls -A "$THEMES" 2>/dev/null)" ]; then
             echo "deploy=true" >> "$GITHUB_OUTPUT"
           else
             echo "deploy=false" >> "$GITHUB_OUTPUT"
@@ -67,5 +69,5 @@ jobs:
           server: ${{ secrets.DH_SFTP_HOST }}
           username: ${{ secrets.DH_SFTP_USER }}
           ssh_private_key: ${{ secrets.DH_SFTP_KEY }}
-          local_path: './wp-content/themes/*'
+          local_path: './wordpress/app/public/wp-content/themes/*'
           remote_path: '${{ secrets.DH_REMOTE_PATH }}/themes'

@@ -11,18 +11,24 @@ at [niagaraqueerarchive.ca](https://niagaraqueerarchive.ca).
 This repo version-controls the **custom parts** of the site — the theme(s), any
 custom plugins, and the deploy automation — so changes can be developed locally
 and pushed live safely. WordPress core, uploads, the database, and secrets are
-**not** tracked (see `.gitignore`). Only `wp-content/themes/` is tracked today;
-custom plugins are added via explicit `.gitignore` exceptions when written.
+**not** tracked (see `.gitignore`). Only the theme directory under
+`wordpress/app/public/wp-content/themes/` is tracked today; custom plugins are
+added via explicit `.gitignore` exceptions when written.
 
 ```text
 .
 ├── .github/workflows/   # CI + deploy-to-Dreamhost pipeline
 ├── docs/                # Porting & operations guides
-├── wp-content/
-│   ├── themes/          # custom theme(s)   ← tracked
-│   └── plugins/         # custom plugin(s)  ← tracked
+├── wordpress/           # Local by Flywheel site root
+│   └── app/public/      # WordPress install
+│       └── wp-content/
+│           └── themes/  # active theme (Twenty Twenty-Five)  ← tracked
 └── data/                # research/source files (LOCAL ONLY — gitignored)
 ```
+
+Everything else under `wordpress/` (WP core, plugins, uploads, the database,
+and Local's `logs/`/`conf/`) is ignored. Custom plugins get added via explicit
+`.gitignore` exceptions when written.
 
 ## Development workflow
 
