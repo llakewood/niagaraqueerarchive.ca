@@ -1,6 +1,6 @@
 # ─────────────────────────────────────────────────────────────────────────
 # Whitelist strategy: ignore EVERYTHING, then re-include only what we track.
-# We commit project meta + wp-content/themes + wp-content/uploads.
+# We commit project meta + wp-content/themes only.
 # WP core, database, secrets, and /data (personal info) stay out by default.
 # ─────────────────────────────────────────────────────────────────────────
 
@@ -19,7 +19,6 @@
 !wp-content/
 wp-content/*
 !wp-content/themes/
-!wp-content/uploads/
 
 # 4. Custom plugins — when we build one, add an exception like:
 #    !wp-content/plugins/
