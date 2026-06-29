@@ -1,11 +1,13 @@
 name: CI & Deploy to Dreamhost
 
 # Tests run on every push/PR. Deploy only happens after tests pass on `main`.
+# Can also be run manually from the Actions tab to verify the connection.
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -21,24 +23,49 @@ jobs:
 
       - name: PHP lint (syntax check all tracked PHP)
         run: |
-          find wp-content -name '*.php' -print0 \
-            | xargs -0 -I{} php -l "{}" || echo "No PHP files yet — skipping."
+          if [ -d wp-content ]; then
+            find wp-content -name '*.php' -print0 | xargs -0 -r -I{} php -l "{}"
+          else
+            echo "No wp-content yet — nothing to lint."
+          fi
 
   deploy:
     name: Deploy to production
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy wp-content/themes & plugins over SFTP
+      # Proves DH_SFTP_KEY + HOST + USER + REMOTE_PATH all work, independent of
+      # whether there are any files to deploy yet. This is the "is it good?" check.
+      - name: Verify SSH connectivity to Dreamhost
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.DH_SFTP_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -p 22 \
+            "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}" \
+            "echo \"Connected as \$(whoami) on \$(hostname)\"; \
+             echo 'Remote path listing:'; \
+             ls -ld '${{ secrets.DH_REMOTE_PATH }}'"
+
+      - name: Check for a theme to deploy
+        id: check
+        run: |
+          if [ -d wp-content/themes ] && [ -n "$(ls -A wp-content/themes 2>/dev/null)" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "No theme committed yet — connectivity verified, skipping file sync."
+          fi
+
+      - name: Deploy wp-content/themes over SFTP
+        if: steps.check.outputs.deploy == 'true'
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           server: ${{ secrets.DH_SFTP_HOST }}
           username: ${{ secrets.DH_SFTP_USER }}
           ssh_private_key: ${{ secrets.DH_SFTP_KEY }}
-          local_path: './wp-content/*'
-          remote_path: ${{ secrets.DH_REMOTE_PATH }}
-          # Never sync uploads, core, or config — production owns those.
-          exclude_list: 'uploads/*,*.sql,wp-config.php'
+          local_path: './wp-content/themes/*'
+          remote_path: '${{ secrets.DH_REMOTE_PATH }}/themes'
