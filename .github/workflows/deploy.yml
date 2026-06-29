@@ -62,12 +62,12 @@ jobs:
             echo "No theme committed yet — connectivity verified, skipping file sync."
           fi
 
-      - name: Deploy wp-content/themes over SFTP
+      # Native rsync over SSH, reusing the key written above. Avoids the
+      # third-party action's key-handling quirks (error in libcrypto).
+      - name: Deploy wp-content/themes over rsync/SSH
         if: steps.check.outputs.deploy == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
-        with:
-          server: ${{ secrets.DH_SFTP_HOST }}
-          username: ${{ secrets.DH_SFTP_USER }}
-          ssh_private_key: ${{ secrets.DH_SFTP_KEY }}
-          local_path: './wordpress/app/public/wp-content/themes/*'
-          remote_path: '${{ secrets.DH_REMOTE_PATH }}/themes'
+        run: |
+          rsync -az --itemize-changes \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -p 22" \
+            wordpress/app/public/wp-content/themes/ \
+            "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}:${{ secrets.DH_REMOTE_PATH }}/themes/"
