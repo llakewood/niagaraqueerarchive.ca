@@ -26,6 +26,9 @@ wordpress/app/public/*
 !wordpress/app/public/wp-content/
 wordpress/app/public/wp-content/*
 !wordpress/app/public/wp-content/themes/
+wordpress/app/public/wp-content/themes/*
+!wordpress/app/public/wp-content/themes/index.php
+!wordpress/app/public/wp-content/themes/twentytwentyfive/
 
 # 4. Custom plugins — when we build one, add an exception like:
 #    !wordpress/app/public/wp-content/plugins/

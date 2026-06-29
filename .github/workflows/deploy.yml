@@ -14,7 +14,7 @@ jobs:
     name: Lint & validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -36,7 +36,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Proves DH_SFTP_KEY + HOST + USER + REMOTE_PATH all work, independent of
       # whether there are any files to deploy yet. This is the "is it good?" check.
@@ -64,6 +64,10 @@ jobs:
 
       # Native rsync over SSH, reusing the key written above. Avoids the
       # third-party action's key-handling quirks (error in libcrypto).
+      #
+      # TODO(deploy-hardening): after 3 successful deploys to production,
+      # add `--delete` below so files removed from the repo are also removed
+      # on the server. Left off initially so a first sync can't delete data.
       - name: Deploy wp-content/themes over rsync/SSH
         if: steps.check.outputs.deploy == 'true'
         run: |
