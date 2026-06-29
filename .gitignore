@@ -30,6 +30,12 @@ wordpress/app/public/wp-content/themes/*
 !wordpress/app/public/wp-content/themes/index.php
 !wordpress/app/public/wp-content/themes/twentytwentyfive/
 
+# mu-plugins: track ONLY our secret-free config plugin. The runtime-secrets
+# file (0-nqa-runtime-config.php) is injected by CI / set locally — never tracked.
+!wordpress/app/public/wp-content/mu-plugins/
+wordpress/app/public/wp-content/mu-plugins/*
+!wordpress/app/public/wp-content/mu-plugins/nqa-acf-config.php
+
 # 4. Custom plugins — when we build one, add an exception like:
 #    !wordpress/app/public/wp-content/plugins/
 #    wordpress/app/public/wp-content/plugins/*

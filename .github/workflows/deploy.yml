@@ -75,3 +75,36 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -p 22" \
             wordpress/app/public/wp-content/themes/ \
             "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}:${{ secrets.DH_REMOTE_PATH }}/themes/"
+
+      # Ship the tracked, secret-free mu-plugin (ACF config).
+      - name: Deploy tracked mu-plugins over rsync/SSH
+        if: steps.check.outputs.deploy == 'true'
+        run: |
+          SSH='ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -p 22'
+          $SSH "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}" \
+            "mkdir -p '${{ secrets.DH_REMOTE_PATH }}/mu-plugins'"
+          rsync -az --itemize-changes -e "$SSH" \
+            wordpress/app/public/wp-content/mu-plugins/nqa-acf-config.php \
+            "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}:${{ secrets.DH_REMOTE_PATH }}/mu-plugins/"
+
+      # Generate the runtime-secrets mu-plugin from a GitHub Secret and ship it.
+      # The key value is never in git and is masked in logs. Skipped (with a
+      # warning) if the secret isn't set yet, so deploys don't hard-fail.
+      - name: Inject runtime secrets (Google Maps key) on production
+        if: steps.check.outputs.deploy == 'true'
+        env:
+          MAPS_KEY: ${{ secrets.NQA_GOOGLE_MAPS_KEY }}
+        run: |
+          if [ -z "$MAPS_KEY" ]; then
+            echo "::warning::NQA_GOOGLE_MAPS_KEY secret not set — skipping key injection."
+            exit 0
+          fi
+          umask 077
+          printf '<?php\nif ( ! defined( "NQA_GOOGLE_MAPS_KEY" ) ) {\n\tdefine( "NQA_GOOGLE_MAPS_KEY", %s );\n}\n' \
+            "'$MAPS_KEY'" > 0-nqa-runtime-config.php
+          SSH='ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -p 22'
+          rsync -az -e "$SSH" \
+            0-nqa-runtime-config.php \
+            "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}:${{ secrets.DH_REMOTE_PATH }}/mu-plugins/0-nqa-runtime-config.php"
+          rm -f 0-nqa-runtime-config.php
+          echo "Runtime secrets injected."

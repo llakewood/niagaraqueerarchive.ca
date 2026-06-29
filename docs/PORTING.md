@@ -56,6 +56,7 @@ to Dreamhost over SFTP on push to `main`. Add these repo **secrets**
 | `DH_SFTP_USER` | SFTP/shell username |
 | `DH_SFTP_KEY`  | Private SSH key (passwordless) authorized on Dreamhost |
 | `DH_REMOTE_PATH` | Absolute path to the live `wp-content` |
+| `NQA_GOOGLE_MAPS_KEY` | Google Maps API key; CI injects it into `mu-plugins/0-nqa-runtime-config.php` on the server (never committed) |
 
 Never deploy `wp-config.php`, the database, or `uploads/` — production owns those.
 
