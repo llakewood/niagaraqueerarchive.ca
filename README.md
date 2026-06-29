@@ -8,12 +8,13 @@ at [niagaraqueerarchive.ca](https://niagaraqueerarchive.ca).
 
 ## What this repository tracks
 
-This repo version-controls the **custom parts** of the site — the theme, any
+This repo version-controls the **custom parts** of the site — the theme(s), any
 custom plugins, and the deploy automation — so changes can be developed locally
 and pushed live safely. WordPress core, uploads, the database, and secrets are
-**not** tracked (see `.gitignore`).
+**not** tracked (see `.gitignore`). Only `wp-content/themes/` is tracked today;
+custom plugins are added via explicit `.gitignore` exceptions when written.
 
-```
+```text
 .
 ├── .github/workflows/   # CI + deploy-to-Dreamhost pipeline
 ├── docs/                # Porting & operations guides
