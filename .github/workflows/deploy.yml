@@ -76,7 +76,9 @@ jobs:
             wordpress/app/public/wp-content/themes/ \
             "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}:${{ secrets.DH_REMOTE_PATH }}/themes/"
 
-      # Ship the tracked, secret-free mu-plugin (ACF config).
+      # Ship all tracked, secret-free mu-plugins (the checkout only contains the
+      # nqa-*.php files; the 0-nqa-runtime-config.php secret is injected separately
+      # below and is preserved on the server since we never use --delete).
       - name: Deploy tracked mu-plugins over rsync/SSH
         if: steps.check.outputs.deploy == 'true'
         run: |
@@ -84,7 +86,7 @@ jobs:
           $SSH "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}" \
             "mkdir -p '${{ secrets.DH_REMOTE_PATH }}/mu-plugins'"
           rsync -az --itemize-changes -e "$SSH" \
-            wordpress/app/public/wp-content/mu-plugins/nqa-acf-config.php \
+            wordpress/app/public/wp-content/mu-plugins/ \
             "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}:${{ secrets.DH_REMOTE_PATH }}/mu-plugins/"
 
       # Generate the runtime-secrets mu-plugin from a GitHub Secret and ship it.
