@@ -87,7 +87,7 @@ function nqa_collections_registry() {
 			'kind'    => 'municipality',
 			'term'    => $slug,
 			'title'   => $name,
-			'desc'    => 'Stories, people, places and events rooted in ' . $name . '.',
+			'desc'    => '',
 			'accent'  => $accents[ $i % 3 ],
 		);
 		$i++;
@@ -265,7 +265,7 @@ function nqa_collections_card_html( array $c, $featured = false ) {
 		<span class="nqa-col-card__body">
 			<?php if ( $featured ) : ?><span class="nqa-col-card__kicker">Featured this week</span><?php endif; ?>
 			<span class="nqa-col-card__title"><?php echo esc_html( $c['title'] ); ?></span>
-			<span class="nqa-col-card__desc"><?php echo esc_html( $c['desc'] ); ?></span>
+			<?php if ( '' !== trim( (string) $c['desc'] ) ) : ?><span class="nqa-col-card__desc"><?php echo esc_html( $c['desc'] ); ?></span><?php endif; ?>
 			<span class="nqa-col-card__count"><?php echo esc_html( $count . ' ' . $noun ); ?></span>
 		</span>
 	</<?php echo $tag; ?>>

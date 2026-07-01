@@ -216,6 +216,86 @@ function nqa_source_fallback( $post_id ) {
 }
 
 /* -------------------------------------------------------------------------
+ * Admin: editor metabox for the private preservation copy.
+ * _nqa_archive_text is protected (underscore) meta, so WordPress hides it from
+ * the default Custom Fields box. This exposes an explicit field for manual entry
+ * of each article's full text, plus read-only Wayback/liveness context and the
+ * per-article "show publicly" rights flag. Works in the block editor (WP submits
+ * legacy meta boxes alongside the block save).
+ * ---------------------------------------------------------------------- */
+add_action( 'add_meta_boxes', function () {
+	add_meta_box(
+		'nqa-preservation-box',
+		'Archive preservation copy',
+		'nqa_preservation_render_metabox',
+		'post',           // archival articles (core post type)
+		'normal',
+		'default'
+	);
+} );
+
+function nqa_preservation_render_metabox( $post ) {
+	wp_nonce_field( 'nqa_preservation_save', 'nqa_preservation_nonce' );
+
+	$text    = (string) get_post_meta( $post->ID, NQA_META_ARCHIVE_TEXT, true );
+	$public  = nqa_archive_text_is_public( $post->ID );
+	$wb_url  = (string) get_post_meta( $post->ID, NQA_META_WAYBACK_URL, true );
+	$wb_ts   = (string) get_post_meta( $post->ID, NQA_META_WAYBACK_TS, true );
+	$ok      = (string) get_post_meta( $post->ID, NQA_META_SOURCE_OK, true );
+	$checked = (string) get_post_meta( $post->ID, NQA_META_SOURCE_CHECK, true );
+
+	echo '<p style="margin-top:0;color:#555">Full-text preservation copy of the source article, kept privately as a link-rot backstop. Paste the article text here. It is <strong>not shown publicly</strong> unless you tick the box below (only do so with republication rights).</p>';
+
+	echo '<p style="font-size:12px;color:#555">';
+	if ( '' !== $wb_url ) {
+		echo 'Wayback snapshot: <a href="' . esc_url( $wb_url ) . '" target="_blank" rel="noopener">'
+			. esc_html( '' !== $wb_ts ? substr( $wb_ts, 0, 8 ) : 'view' ) . '</a> &nbsp;&middot;&nbsp; ';
+	} else {
+		echo 'Wayback snapshot: <em>none yet</em> &nbsp;&middot;&nbsp; ';
+	}
+	$status = ( '1' === $ok ) ? 'reachable' : ( ( '0' === $ok ) ? 'unreachable' : 'unchecked' );
+	echo 'Live source: ' . esc_html( $status );
+	if ( '' !== $checked ) {
+		echo ' <span style="color:#888">(checked ' . esc_html( $checked ) . ')</span>';
+	}
+	echo '</p>';
+
+	echo '<textarea name="nqa_archive_text" style="width:100%;min-height:340px;font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.5" '
+		. 'placeholder="Paste the full article text here&hellip;">' . esc_textarea( $text ) . '</textarea>';
+
+	echo '<p style="margin-bottom:0"><label><input type="checkbox" name="nqa_text_public" value="1" ' . checked( $public, true, false ) . '> '
+		. 'Show this preserved text publicly on the entry <span style="color:#888">(only with republication rights)</span></label></p>';
+}
+
+add_action( 'save_post_post', function ( $post_id ) {
+	if ( ! isset( $_POST['nqa_preservation_nonce'] )
+		|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nqa_preservation_nonce'] ) ), 'nqa_preservation_save' ) ) {
+		return;
+	}
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+
+	if ( isset( $_POST['nqa_archive_text'] ) ) {
+		$text = sanitize_textarea_field( wp_unslash( $_POST['nqa_archive_text'] ) );
+		if ( '' === $text ) {
+			delete_post_meta( $post_id, NQA_META_ARCHIVE_TEXT );
+		} else {
+			update_post_meta( $post_id, NQA_META_ARCHIVE_TEXT, $text );
+		}
+	}
+
+	if ( isset( $_POST['nqa_text_public'] ) ) {
+		update_post_meta( $post_id, NQA_META_TEXT_PUBLIC, '1' );
+	} else {
+		delete_post_meta( $post_id, NQA_META_TEXT_PUBLIC );
+	}
+} );
+
+/* -------------------------------------------------------------------------
  * WP-CLI
  * ---------------------------------------------------------------------- */
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
