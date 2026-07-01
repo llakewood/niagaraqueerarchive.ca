@@ -101,6 +101,24 @@ function nqa_format_field( $kind, $name, $post_id ) {
 
 	switch ( $kind ) {
 		case 'url':
+			// The article source `link` uses the preservation fallback so a
+			// rotted link degrades to its Wayback snapshot; a live link with a
+			// snapshot also gets a secondary "Archived copy" pointer.
+			if ( 'link' === $name && function_exists( 'nqa_source_fallback' ) ) {
+				$fb = nqa_source_fallback( $post_id );
+				if ( ! is_array( $fb ) || empty( $fb['url'] ) ) {
+					return '';
+				}
+				$out = $as_link( $fb['url'] );
+				if ( ! empty( $fb['archived'] ) ) {
+					$out .= ' <span class="nqa-src-archived">(archived)</span>';
+				}
+				if ( ! empty( $fb['wayback'] ) ) {
+					$out .= '<br><a class="nqa-src-wayback" href="' . esc_url( $fb['wayback'] )
+						. '" rel="noopener nofollow" target="_blank">Archived copy (Internet Archive)</a>';
+				}
+				return $out;
+			}
 			return ( is_string( $val ) && trim( $val ) !== '' && preg_match( '#^https?://#', $val ) ) ? $as_link( $val ) : '';
 		case 'email':
 			return ( is_string( $val ) && trim( $val ) !== '' ) ? '<a href="mailto:' . esc_attr( $val ) . '">' . esc_html( $val ) . '</a>' : '';
