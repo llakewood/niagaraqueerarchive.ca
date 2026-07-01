@@ -6,7 +6,7 @@
  *              (injected by the deploy pipeline on production, set locally for dev).
  * Version:     1.0.0
  *
- * This file IS tracked in git, using git environemtn variables. Never put key values here — only references.
+ * This file IS tracked in git, using git env variables. Never put key values here — only references.
  */
 
 defined( 'ABSPATH' ) || exit;
