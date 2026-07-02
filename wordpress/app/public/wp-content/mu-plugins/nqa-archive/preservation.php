@@ -1,12 +1,10 @@
 <?php
 /**
- * Plugin Name: NQA – Source Preservation & Link-Rot Backstop
- * Description: Captures an Internet Archive (Wayback) snapshot of each article's source
- *              URL, stores a PRIVATE full-text copy (never shown publicly unless a per-
- *              article rights flag is set), and tracks source liveness so the display
- *              layer can fall back to the archived snapshot when a link rots. WP-CLI:
- *              `wp nqa capture-sources`, `wp nqa check-sources`. No secrets; git-tracked.
- * Version:     1.0.0
+ * Source preservation & link-rot backstop. Captures an Internet Archive
+ * (Wayback) snapshot of each article's source URL, stores a PRIVATE full-text
+ * copy (never shown publicly unless a per-article rights flag is set), and
+ * tracks source liveness so the display layer can fall back to the archived
+ * snapshot when a link rots. WP-CLI: `wp nqa capture-sources`, `wp nqa check-sources`.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,12 +18,12 @@ defined( 'ABSPATH' ) || exit;
  *   _nqa_source_checked  Datetime (mysql) of the last liveness check.
  *   _nqa_text_public     Per-article rights flag; truthy = full text may be shown.
  */
-const NQA_META_WAYBACK_URL   = '_nqa_wayback_url';
-const NQA_META_WAYBACK_TS    = '_nqa_wayback_ts';
-const NQA_META_ARCHIVE_TEXT  = '_nqa_archive_text';
-const NQA_META_SOURCE_OK     = '_nqa_source_ok';
-const NQA_META_SOURCE_CHECK  = '_nqa_source_checked';
-const NQA_META_TEXT_PUBLIC   = '_nqa_text_public';
+const NQA_META_WAYBACK_URL  = '_nqa_wayback_url';
+const NQA_META_WAYBACK_TS   = '_nqa_wayback_ts';
+const NQA_META_ARCHIVE_TEXT = '_nqa_archive_text';
+const NQA_META_SOURCE_OK    = '_nqa_source_ok';
+const NQA_META_SOURCE_CHECK = '_nqa_source_checked';
+const NQA_META_TEXT_PUBLIC  = '_nqa_text_public';
 
 /** A normal-looking browser User-Agent so publishers don't 403 a bare bot. */
 function nqa_preservation_user_agent() {
@@ -52,10 +50,13 @@ function nqa_source_url( $post_id ) {
  */
 function nqa_wayback_lookup( $url ) {
 	$api = 'https://archive.org/wayback/available?url=' . rawurlencode( $url );
-	$res = wp_remote_get( $api, array(
-		'timeout'    => 15,
-		'user-agent' => nqa_preservation_user_agent(),
-	) );
+	$res = wp_remote_get(
+		$api,
+		array(
+			'timeout'    => 15,
+			'user-agent' => nqa_preservation_user_agent(),
+		)
+	);
 	if ( is_wp_error( $res ) || 200 !== (int) wp_remote_retrieve_response_code( $res ) ) {
 		return null;
 	}
@@ -77,11 +78,14 @@ function nqa_wayback_lookup( $url ) {
  * expected and tolerated (the save can succeed even when the request times out).
  */
 function nqa_wayback_save( $url ) {
-	wp_remote_get( 'https://web.archive.org/save/' . $url, array(
-		'timeout'     => 30,
-		'redirection' => 3,
-		'user-agent'  => nqa_preservation_user_agent(),
-	) );
+	wp_remote_get(
+		'https://web.archive.org/save/' . $url,
+		array(
+			'timeout'     => 30,
+			'redirection' => 3,
+			'user-agent'  => nqa_preservation_user_agent(),
+		)
+	);
 }
 
 /**
@@ -93,12 +97,12 @@ function nqa_capture_article( $post_id, $force = false ) {
 	$post_id = (int) $post_id;
 	$url     = nqa_source_url( $post_id );
 	$result  = array(
-		'post_id'  => $post_id,
-		'url'      => $url,
-		'skipped'  => false,
-		'wayback'  => false,
-		'text'     => false,
-		'live_ok'  => false,
+		'post_id' => $post_id,
+		'url'     => $url,
+		'skipped' => false,
+		'wayback' => false,
+		'text'    => false,
+		'live_ok' => false,
 	);
 	if ( '' === $url ) {
 		$result['skipped'] = true;
@@ -125,11 +129,14 @@ function nqa_capture_article( $post_id, $force = false ) {
 	usleep( 300000 ); // 0.3s between network calls.
 
 	// 2) Live fetch: store a PRIVATE plain-text copy and record liveness.
-	$res = wp_remote_get( $url, array(
-		'timeout'     => 15,
-		'redirection' => 3,
-		'user-agent'  => nqa_preservation_user_agent(),
-	) );
+	$res = wp_remote_get(
+		$url,
+		array(
+			'timeout'     => 15,
+			'redirection' => 3,
+			'user-agent'  => nqa_preservation_user_agent(),
+		)
+	);
 	if ( ! is_wp_error( $res ) && 200 === (int) wp_remote_retrieve_response_code( $res ) ) {
 		$body = (string) wp_remote_retrieve_body( $res );
 		$text = trim( preg_replace( '/\s+/u', ' ', wp_strip_all_tags( $body ) ) );
@@ -193,12 +200,12 @@ function nqa_archive_text_is_public( $post_id ) {
  * post has no source URL at all.
  */
 function nqa_source_fallback( $post_id ) {
-	$post_id  = (int) $post_id;
-	$live     = nqa_source_url( $post_id );
-	$wayback  = get_post_meta( $post_id, NQA_META_WAYBACK_URL, true );
-	$wayback  = is_string( $wayback ) && '' !== $wayback ? $wayback : null;
-	$ok       = get_post_meta( $post_id, NQA_META_SOURCE_OK, true );
-	$dead     = ( '0' === (string) $ok );
+	$post_id = (int) $post_id;
+	$live    = nqa_source_url( $post_id );
+	$wayback = get_post_meta( $post_id, NQA_META_WAYBACK_URL, true );
+	$wayback = is_string( $wayback ) && '' !== $wayback ? $wayback : null;
+	$ok      = get_post_meta( $post_id, NQA_META_SOURCE_OK, true );
+	$dead    = ( '0' === (string) $ok );
 
 	if ( '' === $live && null === $wayback ) {
 		return null;
@@ -220,19 +227,21 @@ function nqa_source_fallback( $post_id ) {
  * _nqa_archive_text is protected (underscore) meta, so WordPress hides it from
  * the default Custom Fields box. This exposes an explicit field for manual entry
  * of each article's full text, plus read-only Wayback/liveness context and the
- * per-article "show publicly" rights flag. Works in the block editor (WP submits
- * legacy meta boxes alongside the block save).
+ * per-article "show publicly" rights flag.
  * ---------------------------------------------------------------------- */
-add_action( 'add_meta_boxes', function () {
-	add_meta_box(
-		'nqa-preservation-box',
-		'Archive preservation copy',
-		'nqa_preservation_render_metabox',
-		'post',           // archival articles (core post type)
-		'normal',
-		'default'
-	);
-} );
+add_action(
+	'add_meta_boxes',
+	function () {
+		add_meta_box(
+			'nqa-preservation-box',
+			'Archive preservation copy',
+			'nqa_preservation_render_metabox',
+			'post',           // archival articles (core post type)
+			'normal',
+			'default'
+		);
+	}
+);
 
 function nqa_preservation_render_metabox( $post ) {
 	wp_nonce_field( 'nqa_preservation_save', 'nqa_preservation_nonce' );
@@ -267,33 +276,36 @@ function nqa_preservation_render_metabox( $post ) {
 		. 'Show this preserved text publicly on the entry <span style="color:#888">(only with republication rights)</span></label></p>';
 }
 
-add_action( 'save_post_post', function ( $post_id ) {
-	if ( ! isset( $_POST['nqa_preservation_nonce'] )
-		|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nqa_preservation_nonce'] ) ), 'nqa_preservation_save' ) ) {
-		return;
-	}
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-		return;
-	}
-	if ( ! current_user_can( 'edit_post', $post_id ) ) {
-		return;
-	}
+add_action(
+	'save_post_post',
+	function ( $post_id ) {
+		if ( ! isset( $_POST['nqa_preservation_nonce'] )
+			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nqa_preservation_nonce'] ) ), 'nqa_preservation_save' ) ) {
+			return;
+		}
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
 
-	if ( isset( $_POST['nqa_archive_text'] ) ) {
-		$text = sanitize_textarea_field( wp_unslash( $_POST['nqa_archive_text'] ) );
-		if ( '' === $text ) {
-			delete_post_meta( $post_id, NQA_META_ARCHIVE_TEXT );
+		if ( isset( $_POST['nqa_archive_text'] ) ) {
+			$text = sanitize_textarea_field( wp_unslash( $_POST['nqa_archive_text'] ) );
+			if ( '' === $text ) {
+				delete_post_meta( $post_id, NQA_META_ARCHIVE_TEXT );
+			} else {
+				update_post_meta( $post_id, NQA_META_ARCHIVE_TEXT, $text );
+			}
+		}
+
+		if ( isset( $_POST['nqa_text_public'] ) ) {
+			update_post_meta( $post_id, NQA_META_TEXT_PUBLIC, '1' );
 		} else {
-			update_post_meta( $post_id, NQA_META_ARCHIVE_TEXT, $text );
+			delete_post_meta( $post_id, NQA_META_TEXT_PUBLIC );
 		}
 	}
-
-	if ( isset( $_POST['nqa_text_public'] ) ) {
-		update_post_meta( $post_id, NQA_META_TEXT_PUBLIC, '1' );
-	} else {
-		delete_post_meta( $post_id, NQA_META_TEXT_PUBLIC );
-	}
-} );
+);
 
 /* -------------------------------------------------------------------------
  * WP-CLI
@@ -302,14 +314,22 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/** Post IDs that carry a source `link`, for a given set of post types. */
 	function nqa_preservation_target_ids( $post_types ) {
-		return get_posts( array(
-			'post_type'        => $post_types,
-			'post_status'      => 'any',
-			'posts_per_page'   => -1,
-			'fields'           => 'ids',
-			'no_found_rows'    => true,
-			'suppress_filters' => true,
-		) );
+		return get_posts(
+			array(
+				'post_type'        => $post_types,
+				'post_status'      => 'any',
+				'posts_per_page'   => -1,
+				'fields'           => 'ids',
+				'no_found_rows'    => true,
+				'suppress_filters' => true,
+			)
+		);
+	}
+
+	/** Short, padded post title for tidy CLI columns. */
+	function nqa_preservation_trim_title( $id ) {
+		$t = html_entity_decode( wp_strip_all_tags( get_the_title( $id ) ) );
+		return mb_strlen( $t ) > 40 ? mb_substr( $t, 0, 37 ) . '…' : $t;
 	}
 
 	class NQA_Preservation_CLI {
@@ -335,15 +355,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 */
 		public function capture_sources( $args, $assoc ) {
 			$force = isset( $assoc['force'] );
-			$types = array( 'post' );
-			if ( isset( $assoc['all'] ) && function_exists( 'nqa_entity_post_types' ) ) {
-				$types = array_merge( $types, nqa_entity_post_types() );
-			}
+			$types = isset( $assoc['all'] ) ? nqa_content_types() : array( 'post' );
 
 			$ids = nqa_preservation_target_ids( $types );
 			WP_CLI::log( sprintf( 'Scanning %d posts (types: %s)…', count( $ids ), implode( ', ', $types ) ) );
 
-			$n = array( 'total' => 0, 'skipped' => 0, 'wayback' => 0, 'text' => 0, 'live_ok' => 0 );
+			$n = array(
+				'total'   => 0,
+				'skipped' => 0,
+				'wayback' => 0,
+				'text'    => 0,
+				'live_ok' => 0,
+			);
 			foreach ( $ids as $id ) {
 				$r = nqa_capture_article( $id, $force );
 				$n['total']++;
@@ -355,20 +378,28 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$n['wayback'] += $r['wayback'] ? 1 : 0;
 				$n['text']    += $r['text'] ? 1 : 0;
 				$n['live_ok'] += $r['live_ok'] ? 1 : 0;
-				WP_CLI::log( sprintf(
-					'  #%d  %-40s  wayback:%s  live:%s  text:%s',
-					$id,
-					nqa_preservation_trim_title( $id ),
-					$r['wayback'] ? 'yes' : 'no ',
-					$r['live_ok'] ? '200' : 'dead',
-					$r['text'] ? 'yes' : 'no '
-				) );
+				WP_CLI::log(
+					sprintf(
+						'  #%d  %-40s  wayback:%s  live:%s  text:%s',
+						$id,
+						nqa_preservation_trim_title( $id ),
+						$r['wayback'] ? 'yes' : 'no ',
+						$r['live_ok'] ? '200' : 'dead',
+						$r['text'] ? 'yes' : 'no '
+					)
+				);
 			}
 
-			WP_CLI::success( sprintf(
-				'Done. %d scanned, %d skipped (no link), %d with Wayback snapshot, %d reachable (200), %d with stored text.',
-				$n['total'], $n['skipped'], $n['wayback'], $n['live_ok'], $n['text']
-			) );
+			WP_CLI::success(
+				sprintf(
+					'Done. %d scanned, %d skipped (no link), %d with Wayback snapshot, %d reachable (200), %d with stored text.',
+					$n['total'],
+					$n['skipped'],
+					$n['wayback'],
+					$n['live_ok'],
+					$n['text']
+				)
+			);
 		}
 
 		/**
@@ -382,15 +413,17 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		 * @when after_wp_load
 		 */
 		public function check_sources( $args, $assoc ) {
-			$types = array( 'post' );
-			if ( isset( $assoc['all'] ) && function_exists( 'nqa_entity_post_types' ) ) {
-				$types = array_merge( $types, nqa_entity_post_types() );
-			}
+			$types = isset( $assoc['all'] ) ? nqa_content_types() : array( 'post' );
 
 			$ids = nqa_preservation_target_ids( $types );
 			WP_CLI::log( sprintf( 'Checking %d posts…', count( $ids ) ) );
 
-			$n = array( 'checked' => 0, 'ok' => 0, 'dead' => 0, 'skipped' => 0 );
+			$n = array(
+				'checked' => 0,
+				'ok'      => 0,
+				'dead'    => 0,
+				'skipped' => 0,
+			);
 			foreach ( $ids as $id ) {
 				$ok = nqa_check_source( $id );
 				if ( null === $ok ) {
@@ -399,23 +432,26 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				}
 				$n['checked']++;
 				$ok ? $n['ok']++ : $n['dead']++;
-				WP_CLI::log( sprintf(
-					'  #%d  %-40s  %s',
-					$id, nqa_preservation_trim_title( $id ), $ok ? 'ok' : 'DEAD'
-				) );
+				WP_CLI::log(
+					sprintf(
+						'  #%d  %-40s  %s',
+						$id,
+						nqa_preservation_trim_title( $id ),
+						$ok ? 'ok' : 'DEAD'
+					)
+				);
 			}
 
-			WP_CLI::success( sprintf(
-				'%d checked, %d ok, %d dead, %d skipped (no link).',
-				$n['checked'], $n['ok'], $n['dead'], $n['skipped']
-			) );
+			WP_CLI::success(
+				sprintf(
+					'%d checked, %d ok, %d dead, %d skipped (no link).',
+					$n['checked'],
+					$n['ok'],
+					$n['dead'],
+					$n['skipped']
+				)
+			);
 		}
-	}
-
-	/** Short, padded post title for tidy CLI columns. */
-	function nqa_preservation_trim_title( $id ) {
-		$t = html_entity_decode( wp_strip_all_tags( get_the_title( $id ) ) );
-		return mb_strlen( $t ) > 40 ? mb_substr( $t, 0, 37 ) . '…' : $t;
 	}
 
 	$nqa_cli = new NQA_Preservation_CLI();

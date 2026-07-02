@@ -1,15 +1,10 @@
 <?php
 /**
- * Plugin Name: NQA – Archive controls (search, filter, columns)
- * Description: Turns the archive/taxonomy listings (Municipality & Collection archives, CPT
- *              archives, category, tag) into a filterable catalogue: a live text search, tag
- *              and category facet filters (built from the records actually on the page), and a
- *              1 / 2 / 3-column grid picker (default 2, remembered via localStorage). All
- *              client-side over the rendered results — no reloads. Colour-blocked to match the
- *              archive; progressive enhancement (no JS = the normal branded listing).
- * Version:     1.0.0
- *
- * Tracked in git; contains no secrets. No child theme.
+ * Archive controls: turns the archive/taxonomy listings into a filterable
+ * catalogue — a live text search, tag + category facet filters (built from the
+ * records actually on the page), and a 1 / 2 / 3-column grid picker (default 2,
+ * remembered via localStorage). All client-side over the rendered results — no
+ * reloads. Progressive enhancement: no JS = the normal branded listing.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -19,91 +14,99 @@ defined( 'ABSPATH' ) || exit;
  * covers the whole set (the archive is small — a few dozen records per term).
  * Capped to stay safe.
  */
-add_action( 'pre_get_posts', function ( $q ) {
-	if ( is_admin() || ! $q->is_main_query() ) {
-		return;
+add_action(
+	'pre_get_posts',
+	function ( $q ) {
+		if ( is_admin() || ! $q->is_main_query() ) {
+			return;
+		}
+		if ( $q->is_archive() ) {
+			$q->set( 'posts_per_page', 200 );
+		}
 	}
-	if ( $q->is_archive() ) {
-		$q->set( 'posts_per_page', 200 );
-	}
-} );
+);
 
 /** Set the saved column count on <html> in <head> so the grid is right on first paint. */
-add_action( 'wp_head', function () {
-	if ( ! is_archive() ) {
-		return;
+add_action(
+	'wp_head',
+	function () {
+		if ( ! is_archive() ) {
+			return;
+		}
+		echo "<script>try{var c=localStorage.getItem('nqaArchiveCols');c=(c==='1'||c==='3')?c:'2';"
+			. "document.documentElement.classList.add('nqa-acols-'+c);}"
+			. "catch(e){document.documentElement.classList.add('nqa-acols-2');}</script>\n";
+	},
+	1
+);
+
+add_action(
+	'wp_enqueue_scripts',
+	function () {
+		if ( ! is_archive() ) {
+			return;
+		}
+		$css = ''
+			// --- Column grid (default 2; overridden by the html.nqa-acols-* class) ---
+			. 'html[class*="nqa-acols"] body.archive .wp-block-post-template{display:grid;gap:1.35rem;'
+				. 'align-items:start;grid-template-columns:repeat(2,minmax(0,1fr))}'
+			. 'html.nqa-acols-1 body.archive .wp-block-post-template{grid-template-columns:1fr}'
+			. 'html.nqa-acols-3 body.archive .wp-block-post-template{grid-template-columns:repeat(3,minmax(0,1fr))}'
+			. '@media(max-width:900px){html.nqa-acols-3 body.archive .wp-block-post-template{grid-template-columns:repeat(2,minmax(0,1fr))}}'
+			. '@media(max-width:600px){html[class*="nqa-acols"] body.archive .wp-block-post-template{grid-template-columns:1fr}}'
+			. 'html[class*="nqa-acols"] body.archive .wp-block-query .wp-block-post{margin-block:0}'
+			. 'body.archive .wp-block-post.nqa-hidden{display:none!important}'
+
+			// --- Control bar shell ---
+			. '.nqa-ctrls{background:var(--nqa-cream);border:2px solid var(--nqa-ink);box-shadow:5px 5px 0 var(--nqa-ink);'
+				. 'padding:1rem 1.15rem;margin:0 0 1.6rem;font-family:var(--nqa-mono);'
+				. 'display:flex;flex-direction:column;gap:.85rem}'
+			. '.nqa-ctrls__row{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem}'
+			. '.nqa-ctrls__row--top{justify-content:space-between}'
+			. '.nqa-ctrls__search{flex:1 1 16rem;display:flex;align-items:center;border:2px solid var(--nqa-ink);background:var(--nqa-base)}'
+			. '.nqa-ctrls__search input{flex:1;border:0;outline:0;font:inherit;font-size:.9rem;'
+				. 'padding:.5rem .7rem;background:transparent;color:var(--nqa-ink)}'
+			. '.nqa-ctrls__search input::placeholder{color:#777}'
+			. '.nqa-ctrls__count{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;'
+				. 'color:var(--nqa-violet);white-space:nowrap}'
+			. '.nqa-ctrls__cols{display:flex;align-items:center;gap:.5rem}'
+			. '.nqa-ctrls__label{font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--nqa-violet)}'
+			. '.nqa-ctrls__colbtns{display:inline-flex;border:2px solid var(--nqa-ink);box-shadow:2px 2px 0 var(--nqa-ink)}'
+			. '.nqa-colbtn{appearance:none;-webkit-appearance:none;cursor:pointer;font:inherit;font-size:.78rem;'
+				. 'font-weight:700;width:2.1rem;padding:.35rem 0;background:var(--nqa-base);color:var(--nqa-ink);border:0;'
+				. 'border-inline-start:2px solid var(--nqa-ink);line-height:1}'
+			. '.nqa-colbtn:first-child{border-inline-start:0}'
+			. '.nqa-colbtn.is-active{background:var(--nqa-violet);color:var(--nqa-base)}'
+			. '.nqa-colbtn:hover:not(.is-active){background:var(--nqa-pink)}'
+			. '.nqa-colbtn:focus-visible{outline:3px solid var(--nqa-yellow);outline-offset:2px}'
+
+			// --- Facets ---
+			. '.nqa-facet{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem}'
+			. '.nqa-facet__legend{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;'
+				. 'color:var(--nqa-ink);margin-inline-end:.2rem}'
+			. '.nqa-chip{appearance:none;cursor:pointer;font:inherit;font-size:.75rem;line-height:1.2;'
+				. 'padding:.28rem .6rem;border:1px solid var(--nqa-violet);border-radius:999px;background:var(--nqa-pink);'
+				. 'color:var(--nqa-violet);transition:background .12s,color .12s}'
+			. '.nqa-chip:hover{background:var(--nqa-violet);color:var(--nqa-base)}'
+			. '.nqa-chip[aria-pressed="true"]{background:var(--nqa-violet);color:var(--nqa-base);font-weight:700}'
+			. '.nqa-chip:focus-visible{outline:3px solid var(--nqa-yellow);outline-offset:2px}'
+			. '.nqa-ctrls__clear{appearance:none;cursor:pointer;font:inherit;font-size:.7rem;font-weight:700;'
+				. 'text-transform:uppercase;letter-spacing:.08em;background:none;border:0;color:var(--nqa-violet);'
+				. 'text-decoration:underline;text-underline-offset:2px}'
+			. '.nqa-ctrls__clear:focus-visible{outline:3px solid var(--nqa-yellow);outline-offset:2px}'
+			. '.nqa-ctrls__empty{font-size:.85rem;color:#555;font-style:italic}';
+
+		nqa_add_style( $css );
 	}
-	echo "<script>try{var c=localStorage.getItem('nqaArchiveCols');c=(c==='1'||c==='3')?c:'2';"
-		. "document.documentElement.classList.add('nqa-acols-'+c);}"
-		. "catch(e){document.documentElement.classList.add('nqa-acols-2');}</script>\n";
-}, 1 );
+);
 
-add_action( 'wp_enqueue_scripts', function () {
-	if ( ! is_archive() ) {
-		return;
-	}
-	wp_register_style( 'nqa-archive-controls', false );
-	wp_enqueue_style( 'nqa-archive-controls' );
-
-	$mono = 'var(--wp--preset--font-family--fira-code,ui-monospace,SFMono-Regular,Menlo,monospace)';
-	$css = ''
-		// --- Column grid (default 2; overridden by the html.nqa-acols-* class) ---
-		. 'html[class*="nqa-acols"] body.archive .wp-block-post-template{display:grid;gap:1.35rem;'
-			. 'align-items:start;grid-template-columns:repeat(2,minmax(0,1fr))}'
-		. 'html.nqa-acols-1 body.archive .wp-block-post-template{grid-template-columns:1fr}'
-		. 'html.nqa-acols-3 body.archive .wp-block-post-template{grid-template-columns:repeat(3,minmax(0,1fr))}'
-		. '@media(max-width:900px){html.nqa-acols-3 body.archive .wp-block-post-template{grid-template-columns:repeat(2,minmax(0,1fr))}}'
-		. '@media(max-width:600px){html[class*="nqa-acols"] body.archive .wp-block-post-template{grid-template-columns:1fr}}'
-		. 'html[class*="nqa-acols"] body.archive .wp-block-query .wp-block-post{margin-block:0}'
-		. 'body.archive .wp-block-post.nqa-hidden{display:none!important}'
-
-		// --- Control bar shell ---
-		. '.nqa-ctrls{background:#FBFAF3;border:2px solid #111;box-shadow:5px 5px 0 #111;'
-			. 'padding:1rem 1.15rem;margin:0 0 1.6rem;font-family:' . $mono . ';'
-			. 'display:flex;flex-direction:column;gap:.85rem}'
-		. '.nqa-ctrls__row{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem}'
-		. '.nqa-ctrls__row--top{justify-content:space-between}'
-		. '.nqa-ctrls__search{flex:1 1 16rem;display:flex;align-items:center;border:2px solid #111;background:#fff}'
-		. '.nqa-ctrls__search input{flex:1;border:0;outline:0;font:inherit;font-size:.9rem;'
-			. 'padding:.5rem .7rem;background:transparent;color:#111}'
-		. '.nqa-ctrls__search input::placeholder{color:#777}'
-		. '.nqa-ctrls__count{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;'
-			. 'color:#503AA8;white-space:nowrap}'
-		. '.nqa-ctrls__cols{display:flex;align-items:center;gap:.5rem}'
-		. '.nqa-ctrls__label{font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#503AA8}'
-		. '.nqa-ctrls__colbtns{display:inline-flex;border:2px solid #111;box-shadow:2px 2px 0 #111}'
-		. '.nqa-colbtn{appearance:none;-webkit-appearance:none;cursor:pointer;font:inherit;font-size:.78rem;'
-			. 'font-weight:700;width:2.1rem;padding:.35rem 0;background:#fff;color:#111;border:0;'
-			. 'border-inline-start:2px solid #111;line-height:1}'
-		. '.nqa-colbtn:first-child{border-inline-start:0}'
-		. '.nqa-colbtn.is-active{background:#503AA8;color:#fff}'
-		. '.nqa-colbtn:hover:not(.is-active){background:#F6CFF4}'
-		. '.nqa-colbtn:focus-visible{outline:3px solid #FFEE58;outline-offset:2px}'
-
-		// --- Facets ---
-		. '.nqa-facet{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem}'
-		. '.nqa-facet__legend{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;'
-			. 'color:#111;margin-inline-end:.2rem}'
-		. '.nqa-chip{appearance:none;cursor:pointer;font:inherit;font-size:.75rem;line-height:1.2;'
-			. 'padding:.28rem .6rem;border:1px solid #503AA8;border-radius:999px;background:#F6CFF4;'
-			. 'color:#503AA8;transition:background .12s,color .12s}'
-		. '.nqa-chip:hover{background:#503AA8;color:#fff}'
-		. '.nqa-chip[aria-pressed="true"]{background:#503AA8;color:#fff;font-weight:700}'
-		. '.nqa-chip:focus-visible{outline:3px solid #FFEE58;outline-offset:2px}'
-		. '.nqa-ctrls__clear{appearance:none;cursor:pointer;font:inherit;font-size:.7rem;font-weight:700;'
-			. 'text-transform:uppercase;letter-spacing:.08em;background:none;border:0;color:#503AA8;'
-			. 'text-decoration:underline;text-underline-offset:2px}'
-		. '.nqa-ctrls__clear:focus-visible{outline:3px solid #FFEE58;outline-offset:2px}'
-		. '.nqa-ctrls__empty{font-size:.85rem;color:#555;font-style:italic}';
-
-	wp_add_inline_style( 'nqa-archive-controls', $css );
-} );
-
-add_action( 'wp_footer', function () {
-	if ( ! is_archive() ) {
-		return;
-	}
-	?>
+add_action(
+	'wp_footer',
+	function () {
+		if ( ! is_archive() ) {
+			return;
+		}
+		?>
 <script>
 (function(){
 	var tpl=document.querySelector('.wp-block-post-template');
@@ -228,5 +231,6 @@ add_action( 'wp_footer', function () {
 	apply();
 })();
 </script>
-	<?php
-} );
+		<?php
+	}
+);
