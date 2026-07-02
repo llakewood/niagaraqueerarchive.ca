@@ -44,3 +44,7 @@ See [`docs/PORTING.md`](docs/PORTING.md) to bring the live site into Local.
 The `data/` directory holds research spreadsheets and notes that contain
 **personal contact information** of community members. It is gitignored and must
 never be committed to this (public) repository.
+
+## Map Location Update for seeded data
+
+`./scripts/wp eval-file /private/tmp/claude-501/-Users-lakewood-Sites-apps-niagaraqueerarchive-ca/f7e14cd0-4d01-4e4d-8e3c-92b0b1e5c116/scratchpad/geocode-places.php`
