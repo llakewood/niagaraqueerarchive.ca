@@ -92,6 +92,25 @@ jobs:
             wordpress/app/public/wp-content/mu-plugins/ \
             "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}:${{ secrets.DH_REMOTE_PATH }}/mu-plugins/"
 
+      # One-time cleanup: the ten single-file nqa-*.php plugins were consolidated
+      # into nqa-archive.php + nqa-archive/. Because the rsync above has no
+      # --delete, those retired files would otherwise linger on the server and
+      # keep auto-loading (mu-plugins load every top-level file) — causing fatal
+      # "cannot redeclare function" errors against the new package. Remove them
+      # explicitly. Safe to keep: rm -f is a no-op once they're gone.
+      - name: Remove retired single-file mu-plugins on production
+        if: steps.check.outputs.deploy == 'true'
+        run: |
+          SSH='ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -p 22'
+          MUP="${{ secrets.DH_REMOTE_PATH }}/mu-plugins"
+          $SSH "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}" "
+            cd '$MUP' || exit 0
+            rm -f nqa-acf-config.php nqa-archival-note.php nqa-archive-controls.php \
+                  nqa-archive-display.php nqa-archives.php nqa-collections.php \
+                  nqa-cpt.php nqa-fields.php nqa-preservation.php nqa-viewtoggle.php
+            echo 'Retired mu-plugins removed (if present).'
+          "
+
       # Generate the runtime-secrets mu-plugin from a GitHub Secret and ship it.
       # The key value is never in git and is masked in logs. Skipped (with a
       # warning) if the secret isn't set yet, so deploys don't hard-fail.
