@@ -932,3 +932,70 @@ html.nqa-view-list .nqa-col-card--featured .nqa-col-card__body { flex-wrap: wrap
 }
 
 .nqa-form__success p { margin: .4rem 0 0; font-size: .95rem; line-height: 1.6; }
+
+/* CF7 radio + checkbox groups inside .nqa-form */
+.nqa-form .wpcf7-radio,
+.nqa-form .wpcf7-checkbox {
+	display: flex;
+	flex-direction: column;
+	gap: .45rem;
+	margin-top: .35rem;
+}
+
+.nqa-form .wpcf7-list-item {
+	display: flex;
+	align-items: flex-start;
+	gap: .5rem;
+	margin: 0;
+}
+
+.nqa-form .wpcf7-list-item input[type="radio"],
+.nqa-form .wpcf7-list-item input[type="checkbox"] {
+	width: 1.1rem;
+	height: 1.1rem;
+	flex: 0 0 auto;
+	margin-top: .15rem;
+	accent-color: var(--nqa-violet);
+	cursor: pointer;
+}
+
+.nqa-form .wpcf7-list-item label {
+	display: inline;
+	margin-bottom: 0;
+	font-size: .9rem;
+	letter-spacing: 0;
+	text-transform: none;
+	font-weight: 400;
+	color: var(--nqa-ink);
+	cursor: pointer;
+}
+
+/* CF7 inline validation */
+.nqa-form .wpcf7-not-valid { border-color: #b00 !important; }
+
+.nqa-form .wpcf7-not-valid-tip {
+	display: block;
+	margin-top: .3rem;
+	font-size: .78rem;
+	font-weight: 700;
+	color: #b00;
+}
+
+/* CF7 response banner */
+.nqa-form .wpcf7-response-output {
+	margin: 1rem 0 0;
+	padding: .85rem 1rem;
+	border: 2px solid var(--nqa-ink);
+	font-size: .875rem;
+}
+
+.nqa-form .wpcf7-mail-sent-ok {
+	background: var(--nqa-cream);
+	box-shadow: 4px 4px 0 var(--nqa-ink);
+}
+
+.nqa-form .wpcf7-validation-errors,
+.nqa-form .wpcf7-mail-sent-ng {
+	background: #fff0f0;
+	border-color: #b00;
+}

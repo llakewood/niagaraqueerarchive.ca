@@ -44,6 +44,7 @@ $nqa_modules = array(
 	'listing-controls.php',
 	'view-toggle.php',
 	'map.php',
+	'submissions.php',
 );
 
 foreach ( $nqa_modules as $nqa_module ) {
