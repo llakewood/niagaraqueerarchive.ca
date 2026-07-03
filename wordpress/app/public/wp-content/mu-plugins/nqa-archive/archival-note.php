@@ -47,23 +47,6 @@ add_filter(
 	25
 );
 
-add_action(
-	'wp_enqueue_scripts',
-	function () {
-		if ( ! is_singular( nqa_archival_note_types() ) || ! nqa_archival_note_can_view( get_queried_object_id() ) ) {
-			return;
-		}
-		$css = '.nqa-archival-note-box{margin-block-start:2rem;border:2px dashed var(--nqa-violet);'
-				. 'background:repeating-linear-gradient(135deg,var(--nqa-cream),var(--nqa-cream) 10px,#f4f1e6 10px,#f4f1e6 20px);'
-				. 'padding:1rem 1.2rem}'
-			. '.nqa-archival-note-box__label{display:inline-block;margin-bottom:.45rem;'
-				. 'font-family:var(--nqa-mono);'
-				. 'font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--nqa-violet)}'
-			. '.nqa-archival-note-box__body{font-size:.9rem;line-height:1.55;color:#333;font-style:italic}';
-		nqa_add_style( $css );
-	}
-);
-
 /* -------------------------------------------------------------------------
  * Admin: editor metabox to view/edit the note.
  * ---------------------------------------------------------------------- */

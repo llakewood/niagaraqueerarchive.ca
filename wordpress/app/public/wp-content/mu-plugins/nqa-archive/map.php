@@ -213,45 +213,6 @@ function nqa_map_enqueue( string $map_id, array $markers ) : void {
 	);
 
 	add_action( 'wp_footer', 'nqa_map_print_controller', 5 );
-	add_action( 'wp_head',   'nqa_map_print_css', 20 );
-}
-
-// ── Styles ─────────────────────────────────────────────────────────────────
-
-function nqa_map_print_css() : void {
-	static $done = false;
-	if ( $done ) { return; }
-	$done = true;
-
-	echo '<style id="nqa-map-styles">'
-		// Block wrapper — full viewport width, breaking out of the content column
-		. '.nqa-map-block{margin-block:3rem;width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw}'
-		. '.nqa-map-block__heading{font-family:var(--nqa-mono,monospace);font-size:1.4rem;font-weight:700;'
-			. 'letter-spacing:.04em;text-transform:uppercase;color:var(--nqa-ink,#111);margin-block-end:1rem}'
-		// Border + shadow matching the card aesthetic
-		. '.nqa-map-wrap{border:2px solid var(--nqa-ink,#111);box-shadow:6px 6px 0 var(--nqa-ink,#111)}'
-		// Toolbar
-		. '.nqa-map-toolbar{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;'
-			. 'padding:.65rem 1rem;background:var(--nqa-cream,#FBFAF3);border-bottom:2px solid var(--nqa-ink,#111)}'
-		. '.nqa-map-search{flex:1 1 12rem;min-width:0;padding:.4rem .7rem;font-size:.875rem;'
-			. 'border:1.5px solid var(--nqa-ink,#111);background:#fff;font-family:inherit}'
-		. '.nqa-map-types{display:flex;flex-wrap:wrap;gap:.3rem .75rem}'
-		. '.nqa-map-type-label{display:flex;align-items:center;gap:.3rem;font-size:.8rem;'
-			. 'font-family:var(--nqa-mono,monospace);cursor:pointer;user-select:none}'
-		// Canvas
-		. '.nqa-map-canvas{width:100%;display:block}'
-		// Empty state
-		. '.nqa-map-empty{padding:.75rem 1rem;font-size:.875rem;margin:0;color:var(--nqa-ink,#111)}'
-		// Info window
-		. '.nqa-iw{font-size:.875rem;line-height:1.4;max-width:220px}'
-		. '.nqa-iw-badge{display:inline-block;padding:.1rem .4rem;margin-block-end:.35rem;'
-			. 'font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;'
-			. 'background:var(--nqa-violet,#503AA8);color:#fff}'
-		. '.nqa-iw-title{font-weight:700;margin-block:.2rem .15rem}'
-		. '.nqa-iw-title a{color:var(--nqa-violet,#503AA8);text-decoration:none}'
-		. '.nqa-iw-title a:hover{text-decoration:underline}'
-		. '.nqa-iw-addr{color:#666;font-size:.8rem}'
-		. '</style>' . "\n";
 }
 
 // ── JS Controller ──────────────────────────────────────────────────────────

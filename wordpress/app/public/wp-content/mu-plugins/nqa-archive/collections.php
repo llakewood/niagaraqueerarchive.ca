@@ -245,45 +245,6 @@ function nqa_collections_render() {
 
 	ob_start();
 	?>
-	<style>
-	<?php echo nqa_css_vars( '.nqa-collections' ); ?>
-	.nqa-collections{font-family:var(--nqa-mono);color:var(--nqa-ink);max-width:1200px;margin:0 auto;}
-	.nqa-collections *{box-sizing:border-box;}
-	.nqa-col-lede{background:var(--nqa-cream);border:2px solid var(--nqa-ink);box-shadow:6px 6px 0 var(--nqa-ink);padding:1.75rem 2rem;margin:0 0 2.5rem;}
-	.nqa-col-lede p{margin:.4rem 0 0;font-size:1.05rem;line-height:1.6;font-family:inherit;}
-	.nqa-col-eyebrow{font-family:var(--nqa-mono);text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;font-weight:700;margin:0;}
-	.nqa-col-section-head{display:flex;align-items:baseline;gap:.9rem;margin:2.75rem 0 1.25rem;border-bottom:2px solid var(--nqa-ink);padding-bottom:.5rem;}
-	.nqa-col-section-head h2{font-family:inherit;text-transform:uppercase;letter-spacing:.06em;font-size:1.5rem;margin:0;line-height:1;}
-	.nqa-col-section-head .nqa-col-eyebrow{color:var(--nqa-violet);}
-	.nqa-col-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.1rem;}
-	.nqa-col-grid--place{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));}
-	.nqa-col-card{position:relative;display:flex;flex-direction:column;background:var(--nqa-base);border:2px solid var(--nqa-ink);box-shadow:5px 5px 0 var(--nqa-ink);text-decoration:none;color:var(--nqa-ink);overflow:hidden;transition:transform .12s ease,box-shadow .12s ease;}
-	a.nqa-col-card:hover,a.nqa-col-card:focus-visible{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--nqa-ink);}
-	a.nqa-col-card:focus-visible{outline:3px solid var(--nqa-violet);outline-offset:3px;}
-	.nqa-col-card__block{display:block;height:14px;background:var(--nqa-accent);border-bottom:2px solid var(--nqa-ink);}
-	.nqa-col-card__body{display:flex;flex-direction:column;gap:.5rem;padding:1rem 1.05rem 1.1rem;flex:1;}
-	.nqa-col-card__kicker{font-size:.66rem;text-transform:uppercase;letter-spacing:.14em;font-weight:700;color:var(--nqa-violet);}
-	.nqa-col-card__title{font-size:1.15rem;font-weight:700;line-height:1.15;letter-spacing:.01em;}
-	.nqa-col-card__desc{font-size:.82rem;line-height:1.5;color:#333;flex:1;}
-	.nqa-col-card__count{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;border:2px solid var(--nqa-ink);align-self:flex-start;padding:.2rem .5rem;background:var(--nqa-accent);color:var(--nqa-title);}
-	.nqa-col-card--featured{grid-column:1/-1;flex-direction:row;background:var(--nqa-violet);color:var(--nqa-base);box-shadow:8px 8px 0 var(--nqa-ink);}
-	.nqa-col-card--featured .nqa-col-card__block{width:16px;height:auto;border-bottom:0;border-right:2px solid var(--nqa-ink);}
-	.nqa-col-card--featured .nqa-col-card__title{font-size:1.8rem;color:var(--nqa-base);}
-	.nqa-col-card--featured .nqa-col-card__desc{color:var(--nqa-pink);font-size:.95rem;}
-	.nqa-col-card--featured .nqa-col-card__kicker{color:var(--nqa-yellow);}
-	.nqa-col-card--featured .nqa-col-card__count{background:var(--nqa-yellow);color:var(--nqa-ink);border-color:var(--nqa-ink);}
-	a.nqa-col-card--featured:hover,a.nqa-col-card--featured:focus-visible{transform:translate(-3px,-3px);box-shadow:12px 12px 0 var(--nqa-ink);}
-	.nqa-col-recent{margin:2.75rem 0 0;background:var(--nqa-cream);border:2px solid var(--nqa-ink);box-shadow:6px 6px 0 var(--nqa-ink);padding:1.4rem 1.6rem;}
-	.nqa-col-recent h2{font-family:inherit;text-transform:uppercase;letter-spacing:.06em;font-size:1.1rem;margin:0 0 .9rem;}
-	.nqa-col-recent ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.6rem;}
-	.nqa-col-recent li{margin:0;}
-	.nqa-col-recent a{display:inline-block;text-decoration:none;color:var(--nqa-ink);border:2px solid var(--nqa-ink);padding:.35rem .6rem;background:var(--nqa-base);font-size:.8rem;line-height:1.3;transition:background .12s ease;}
-	.nqa-col-recent a:hover{background:var(--nqa-pink);}
-	.nqa-col-recent a:focus-visible{outline:3px solid var(--nqa-violet);outline-offset:2px;}
-	.nqa-col-recent .nqa-col-recent__date{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:#555;}
-	@media (max-width:640px){.nqa-col-card--featured{flex-direction:column;}.nqa-col-card--featured .nqa-col-card__block{width:auto;height:14px;border-right:0;border-bottom:2px solid var(--nqa-ink);}}
-	</style>
-
 	<div class="nqa-collections">
 
 		<?php if ( $featured ) : ?>
