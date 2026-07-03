@@ -28,7 +28,7 @@ wordpress/app/public/wp-content/*
 !wordpress/app/public/wp-content/themes/
 wordpress/app/public/wp-content/themes/*
 !wordpress/app/public/wp-content/themes/index.php
-!wordpress/app/public/wp-content/themes/twentytwentyfive/
+!wordpress/app/public/wp-content/themes/nqa/
 
 # mu-plugins: track our secret-free NQA code. The runtime-secrets file
 # (0-nqa-runtime-config.php) starts with "0-" so it is NOT matched here — it is

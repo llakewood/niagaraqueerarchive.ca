@@ -1,0 +1,38 @@
+<!-- wp:template-part {"slug":"header","tagName":"div"} /-->
+
+<!-- wp:group {"tagName":"main","metadata":{"name":"Single post"},"style":{"spacing":{"margin":{"top":"0"}}},"layout":{"type":"constrained"}} -->
+<main id="nqa-main" class="wp-block-group" tabindex="-1">
+
+	<!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|60"}}},"layout":{"type":"constrained"}} -->
+	<div class="wp-block-group" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--60)">
+
+		<!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|20"}},"layout":{"type":"flow"}} -->
+		<div class="wp-block-group">
+			<!-- wp:post-terms {"term":"category","style":{"typography":{"fontFamily":"var(--wp--preset--font-family--nqa-mono)","fontSize":"var(--wp--preset--font-size--xs)","textTransform":"uppercase","letterSpacing":"0.1em"}}} /-->
+			<!-- wp:post-title {"level":1} /-->
+			<!-- wp:post-date {"style":{"typography":{"fontFamily":"var(--wp--preset--font-family--nqa-mono)","fontSize":"var(--wp--preset--font-size--xs)","textTransform":"uppercase"}}} /-->
+		</div>
+		<!-- /wp:group -->
+
+		<!-- wp:separator {"style":{"spacing":{"margin":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|40"}}},"className":"is-style-wide"} -->
+		<hr class="wp-block-separator is-style-wide" style="margin-top:var(--wp--preset--spacing--30);margin-bottom:var(--wp--preset--spacing--40)" />
+		<!-- /wp:separator -->
+
+		<!-- wp:post-content {"layout":{"type":"constrained"}} /-->
+
+		<!-- wp:separator {"style":{"spacing":{"margin":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|40"}}},"className":"is-style-wide"} -->
+		<hr class="wp-block-separator is-style-wide" style="margin-top:var(--wp--preset--spacing--50);margin-bottom:var(--wp--preset--spacing--40)" />
+		<!-- /wp:separator -->
+
+		<!-- wp:post-terms {"term":"post_tag","prefix":"Tagged: ","style":{"typography":{"fontFamily":"var(--wp--preset--font-family--nqa-mono)","fontSize":"var(--wp--preset--font-size--xs)","textTransform":"uppercase","letterSpacing":"0.08em"}}} /-->
+
+		<!-- wp:post-navigation-link {"type":"previous","showTitle":true} /-->
+		<!-- wp:post-navigation-link {"type":"next","showTitle":true} /-->
+
+	</div>
+	<!-- /wp:group -->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"div"} /-->
