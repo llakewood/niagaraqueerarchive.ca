@@ -1006,24 +1006,26 @@ html.nqa-view-list .nqa-col-card--featured .nqa-col-card__body { flex-wrap: wrap
 /* Applied when the nqa block theme is active. All colours via var(--nqa-*). */
 
 /* Accessibility: skip to main (WCAG 2.4.1) */
-.skip-link {
-	position: absolute;
-	top: -100%;
-	left: 1rem;
-	z-index: 10000;
-	padding: .6rem 1.25rem;
-	background: var(--nqa-yellow);
-	color: var(--nqa-ink);
-	font-family: 'Space Mono', 'Courier New', monospace;
-	font-size: .82rem;
-	font-weight: 700;
-	letter-spacing: .08em;
-	text-transform: uppercase;
-	border: 2px solid var(--nqa-ink);
-	text-decoration: none;
-	transition: top .1s;
+/* Targets WP's auto-generated .skip-link.screen-reader-text on focus */
+.skip-link.screen-reader-text:focus {
+	background: var(--nqa-yellow) !important;
+	color: var(--nqa-ink) !important;
+	font-family: 'Space Mono', 'Courier New', monospace !important;
+	font-size: .82rem !important;
+	font-weight: 700 !important;
+	letter-spacing: .08em !important;
+	text-transform: uppercase !important;
+	border: 2px solid var(--nqa-ink) !important;
+	border-radius: 0 !important;
+	text-decoration: none !important;
+	clip-path: none !important;
+	top: 0.5rem !important;
+	left: 1rem !important;
+	padding: .6rem 1.25rem !important;
+	z-index: 100001 !important;
+	height: auto !important;
+	width: auto !important;
 }
-.skip-link:focus { top: 0; }
 
 /* Screen-reader-only utility (WCAG 1.3.1) */
 .sr-only {
