@@ -1,0 +1,47 @@
+<!-- wp:template-part {"slug":"header","tagName":"div"} /-->
+
+<!-- wp:group {"tagName":"main","metadata":{"name":"Single — Organization"},"className":"nqa-single","style":{"spacing":{"margin":{"top":"0"}}},"layout":{"type":"constrained"}} -->
+<main id="nqa-main" class="wp-block-group nqa-single" tabindex="-1">
+
+	<!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|60"}}},"layout":{"type":"constrained"}} -->
+	<div class="wp-block-group" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--60)">
+
+		<!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|10"}},"layout":{"type":"flow"}} -->
+		<div class="wp-block-group">
+			<!-- wp:html --><p class="nqa-type-label">Organization</p><!-- /wp:html -->
+			<!-- wp:post-title {"level":1} /-->
+			<!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|10"}},"layout":{"type":"flex","flexWrap":"wrap","verticalAlignment":"center"}} -->
+			<div class="wp-block-group">
+				<!-- wp:post-terms {"term":"municipality","style":{"typography":{"fontFamily":"var(--wp--preset--font-family--nqa-mono)","fontSize":"var(--wp--preset--font-size--xs)","textTransform":"uppercase","letterSpacing":"0.12em"},"color":{"text":"var(--wp--preset--color--nqa-violet)"}}} /-->
+				<!-- wp:post-terms {"term":"post_tag","style":{"typography":{"fontFamily":"var(--wp--preset--font-family--nqa-mono)","fontSize":"var(--wp--preset--font-size--xs)","textTransform":"uppercase","letterSpacing":"0.1em"}}} /-->
+			</div>
+			<!-- /wp:group -->
+		</div>
+		<!-- /wp:group -->
+
+		<!-- wp:separator {"className":"is-style-wide","style":{"spacing":{"margin":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|40"}}}} -->
+		<hr class="wp-block-separator is-style-wide" style="margin-top:var(--wp--preset--spacing--30);margin-bottom:var(--wp--preset--spacing--40)" />
+		<!-- /wp:separator -->
+
+		<!-- wp:post-content {"layout":{"type":"constrained"}} /-->
+
+		<!-- wp:separator {"className":"is-style-wide","style":{"spacing":{"margin":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|30"}}}} -->
+		<hr class="wp-block-separator is-style-wide" style="margin-top:var(--wp--preset--spacing--50);margin-bottom:var(--wp--preset--spacing--30)" />
+		<!-- /wp:separator -->
+
+		<!-- wp:html --><a href="/organization/" class="nqa-back-link">← All Organizations</a><!-- /wp:html -->
+
+		<!-- wp:group {"style":{"spacing":{"margin":{"top":"var:preset|spacing|40"}}},"layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
+		<div class="wp-block-group" style="margin-top:var(--wp--preset--spacing--40)">
+			<!-- wp:post-navigation-link {"type":"previous","label":"Previous","showTitle":true} /-->
+			<!-- wp:post-navigation-link {"type":"next","label":"Next","showTitle":true} /-->
+		</div>
+		<!-- /wp:group -->
+
+	</div>
+	<!-- /wp:group -->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"div"} /-->
