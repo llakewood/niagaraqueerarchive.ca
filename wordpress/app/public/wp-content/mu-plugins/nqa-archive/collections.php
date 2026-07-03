@@ -59,7 +59,7 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'pride-roots',
 			'title'   => 'Pride Roots',
-			'desc'    => 'Origin stories and the longest-running Pride organizations and festivals in Niagara.',
+			'desc'    => 'The first marches, the early organizers, the fights for space and visibility. Documents how a Pride movement took root in small cities and towns across Niagara — outside the major urban centres that usually define the Canadian Pride story.',
 			'accent'  => $pal['violet'],
 		),
 		'progress-protest'      => array(
@@ -67,7 +67,7 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'progress-protest',
 			'title'   => 'Progress & Protest',
-			'desc'    => 'Crosswalks, flag-raisings, contested votes and the backlash met along the way.',
+			'desc'    => 'Records of advocacy and public action: campaigns, controversies, and the moments Niagara\'s queer community refused to stay quiet. Rainbow crosswalks, flag-raising ceremonies, school board battles — this collection maps the political landscape.',
 			'accent'  => $pal['yellow'],
 		),
 		'community-organizing'  => array(
@@ -91,7 +91,7 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'queer-arts-letters',
 			'title'   => 'Queer Arts & Letters',
-			'desc'    => 'Books, writers, drag, markets and the arts spaces of Niagara.',
+			'desc'    => 'Books, drag performers, writers, markets, and the arts spaces that gave Niagara\'s queer community somewhere to be seen. Includes the performers, publishers, and venues that made cultural life possible.',
 			'accent'  => $pal['pink'],
 		),
 		'trans-niagara'         => array(
@@ -99,7 +99,7 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'trans-niagara',
 			'title'   => 'Trans Niagara',
-			'desc'    => 'The trans-specific thread: advocacy, visibility and Trans Day of Visibility.',
+			'desc'    => 'The trans-specific thread through Niagara\'s queer history: advocacy organizations, visibility events, and the people who built support structures that didn\'t yet exist.',
 			'accent'  => $pal['yellow'],
 		),
 		'two-spirit-indigenous' => array(
@@ -107,8 +107,40 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'two-spirit-indigenous',
 			'title'   => 'Two-Spirit & Indigenous Queer Niagara',
-			'desc'    => 'Two-Spirit and Indigenous queer life in Niagara — flag-raisings, gatherings, and the Fort Erie Native Friendship Centre.',
+			'desc'    => 'Centres Indigenous queer and Two-Spirit histories in a region whose territory has been home to Haudenosaunee and Anishinaabe peoples since long before colonial settlement. These records are often thinly sourced; this collection holds what has been documented and marks what still needs to be gathered.',
 			'accent'  => $pal['violet'],
+		),
+		'faith-inclusion'       => array(
+			'section' => 'theme',
+			'kind'    => 'collection',
+			'term'    => 'faith-inclusion',
+			'title'   => 'Faith & Inclusion',
+			'desc'    => 'Documents the relationship between queer people and faith communities in Niagara: the congregations that made space, the denominations that pushed back, and the individuals who found or lost a spiritual home because of who they are.',
+			'accent'  => $pal['pink'],
+		),
+		'drag-performer'        => array(
+			'section' => 'theme',
+			'kind'    => 'collection',
+			'term'    => 'drag-performer',
+			'title'   => 'Drag Performers',
+			'desc'    => 'Kings, queens, and performers who built audiences and community from Niagara stages. The art form as documentation: drag as history, as survival, as joy.',
+			'accent'  => $pal['yellow'],
+		),
+		'love-support'          => array(
+			'section' => 'theme',
+			'kind'    => 'collection',
+			'term'    => 'love-support',
+			'title'   => 'Love & Support',
+			'desc'    => 'Ally organizations, PFLAG chapters, support networks, and the institutions that stood beside Niagara\'s queer community — documented with clear framing as partners and supporters.',
+			'accent'  => $pal['violet'],
+		),
+		'in-memorium'           => array(
+			'section' => 'theme',
+			'kind'    => 'collection',
+			'term'    => 'in-memorium',
+			'title'   => 'In Memoriam',
+			'desc'    => 'Records of loss: people who have died, places that have closed, organizations that no longer exist. A space to honour what has ended while keeping it part of the permanent record.',
+			'accent'  => $pal['pink'],
 		),
 	);
 
