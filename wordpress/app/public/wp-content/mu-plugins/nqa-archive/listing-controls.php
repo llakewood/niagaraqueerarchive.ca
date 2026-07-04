@@ -41,66 +41,6 @@ add_action(
 );
 
 add_action(
-	'wp_enqueue_scripts',
-	function () {
-		if ( ! is_archive() ) {
-			return;
-		}
-		$css = ''
-			// --- Column grid (default 2; overridden by the html.nqa-acols-* class) ---
-			. 'html[class*="nqa-acols"] body.archive .wp-block-post-template{display:grid;gap:1.35rem;'
-				. 'align-items:start;grid-template-columns:repeat(2,minmax(0,1fr))}'
-			. 'html.nqa-acols-1 body.archive .wp-block-post-template{grid-template-columns:1fr}'
-			. 'html.nqa-acols-3 body.archive .wp-block-post-template{grid-template-columns:repeat(3,minmax(0,1fr))}'
-			. '@media(max-width:900px){html.nqa-acols-3 body.archive .wp-block-post-template{grid-template-columns:repeat(2,minmax(0,1fr))}}'
-			. '@media(max-width:600px){html[class*="nqa-acols"] body.archive .wp-block-post-template{grid-template-columns:1fr}}'
-			. 'html[class*="nqa-acols"] body.archive .wp-block-query .wp-block-post{margin-block:0}'
-			. 'body.archive .wp-block-post.nqa-hidden{display:none!important}'
-
-			// --- Control bar shell ---
-			. '.nqa-ctrls{background:var(--nqa-cream);border:2px solid var(--nqa-ink);box-shadow:5px 5px 0 var(--nqa-ink);'
-				. 'padding:1rem 1.15rem;margin:0 0 1.6rem;font-family:var(--nqa-mono);'
-				. 'display:flex;flex-direction:column;gap:.85rem}'
-			. '.nqa-ctrls__row{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem}'
-			. '.nqa-ctrls__row--top{justify-content:space-between}'
-			. '.nqa-ctrls__search{flex:1 1 16rem;display:flex;align-items:center;border:2px solid var(--nqa-ink);background:var(--nqa-base)}'
-			. '.nqa-ctrls__search input{flex:1;border:0;outline:0;font:inherit;font-size:.9rem;'
-				. 'padding:.5rem .7rem;background:transparent;color:var(--nqa-ink)}'
-			. '.nqa-ctrls__search input::placeholder{color:#777}'
-			. '.nqa-ctrls__count{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;'
-				. 'color:var(--nqa-violet);white-space:nowrap}'
-			. '.nqa-ctrls__cols{display:flex;align-items:center;gap:.5rem}'
-			. '.nqa-ctrls__label{font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--nqa-violet)}'
-			. '.nqa-ctrls__colbtns{display:inline-flex;border:2px solid var(--nqa-ink);box-shadow:2px 2px 0 var(--nqa-ink)}'
-			. '.nqa-colbtn{appearance:none;-webkit-appearance:none;cursor:pointer;font:inherit;font-size:.78rem;'
-				. 'font-weight:700;width:2.1rem;padding:.35rem 0;background:var(--nqa-base);color:var(--nqa-ink);border:0;'
-				. 'border-inline-start:2px solid var(--nqa-ink);line-height:1}'
-			. '.nqa-colbtn:first-child{border-inline-start:0}'
-			. '.nqa-colbtn.is-active{background:var(--nqa-violet);color:var(--nqa-base)}'
-			. '.nqa-colbtn:hover:not(.is-active){background:var(--nqa-pink)}'
-			. '.nqa-colbtn:focus-visible{outline:3px solid var(--nqa-yellow);outline-offset:2px}'
-
-			// --- Facets ---
-			. '.nqa-facet{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem}'
-			. '.nqa-facet__legend{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;'
-				. 'color:var(--nqa-ink);margin-inline-end:.2rem}'
-			. '.nqa-chip{appearance:none;cursor:pointer;font:inherit;font-size:.75rem;line-height:1.2;'
-				. 'padding:.28rem .6rem;border:1px solid var(--nqa-violet);border-radius:999px;background:var(--nqa-pink);'
-				. 'color:var(--nqa-violet);transition:background .12s,color .12s}'
-			. '.nqa-chip:hover{background:var(--nqa-violet);color:var(--nqa-base)}'
-			. '.nqa-chip[aria-pressed="true"]{background:var(--nqa-violet);color:var(--nqa-base);font-weight:700}'
-			. '.nqa-chip:focus-visible{outline:3px solid var(--nqa-yellow);outline-offset:2px}'
-			. '.nqa-ctrls__clear{appearance:none;cursor:pointer;font:inherit;font-size:.7rem;font-weight:700;'
-				. 'text-transform:uppercase;letter-spacing:.08em;background:none;border:0;color:var(--nqa-violet);'
-				. 'text-decoration:underline;text-underline-offset:2px}'
-			. '.nqa-ctrls__clear:focus-visible{outline:3px solid var(--nqa-yellow);outline-offset:2px}'
-			. '.nqa-ctrls__empty{font-size:.85rem;color:#555;font-style:italic}';
-
-		nqa_add_style( $css );
-	}
-);
-
-add_action(
 	'wp_footer',
 	function () {
 		if ( ! is_archive() ) {

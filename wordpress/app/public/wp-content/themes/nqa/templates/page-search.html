@@ -1,0 +1,98 @@
+<!-- wp:template-part {"slug":"header","tagName":"div"} /-->
+
+<!-- wp:group {"tagName":"main","metadata":{"name":"Search"},"style":{"spacing":{"margin":{"top":"0"}}},"layout":{"type":"default"}} -->
+<main id="nqa-main" class="wp-block-group" tabindex="-1">
+
+<!-- wp:html -->
+<section class="search-hero">
+	<div class="search-hero__inner">
+		<div class="eyebrow eyebrow--light">Archive Search</div>
+		<h1>Search the Archive</h1>
+		<form class="search-hero__bar" id="nqa-search-form" role="search" aria-label="Search archive records">
+			<input
+				id="nqa-search-input"
+				class="search-hero__input"
+				type="search"
+				name="q"
+				placeholder="People, places, events, organizations&hellip;"
+				autocomplete="off"
+				aria-label="Search query"
+			>
+			<button class="search-hero__btn" type="submit" aria-label="Search">Search</button>
+		</form>
+		<p class="search-hero__hint">Search names, places, keywords &mdash; or browse using the filters below.</p>
+	</div>
+</section>
+<!-- /wp:html -->
+
+<!-- wp:html -->
+<section class="search-body">
+	<div class="search-body__inner">
+
+		<!-- Sidebar filters -->
+		<aside class="search-sidebar" id="nqa-search-sidebar" aria-label="Filter records">
+
+			<div class="search-filter-group">
+				<div class="search-filter-group__head">Record Type</div>
+				<div class="search-chips" role="group" aria-label="Filter by record type">
+					<button type="button" class="search-chip is-active" data-filter="type" data-value="" aria-pressed="true">All records</button>
+					<button type="button" class="search-chip" data-filter="type" data-value="post" aria-pressed="false">Articles</button>
+					<button type="button" class="search-chip" data-filter="type" data-value="nqa_person" aria-pressed="false">People</button>
+					<button type="button" class="search-chip" data-filter="type" data-value="nqa_org" aria-pressed="false">Organizations</button>
+					<button type="button" class="search-chip" data-filter="type" data-value="nqa_event" aria-pressed="false">Events</button>
+					<button type="button" class="search-chip" data-filter="type" data-value="nqa_place" aria-pressed="false">Places</button>
+				</div>
+			</div>
+
+			<div class="search-filter-group">
+				<div class="search-filter-group__head">Decade</div>
+				<div class="search-chips" role="group" aria-label="Filter by decade">
+					<button type="button" class="search-chip" data-filter="decade" data-value="1970s" aria-pressed="false">1970s</button>
+					<button type="button" class="search-chip" data-filter="decade" data-value="1980s" aria-pressed="false">1980s</button>
+					<button type="button" class="search-chip" data-filter="decade" data-value="1990s" aria-pressed="false">1990s</button>
+					<button type="button" class="search-chip" data-filter="decade" data-value="2000s" aria-pressed="false">2000s</button>
+					<button type="button" class="search-chip" data-filter="decade" data-value="2010s" aria-pressed="false">2010s</button>
+					<button type="button" class="search-chip" data-filter="decade" data-value="2020s" aria-pressed="false">2020s</button>
+				</div>
+			</div>
+
+			<div class="search-filter-group" hidden>
+				<div class="search-filter-group__head">Municipality</div>
+				<div class="search-chips" id="nqa-muni-chips" role="group" aria-label="Filter by municipality">
+					<!-- populated by nqa-search.js -->
+				</div>
+			</div>
+
+			<div class="search-filter-group" hidden>
+				<div class="search-filter-group__head">Collection</div>
+				<div class="search-chips" id="nqa-coll-chips" role="group" aria-label="Filter by collection">
+					<!-- populated by nqa-search.js -->
+				</div>
+			</div>
+
+		</aside>
+
+		<!-- Results pane -->
+		<div class="search-results">
+			<div class="search-results__head">
+				<div class="search-results__count" id="nqa-search-count" role="status" aria-live="polite" aria-atomic="true">Loading&hellip;</div>
+				<select class="search-results__sort" id="nqa-search-sort" aria-label="Sort results">
+					<option value="relevance">Relevance</option>
+					<option value="newest">Newest first</option>
+					<option value="oldest">Oldest first</option>
+					<option value="az">A &ndash; Z</option>
+				</select>
+			</div>
+			<div class="search-results__list" id="nqa-search-results" aria-label="Search results">
+				<p class="search-loading">Loading&hellip;</p>
+			</div>
+		</div>
+
+	</div>
+</section>
+<!-- /wp:html -->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"div"} /-->

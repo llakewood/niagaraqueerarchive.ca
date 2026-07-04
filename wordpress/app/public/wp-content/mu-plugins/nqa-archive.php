@@ -34,6 +34,7 @@ $nqa_modules = array(
 	'content-model.php',
 	'fields.php',
 	// Admin.
+	'access.php',
 	'archival-note.php',
 	'preservation.php',
 	// Front end.
@@ -42,6 +43,10 @@ $nqa_modules = array(
 	'listing.php',
 	'listing-controls.php',
 	'view-toggle.php',
+	'map.php',
+	'submissions.php',
+	'shortcodes.php',
+	'search.php',
 );
 
 foreach ( $nqa_modules as $nqa_module ) {

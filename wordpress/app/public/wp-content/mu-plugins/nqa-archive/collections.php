@@ -59,7 +59,7 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'pride-roots',
 			'title'   => 'Pride Roots',
-			'desc'    => 'Origin stories and the longest-running Pride organizations and festivals in Niagara.',
+			'desc'    => 'The first marches, the early organizers, the fights for space and visibility. Documents how a Pride movement took root in small cities and towns across Niagara — outside the major urban centres that usually define the Canadian Pride story.',
 			'accent'  => $pal['violet'],
 		),
 		'progress-protest'      => array(
@@ -67,7 +67,7 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'progress-protest',
 			'title'   => 'Progress & Protest',
-			'desc'    => 'Crosswalks, flag-raisings, contested votes and the backlash met along the way.',
+			'desc'    => 'Records of advocacy and public action: campaigns, controversies, and the moments Niagara\'s queer community refused to stay quiet. Rainbow crosswalks, flag-raising ceremonies, school board battles — this collection maps the political landscape.',
 			'accent'  => $pal['yellow'],
 		),
 		'community-organizing'  => array(
@@ -91,7 +91,7 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'queer-arts-letters',
 			'title'   => 'Queer Arts & Letters',
-			'desc'    => 'Books, writers, drag, markets and the arts spaces of Niagara.',
+			'desc'    => 'Books, drag performers, writers, markets, and the arts spaces that gave Niagara\'s queer community somewhere to be seen. Includes the performers, publishers, and venues that made cultural life possible.',
 			'accent'  => $pal['pink'],
 		),
 		'trans-niagara'         => array(
@@ -99,7 +99,7 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'trans-niagara',
 			'title'   => 'Trans Niagara',
-			'desc'    => 'The trans-specific thread: advocacy, visibility and Trans Day of Visibility.',
+			'desc'    => 'The trans-specific thread through Niagara\'s queer history: advocacy organizations, visibility events, and the people who built support structures that didn\'t yet exist.',
 			'accent'  => $pal['yellow'],
 		),
 		'two-spirit-indigenous' => array(
@@ -107,8 +107,40 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'two-spirit-indigenous',
 			'title'   => 'Two-Spirit & Indigenous Queer Niagara',
-			'desc'    => 'Two-Spirit and Indigenous queer life in Niagara — flag-raisings, gatherings, and the Fort Erie Native Friendship Centre.',
+			'desc'    => 'Centres Indigenous queer and Two-Spirit histories in a region whose territory has been home to Haudenosaunee and Anishinaabe peoples since long before colonial settlement. These records are often thinly sourced; this collection holds what has been documented and marks what still needs to be gathered.',
 			'accent'  => $pal['violet'],
+		),
+		'faith-inclusion'       => array(
+			'section' => 'theme',
+			'kind'    => 'collection',
+			'term'    => 'faith-inclusion',
+			'title'   => 'Faith & Inclusion',
+			'desc'    => 'Documents the relationship between queer people and faith communities in Niagara: the congregations that made space, the denominations that pushed back, and the individuals who found or lost a spiritual home because of who they are.',
+			'accent'  => $pal['pink'],
+		),
+		'drag-performer'        => array(
+			'section' => 'theme',
+			'kind'    => 'collection',
+			'term'    => 'drag-performer',
+			'title'   => 'Drag Performers',
+			'desc'    => 'Kings, queens, and performers who built audiences and community from Niagara stages. The art form as documentation: drag as history, as survival, as joy.',
+			'accent'  => $pal['yellow'],
+		),
+		'love-support'          => array(
+			'section' => 'theme',
+			'kind'    => 'collection',
+			'term'    => 'love-support',
+			'title'   => 'Love & Support',
+			'desc'    => 'Ally organizations, PFLAG chapters, support networks, and the institutions that stood beside Niagara\'s queer community — documented with clear framing as partners and supporters.',
+			'accent'  => $pal['violet'],
+		),
+		'in-memorium'           => array(
+			'section' => 'theme',
+			'kind'    => 'collection',
+			'term'    => 'in-memorium',
+			'title'   => 'In Memoriam',
+			'desc'    => 'Records of loss: people who have died, places that have closed, organizations that no longer exist. A space to honour what has ended while keeping it part of the permanent record.',
+			'accent'  => $pal['pink'],
 		),
 	);
 
@@ -224,14 +256,8 @@ function nqa_collections_card_html( array $c, $featured = false ) {
 	?>
 	<<?php echo $tag; ?> class="<?php echo esc_attr( $classes ); ?>"<?php echo $href; ?> style="--nqa-accent:<?php echo esc_attr( $accent ); ?>;--nqa-title:<?php echo esc_attr( $title_color ); ?>;">
 		<span class="nqa-col-card__block" aria-hidden="true"></span>
-		<span class="nqa-col-card__body">
-			<?php if ( $featured ) : ?><span class="nqa-col-card__kicker">Featured this week</span><?php endif; ?>
-			<span class="nqa-col-card__title"><?php echo esc_html( $c['title'] ); ?></span>
-			<?php if ( '' !== trim( (string) $c['desc'] ) ) : ?><span class="nqa-col-card__desc"><?php echo esc_html( $c['desc'] ); ?></span><?php endif; ?>
-			<span class="nqa-col-card__count"><?php echo esc_html( $count . ' ' . $noun ); ?></span>
-		</span>
-	</<?php echo $tag; ?>>
-	<?php
+		<span class="nqa-col-card__body"><?php if ( $featured ) : ?><span class="nqa-col-card__kicker">Featured this week</span><?php endif; ?><span class="nqa-col-card__title"><?php echo esc_html( $c['title'] ); ?></span><?php if ( '' !== trim( (string) $c['desc'] ) ) : ?><span class="nqa-col-card__desc"><?php echo esc_html( $c['desc'] ); ?></span><?php endif; ?><span class="nqa-col-card__count"><?php echo esc_html( $count . ' ' . $noun ); ?></span></span>
+	</<?php echo $tag; ?>><?php
 	return ob_get_clean();
 }
 
@@ -245,45 +271,6 @@ function nqa_collections_render() {
 
 	ob_start();
 	?>
-	<style>
-	<?php echo nqa_css_vars( '.nqa-collections' ); ?>
-	.nqa-collections{font-family:var(--nqa-mono);color:var(--nqa-ink);max-width:1200px;margin:0 auto;}
-	.nqa-collections *{box-sizing:border-box;}
-	.nqa-col-lede{background:var(--nqa-cream);border:2px solid var(--nqa-ink);box-shadow:6px 6px 0 var(--nqa-ink);padding:1.75rem 2rem;margin:0 0 2.5rem;}
-	.nqa-col-lede p{margin:.4rem 0 0;font-size:1.05rem;line-height:1.6;font-family:inherit;}
-	.nqa-col-eyebrow{font-family:var(--nqa-mono);text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;font-weight:700;margin:0;}
-	.nqa-col-section-head{display:flex;align-items:baseline;gap:.9rem;margin:2.75rem 0 1.25rem;border-bottom:2px solid var(--nqa-ink);padding-bottom:.5rem;}
-	.nqa-col-section-head h2{font-family:inherit;text-transform:uppercase;letter-spacing:.06em;font-size:1.5rem;margin:0;line-height:1;}
-	.nqa-col-section-head .nqa-col-eyebrow{color:var(--nqa-violet);}
-	.nqa-col-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.1rem;}
-	.nqa-col-grid--place{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));}
-	.nqa-col-card{position:relative;display:flex;flex-direction:column;background:var(--nqa-base);border:2px solid var(--nqa-ink);box-shadow:5px 5px 0 var(--nqa-ink);text-decoration:none;color:var(--nqa-ink);overflow:hidden;transition:transform .12s ease,box-shadow .12s ease;}
-	a.nqa-col-card:hover,a.nqa-col-card:focus-visible{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--nqa-ink);}
-	a.nqa-col-card:focus-visible{outline:3px solid var(--nqa-violet);outline-offset:3px;}
-	.nqa-col-card__block{display:block;height:14px;background:var(--nqa-accent);border-bottom:2px solid var(--nqa-ink);}
-	.nqa-col-card__body{display:flex;flex-direction:column;gap:.5rem;padding:1rem 1.05rem 1.1rem;flex:1;}
-	.nqa-col-card__kicker{font-size:.66rem;text-transform:uppercase;letter-spacing:.14em;font-weight:700;color:var(--nqa-violet);}
-	.nqa-col-card__title{font-size:1.15rem;font-weight:700;line-height:1.15;letter-spacing:.01em;}
-	.nqa-col-card__desc{font-size:.82rem;line-height:1.5;color:#333;flex:1;}
-	.nqa-col-card__count{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;border:2px solid var(--nqa-ink);align-self:flex-start;padding:.2rem .5rem;background:var(--nqa-accent);color:var(--nqa-title);}
-	.nqa-col-card--featured{grid-column:1/-1;flex-direction:row;background:var(--nqa-violet);color:var(--nqa-base);box-shadow:8px 8px 0 var(--nqa-ink);}
-	.nqa-col-card--featured .nqa-col-card__block{width:16px;height:auto;border-bottom:0;border-right:2px solid var(--nqa-ink);}
-	.nqa-col-card--featured .nqa-col-card__title{font-size:1.8rem;color:var(--nqa-base);}
-	.nqa-col-card--featured .nqa-col-card__desc{color:var(--nqa-pink);font-size:.95rem;}
-	.nqa-col-card--featured .nqa-col-card__kicker{color:var(--nqa-yellow);}
-	.nqa-col-card--featured .nqa-col-card__count{background:var(--nqa-yellow);color:var(--nqa-ink);border-color:var(--nqa-ink);}
-	a.nqa-col-card--featured:hover,a.nqa-col-card--featured:focus-visible{transform:translate(-3px,-3px);box-shadow:12px 12px 0 var(--nqa-ink);}
-	.nqa-col-recent{margin:2.75rem 0 0;background:var(--nqa-cream);border:2px solid var(--nqa-ink);box-shadow:6px 6px 0 var(--nqa-ink);padding:1.4rem 1.6rem;}
-	.nqa-col-recent h2{font-family:inherit;text-transform:uppercase;letter-spacing:.06em;font-size:1.1rem;margin:0 0 .9rem;}
-	.nqa-col-recent ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.6rem;}
-	.nqa-col-recent li{margin:0;}
-	.nqa-col-recent a{display:inline-block;text-decoration:none;color:var(--nqa-ink);border:2px solid var(--nqa-ink);padding:.35rem .6rem;background:var(--nqa-base);font-size:.8rem;line-height:1.3;transition:background .12s ease;}
-	.nqa-col-recent a:hover{background:var(--nqa-pink);}
-	.nqa-col-recent a:focus-visible{outline:3px solid var(--nqa-violet);outline-offset:2px;}
-	.nqa-col-recent .nqa-col-recent__date{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:#555;}
-	@media (max-width:640px){.nqa-col-card--featured{flex-direction:column;}.nqa-col-card--featured .nqa-col-card__block{width:auto;height:14px;border-right:0;border-bottom:2px solid var(--nqa-ink);}}
-	</style>
-
 	<div class="nqa-collections">
 
 		<?php if ( $featured ) : ?>

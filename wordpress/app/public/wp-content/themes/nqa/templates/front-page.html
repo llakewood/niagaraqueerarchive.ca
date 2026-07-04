@@ -1,0 +1,74 @@
+<!-- wp:template-part {"slug":"header","tagName":"div"} /-->
+
+<!-- wp:group {"tagName":"main","metadata":{"name":"Homepage"},"style":{"spacing":{"margin":{"top":"0"}}},"layout":{"type":"default"}} -->
+<main id="nqa-main" class="wp-block-group" tabindex="-1">
+
+
+	<!-- ═══ HERO ═══════════════════════════════════════════════════════════ -->
+	<!-- wp:shortcode -->[nqa_hero]<!-- /wp:shortcode -->
+
+
+	<!-- ═══ PRINCIPLES ══════════════════════════════════════════════════════ -->
+	<!-- wp:html -->
+	<div class="home-principles">
+		<div class="home-principles__inner">
+			<div class="home-principle">
+				<div class="home-principle__n">01</div>
+				<h3>Catalogue</h3>
+				<p>Gather and record the documents, stories, and materials that make up our shared history &mdash; newspaper articles, photographs, personal accounts, event records.</p>
+			</div>
+			<div class="home-principle">
+				<div class="home-principle__n">02</div>
+				<h3>Curate</h3>
+				<p>Organize entries into meaningful collections that reflect our diverse identities and experiences &mdash; by theme, era, municipality, and community.</p>
+			</div>
+			<div class="home-principle">
+				<div class="home-principle__n">03</div>
+				<h3>Preserve</h3>
+				<p>Ensure these histories are cared for and carried forward &mdash; with source liveness checks, Wayback Machine captures, and careful consent management.</p>
+			</div>
+		</div>
+	</div>
+	<!-- /wp:html -->
+
+
+	<!-- ═══ FEATURED COLLECTION ════════════════════════════════════════════ -->
+	<!-- wp:shortcode -->[nqa_featured_collection]<!-- /wp:shortcode -->
+
+
+	<!-- ═══ RECENTLY ADDED ══════════════════════════════════════════════════ -->
+	<!-- wp:shortcode -->[nqa_recent_records count="3"]<!-- /wp:shortcode -->
+
+
+	<!-- ═══ SUBMIT CTA ══════════════════════════════════════════════════════ -->
+	<!-- wp:html -->
+	<section class="home-submit-cta">
+		<h2>Your story belongs <em>here.</em></h2>
+		<p>The Niagara Queer Archive is only as complete as the stories shared with it. Whether you have a memory, a photograph, a document, or an artifact &mdash; we want to hear from you.</p>
+		<div class="ctas">
+			<a href="/tell/" class="btn btn--primary">Submit your story</a>
+			<a href="/about/" class="btn btn--outline">Learn about the archive</a>
+		</div>
+	</section>
+	<!-- /wp:html -->
+
+
+	<!-- ═══ NEWSLETTER ══════════════════════════════════════════════════════ -->
+	<!-- wp:html -->
+	<section class="home-newsletter">
+		<div class="eyebrow" style="justify-content:center;margin-bottom:.85rem">Stay connected</div>
+		<h2>Get archive updates in your inbox</h2>
+		<p>New records, collection launches, and storytelling events &mdash; delivered when there&rsquo;s something worth telling.</p>
+		<form class="home-newsletter__form" action="https://niagaraqueerarchive.ca/" method="post" aria-label="Newsletter sign-up">
+			<label for="home-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Email address</label>
+			<input class="home-newsletter__input" id="home-email" type="email" name="email" placeholder="your@email.com" autocomplete="email" required>
+			<button type="submit" class="home-newsletter__btn">Subscribe</button>
+		</form>
+	</section>
+	<!-- /wp:html -->
+
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"div"} /-->

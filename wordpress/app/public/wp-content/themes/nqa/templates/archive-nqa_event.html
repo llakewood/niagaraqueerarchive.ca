@@ -1,0 +1,39 @@
+<!-- wp:template-part {"slug":"header","tagName":"div"} /-->
+
+<!-- wp:group {"tagName":"main","metadata":{"name":"Archive — Events"},"style":{"spacing":{"margin":{"top":"0"}}},"layout":{"type":"constrained"}} -->
+<main id="nqa-main" class="wp-block-group" tabindex="-1">
+
+	<!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|60"}}},"layout":{"type":"constrained"}} -->
+	<div class="wp-block-group" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--60)">
+
+		<!-- wp:query-title {"type":"archive","showPrefix":false} /-->
+
+		<!-- wp:query {"queryId":0,"query":{"inherit":true},"layout":{"type":"default"}} -->
+		<div class="wp-block-query">
+
+			<!-- wp:post-template {"layout":{"type":"default"}} -->
+				<!-- wp:post-title {"isLink":true} /-->
+				<!-- wp:post-terms {"term":"municipality"} /-->
+				<!-- wp:post-excerpt {"moreText":"","excerptLength":18} /-->
+			<!-- /wp:post-template -->
+
+			<!-- wp:query-no-results -->
+				<!-- wp:paragraph --><p>No events found in this archive yet.</p><!-- /wp:paragraph -->
+			<!-- /wp:query-no-results -->
+
+			<!-- wp:query-pagination {"layout":{"type":"flex","justifyContent":"center"}} -->
+				<!-- wp:query-pagination-previous /-->
+				<!-- wp:query-pagination-numbers /-->
+				<!-- wp:query-pagination-next /-->
+			<!-- /wp:query-pagination -->
+
+		</div>
+		<!-- /wp:query -->
+
+	</div>
+	<!-- /wp:group -->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"div"} /-->
