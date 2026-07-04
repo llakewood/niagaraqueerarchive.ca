@@ -1318,8 +1318,10 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	text-transform: uppercase;
 	letter-spacing: .05em;
 }
-.section-head .eyebrow { margin-left: auto; }
+/* Last child pushed right; covers direct .eyebrow AND a wpautop-added <p> wrapper */
+.section-head > :last-child { margin-left: auto; }
 .section-head a.eyebrow { text-decoration: none; }
+.section-head p { margin: 0; display: flex; align-items: baseline; }
 
 /* Shared: catalogue entry card (.cat-card) */
 .cat-card {
@@ -1347,6 +1349,7 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 .cat-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--nqa-ink); }
 .cat-card:focus-visible { outline: 3px solid var(--nqa-violet); outline-offset: 2px; }
 .cat-card__type {
+	display: block;
 	font-family: 'Space Mono', 'Courier New', monospace;
 	font-size: .74rem;
 	font-weight: 700;
@@ -1356,15 +1359,16 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	margin-bottom: .35rem;
 }
 .cat-card__title {
+	display: block;
 	font-family: 'Fraunces', Georgia, serif;
 	font-size: 1.4rem;
 	font-weight: 600;
 	margin-bottom: .45rem;
 }
-.cat-card__excerpt { font-size: 1rem; line-height: 1.6; color: #222; }
+.cat-card__excerpt { display: block; font-size: 1rem; line-height: 1.6; color: #222; }
 .cat-card__meta {
-	margin-top: .75rem;
 	display: flex;
+	margin-top: .75rem;
 	gap: .6rem;
 	flex-wrap: wrap;
 	font-family: 'Space Mono', 'Courier New', monospace;
@@ -1533,6 +1537,8 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	max-width: 44ch;
 }
 .home-hero__ctas { display: flex; flex-wrap: wrap; gap: .75rem; }
+/* wpautop wraps the CTA <a> elements in <p>; display:contents makes it transparent */
+.home-hero__ctas > p { display: contents; margin: 0; }
 
 /* Hero stats panel (right column) */
 .home-hero__stats {
@@ -1628,6 +1634,8 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 /* Featured collection section */
 .home-featured { padding: 3rem 2rem; }
 .home-featured__inner { max-width: 1200px; margin: 0 auto; }
+/* wpautop may wrap the col-card <a> in <p>; display:contents removes the box */
+.home-featured__inner > p { display: contents; }
 
 /* Recently added section */
 .home-recent { padding: 0 2rem 3.5rem; background: var(--nqa-base); }

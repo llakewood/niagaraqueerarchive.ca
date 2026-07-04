@@ -5,51 +5,7 @@
 
 
 	<!-- ═══ HERO ═══════════════════════════════════════════════════════════ -->
-	<!-- wp:html -->
-	<section class="home-hero">
-		<div class="home-hero__inner">
-
-			<div>
-				<div class="home-hero__tag">Niagara, Ontario &mdash; Est. 2025</div>
-				<h1>Preserving Niagara's <em>Queer</em> past &mdash; celebrating our living history.</h1>
-				<p class="home-hero__lede">A community project dedicated to cataloguing, curating, and preserving LGBTQ2S+ stories across the Niagara region &mdash; from St.&nbsp;Catharines to Fort Erie, Welland to Niagara-on-the-Lake.</p>
-				<div class="home-hero__ctas">
-					<a href="/collections/" class="btn btn--primary">Browse the Archive</a>
-					<a href="/collections/" class="btn btn--ghost">Explore Collections</a>
-					<a href="/tell-your-story/" class="btn btn--ghost">Submit Your Story</a>
-				</div>
-			</div>
-
-			<div class="home-hero__stats">
-				<div class="home-hero__stats-title">Archive at a Glance</div>
-				<div class="home-hero__stat-grid">
-					<div class="home-hero__stat">
-						<div class="home-hero__stat-n">130<em>+</em></div>
-						<div class="home-hero__stat-label">Records</div>
-						<div class="home-hero__stat-sub">People, orgs, events, places</div>
-					</div>
-					<div class="home-hero__stat">
-						<div class="home-hero__stat-n">24</div>
-						<div class="home-hero__stat-label">Archival Articles</div>
-						<div class="home-hero__stat-sub">Niagara press, sourced &amp; preserved</div>
-					</div>
-					<hr class="home-hero__stat-divider">
-					<div class="home-hero__stat">
-						<div class="home-hero__stat-n">5</div>
-						<div class="home-hero__stat-label">Collections</div>
-						<div class="home-hero__stat-sub">Themed, curated sets</div>
-					</div>
-					<div class="home-hero__stat">
-						<div class="home-hero__stat-n">12</div>
-						<div class="home-hero__stat-label">Municipalities</div>
-						<div class="home-hero__stat-sub">Across the Niagara region</div>
-					</div>
-				</div>
-			</div>
-
-		</div>
-	</section>
-	<!-- /wp:html -->
+	<!-- wp:shortcode -->[nqa_hero]<!-- /wp:shortcode -->
 
 
 	<!-- ═══ PRINCIPLES ══════════════════════════════════════════════════════ -->
@@ -77,58 +33,11 @@
 
 
 	<!-- ═══ FEATURED COLLECTION ════════════════════════════════════════════ -->
-	<!-- wp:html -->
-	<section class="home-featured">
-		<div class="home-featured__inner">
-			<div class="section-head">
-				<h2>Featured Collection</h2>
-				<span class="eyebrow">Collections</span>
-			</div>
-			<a href="/collections/pride-roots/" class="col-card col-card--featured">
-				<div class="col-card__block" style="background:var(--nqa-violet)"></div>
-				<div class="col-card__body">
-					<div class="col-card__kicker">Featured &middot; Pride Roots</div>
-					<div class="col-card__title">Pride Roots</div>
-					<div class="col-card__desc">The early years of organized Pride in Niagara &mdash; how a small group of activists planted the seeds of visibility that would grow into the community we know today. From the first marches to Montebello Park, from drag nights at Envy to the crosswalk on St.&nbsp;Paul.</div>
-					<div class="col-card__count">View collection &rarr;</div>
-				</div>
-			</a>
-		</div>
-	</section>
-	<!-- /wp:html -->
+	<!-- wp:shortcode -->[nqa_featured_collection]<!-- /wp:shortcode -->
 
 
 	<!-- ═══ RECENTLY ADDED ══════════════════════════════════════════════════ -->
-	<!-- wp:html -->
-	<section class="home-recent">
-		<div class="home-recent__inner">
-			<div class="section-head">
-				<h2>Recently Added</h2>
-				<a href="/collections/" class="eyebrow" style="text-decoration:none">View all records &rarr;</a>
-			</div>
-			<div class="home-recent__grid">
-				<a href="/person/enzo-de-divitiis/" class="cat-card">
-					<div class="cat-card__type">Person</div>
-					<div class="cat-card__title">Enzo De Divitiis</div>
-					<div class="cat-card__excerpt">Prominent St.&nbsp;Catharines community figure and longtime Pride Niagara organizer.</div>
-					<div class="cat-card__meta"><span>St. Catharines</span><span>Pride Roots</span></div>
-				</a>
-				<a href="/event/pride-in-the-park-st-catharines/" class="cat-card">
-					<div class="cat-card__type">Event</div>
-					<div class="cat-card__title">Pride in the Park</div>
-					<div class="cat-card__excerpt">Annual Pride festival in Montebello Park. One of Niagara&rsquo;s largest and longest-running Pride events.</div>
-					<div class="cat-card__meta"><span>St. Catharines</span><span>from 2012</span></div>
-				</a>
-				<a href="/place/envy-lounge/" class="cat-card">
-					<div class="cat-card__type">Place</div>
-					<div class="cat-card__title">Envy Lounge</div>
-					<div class="cat-card__excerpt">St.&nbsp;Catharines queer bar and nightclub. A key social space for the region&rsquo;s LGBTQ2S+ community for many years.</div>
-					<div class="cat-card__meta"><span>St. Catharines</span></div>
-				</a>
-			</div>
-		</div>
-	</section>
-	<!-- /wp:html -->
+	<!-- wp:shortcode -->[nqa_recent_records count="3"]<!-- /wp:shortcode -->
 
 
 	<!-- ═══ SUBMIT CTA ══════════════════════════════════════════════════════ -->
@@ -137,7 +46,7 @@
 		<h2>Your story belongs <em>here.</em></h2>
 		<p>The Niagara Queer Archive is only as complete as the stories shared with it. Whether you have a memory, a photograph, a document, or an artifact &mdash; we want to hear from you.</p>
 		<div class="ctas">
-			<a href="/tell-your-story/" class="btn btn--primary">Submit your story</a>
+			<a href="/tell/" class="btn btn--primary">Submit your story</a>
 			<a href="/about/" class="btn btn--outline">Learn about the archive</a>
 		</div>
 	</section>
