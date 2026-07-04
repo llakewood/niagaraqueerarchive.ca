@@ -261,7 +261,7 @@ function nqa_collections_card_html( array $c, $featured = false ) {
 	return ob_get_clean();
 }
 
-function nqa_collections_render() {
+function nqa_collections_render( $skip_featured = false ) {
 	$registry = nqa_collections_registry();
 	$featured = nqa_collections_featured( $registry );
 	$recent   = nqa_collections_recent( 6 );
@@ -273,7 +273,7 @@ function nqa_collections_render() {
 	?>
 	<div class="nqa-collections">
 
-		<?php if ( $featured ) : ?>
+		<?php if ( ! $skip_featured && $featured ) : ?>
 			<div class="nqa-col-grid" style="margin-bottom:2rem;">
 				<?php echo nqa_collections_card_html( $featured, true ); ?>
 			</div>
@@ -311,28 +311,69 @@ function nqa_collections_render() {
 }
 
 /* -------------------------------------------------------------------------
- * 6) Shortcode + auto-injection on the Collections page.
+ * 6) Shortcodes.
  * ---------------------------------------------------------------------- */
 add_shortcode( 'nqa_collections', 'nqa_collections_render' );
 
-/**
- * Robust, idempotent auto-render: if the Collections page content does not
- * already contain the shortcode, append the rendered wayfinding grid to the
- * page content. Runs at priority 9 (before core do_shortcode at 11) so the raw
- * [nqa_collections] shortcode is still present to detect.
- */
-add_filter(
-	'the_content',
-	function ( $content ) {
-		static $done = false;
-		if ( $done || ! is_page( 'collections' ) || ! in_the_loop() || ! is_main_query() ) {
-			return $content;
+add_shortcode( 'nqa_collections_page', 'nqa_collections_page_shortcode' );
+
+function nqa_collections_page_shortcode() {
+	$registry = nqa_collections_registry();
+	$featured = nqa_collections_featured( $registry );
+
+	// Live stats.
+	$total = 0;
+	foreach ( nqa_content_types() as $type ) {
+		$c      = wp_count_posts( $type );
+		$total += isset( $c->publish ) ? (int) $c->publish : 0;
+	}
+	$collection_count = (int) wp_count_terms( array( 'taxonomy' => 'nqa_collection', 'hide_empty' => false ) );
+	$muni_count       = (int) wp_count_terms( array( 'taxonomy' => 'municipality',   'hide_empty' => false ) );
+
+	$h  = '<section class="col-hero">';
+	$h .= '<div class="col-hero__inner">';
+
+	// Left: heading + lede + stats.
+	$h .= '<div>';
+	$h .= '<div class="eyebrow eyebrow--light">Collections</div>';
+	$h .= '<h1>Curated windows into Niagara&rsquo;s queer history.</h1>';
+	$h .= '<p class="col-hero__lede">Collections bring individual records together into a narrative. Each collection is a thematic lens &mdash; a way of seeing connections across people, places, eras, and communities that might not be visible record by record.</p>';
+	$h .= '<div class="col-hero__stat-row">';
+	$h .= '<div class="col-hero__stat"><div class="col-hero__stat-n">' . $collection_count . '</div><div class="col-hero__stat-l">Collections</div></div>';
+	$h .= '<div class="col-hero__stat"><div class="col-hero__stat-n">' . $total . '<span class="col-hero__stat-plus">+</span></div><div class="col-hero__stat-l">Records</div></div>';
+	$h .= '<div class="col-hero__stat"><div class="col-hero__stat-n">' . $muni_count . '</div><div class="col-hero__stat-l">Municipalities</div></div>';
+	$h .= '</div>';
+	$h .= '</div>';
+
+	// Right: featured collection card.
+	if ( $featured ) {
+		$url    = nqa_collection_link( $featured );
+		$count  = nqa_collection_count( $featured );
+		$noun   = ( 1 === $count ) ? 'item' : 'items';
+		$tag    = $url ? 'a' : 'div';
+		$href   = $url ? ' href="' . esc_url( $url ) . '"' : '';
+		$h .= '<' . $tag . ' class="nqa-col-card nqa-col-card--featured nqa-col-card--hero"' . $href . ' style="--nqa-accent:' . esc_attr( $featured['accent'] ) . ';">';
+		$h .= '<span class="nqa-col-card__block" aria-hidden="true"></span>';
+		$h .= '<span class="nqa-col-card__body">';
+		$h .= '<span class="nqa-col-card__kicker">Featured this week</span>';
+		$h .= '<span class="nqa-col-card__title">' . esc_html( $featured['title'] ) . '</span>';
+		if ( $featured['desc'] ) {
+			$h .= '<span class="nqa-col-card__desc">' . esc_html( wp_trim_words( $featured['desc'], 30, '&hellip;' ) ) . '</span>';
 		}
-		$done = true;
-		if ( has_shortcode( $content, 'nqa_collections' ) ) {
-			return $content; // Shortcode present — let it render in place, no dupe.
-		}
-		return $content . nqa_collections_render();
-	},
-	9
-);
+		$h .= '<span class="nqa-col-card__count">' . esc_html( $count . ' ' . $noun ) . ' &rarr;</span>';
+		$h .= '</span>';
+		$h .= '</' . $tag . '>';
+	}
+
+	$h .= '</div>'; // /col-hero__inner
+	$h .= '</section>';
+
+	// Grid — featured card handled above, skip it in the grid.
+	$h .= '<div class="col-content">';
+	$h .= '<div class="col-content__inner">';
+	$h .= nqa_collections_render( true );
+	$h .= '</div>';
+	$h .= '</div>';
+
+	return $h;
+}

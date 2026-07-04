@@ -433,7 +433,88 @@ body.archive .wp-block-post.nqa-hidden { display: none !important; }
 }
 
 
-/* ── 4. Collections wayfinding grid ──────────────────────────────────────── */
+/* ── 4. Collections page hero ────────────────────────────────────────────── */
+
+.col-hero {
+	background: var(--nqa-violet);
+	color: var(--nqa-base);
+	padding: 4rem 2rem;
+	border-bottom: 2px solid var(--nqa-ink);
+}
+
+.col-hero__inner {
+	max-width: 1200px;
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 3rem;
+	align-items: center;
+}
+
+.col-hero h1 {
+	font-family: var(--nqa-serif);
+	font-size: clamp(2.5rem, 4.5vw, 4rem);
+	font-weight: 600;
+	line-height: 1.1;
+	color: var(--nqa-base);
+	margin-top: .75rem;
+}
+
+.col-hero__lede {
+	font-size: 1.1rem;
+	line-height: 1.75;
+	color: rgba(255,255,255,.92);
+	margin-top: 1rem;
+}
+
+.col-hero__stat-row { display: flex; gap: 2rem; margin-top: 2rem; }
+
+.col-hero__stat-n {
+	font-family: var(--nqa-serif);
+	font-size: 2.4rem;
+	font-weight: 600;
+	color: var(--nqa-yellow);
+	line-height: 1;
+}
+
+.col-hero__stat-plus {
+	font-family: var(--nqa-mono);
+	font-size: 1.2rem;
+	font-weight: 700;
+	vertical-align: super;
+}
+
+.col-hero__stat-l {
+	font-family: var(--nqa-mono);
+	font-size: .74rem;
+	font-weight: 700;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+	color: rgba(255,255,255,.85);
+	margin-top: .2rem;
+}
+
+/* Featured card inside the hero — override grid-spanning */
+.nqa-col-card--hero {
+	grid-column: auto;
+	width: 100%;
+}
+
+.col-content { padding: 3rem 2rem 4rem; }
+.col-content__inner { max-width: 1200px; margin: 0 auto; }
+
+@media (max-width: 900px) {
+	.col-hero__inner { grid-template-columns: 1fr; gap: 2rem; }
+	.nqa-col-card--hero { max-width: 480px; }
+}
+
+@media (max-width: 600px) {
+	.col-hero { padding: 2.5rem 1.25rem 2rem; }
+	.col-content { padding: 2rem 1.25rem 3rem; }
+	.col-hero__stat-row { gap: 1.25rem; }
+}
+
+/* ── 4b. Collections wayfinding grid ─────────────────────────────────────── */
 
 .nqa-collections { font-family: var(--nqa-mono); color: var(--nqa-ink); max-width: 1200px; margin: 0 auto; }
 .nqa-collections * { box-sizing: border-box; }
