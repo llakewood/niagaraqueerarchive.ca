@@ -47,6 +47,10 @@ $nqa_modules = array(
 	'submissions.php',
 	'shortcodes.php',
 	'search.php',
+	'tell.php',
+	'contact.php',
+	'privacy.php',
+	'forms.php',
 );
 
 foreach ( $nqa_modules as $nqa_module ) {

@@ -8,8 +8,8 @@ defined( 'ABSPATH' ) || exit;
 
 add_filter(
 	'wpcf7_form_class_attr',
-	function ( $class, $form ) {
-		if ( 61 === (int) $form->id() ) {
+	function ( $class, $form = null ) {
+		if ( $form instanceof WPCF7_ContactForm && in_array( (int) $form->id(), array( 60, 61 ), true ) ) {
 			$class .= ' nqa-form';
 		}
 		return $class;
