@@ -45,7 +45,7 @@ $nqa_modules = array(
 	'view-toggle.php',
 	'map.php',
 	'submissions.php',
-	'homepage.php',
+	'shortcodes.php',
 );
 
 foreach ( $nqa_modules as $nqa_module ) {
