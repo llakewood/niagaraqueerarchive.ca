@@ -1,12 +1,12 @@
 <?php
 /**
- * Homepage shortcodes.
+ * Reusable archive shortcodes.
  *
- * [nqa_hero]                — full hero section with live stat counts
- * [nqa_featured_collection] — picks a pinned or random collection card
- * [nqa_recent_records]      — 3 most-recently-modified published records
+ * [nqa_hero]                — hero section with live stat counts (homepage only)
+ * [nqa_featured_collection] — pinned or random collection feature card
+ * [nqa_recent_records]      — N most-recently-modified published records
  *
- * All three are used in front-page.html via <!-- wp:shortcode -->.
+ * Used in front-page.html and the Collections page via <!-- wp:shortcode -->.
  * All use <span> (not <div>) for children inside <a> so wpautop's
  * block-before-inline paragraph injection doesn't corrupt the markup.
  */
