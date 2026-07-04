@@ -49,6 +49,7 @@ $nqa_modules = array(
 	'search.php',
 	'tell.php',
 	'contact.php',
+	'privacy.php',
 	'forms.php',
 );
 

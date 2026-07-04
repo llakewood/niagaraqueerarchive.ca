@@ -2276,7 +2276,89 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	.contact-form-section { padding: 2rem 1.25rem 3rem; }
 }
 
-/* ── 14. Tell Your Story page ────────────────────────────────────────────── */
+/* ── 14. Privacy Policy page ─────────────────────────────────────────────── */
+
+.privacy-hero {
+	background: var(--nqa-cream);
+	border-bottom: 2px solid var(--nqa-ink);
+	padding: 3.5rem 2rem;
+}
+
+.privacy-hero__inner { max-width: 800px; margin: 0 auto; }
+
+.privacy-hero h1 {
+	font-family: var(--nqa-serif);
+	font-size: 2.8rem;
+	font-weight: 600;
+	margin-top: .75rem;
+}
+
+.privacy-hero p {
+	font-size: .95rem;
+	color: #444;
+	font-family: var(--nqa-mono);
+	margin-top: .55rem;
+}
+
+.privacy-body { padding: 3.5rem 2rem 5rem; }
+
+.privacy-body__inner { max-width: 800px; margin: 0 auto; }
+
+.privacy-section {
+	margin-bottom: 3rem;
+	padding-bottom: 3rem;
+	border-bottom: 1px solid rgba(17,17,17,.12);
+}
+
+.privacy-section:last-child { border-bottom: 0; }
+
+.privacy-section h2 {
+	font-family: var(--nqa-mono);
+	font-size: .9rem;
+	font-weight: 700;
+	letter-spacing: .16em;
+	text-transform: uppercase;
+	color: var(--nqa-violet);
+	margin-bottom: 1rem;
+	padding-bottom: .5rem;
+	border-bottom: 2px solid var(--nqa-ink);
+}
+
+.privacy-section p,
+.privacy-section li {
+	font-size: 1.05rem;
+	line-height: 1.8;
+	color: #111;
+	margin-bottom: .8rem;
+}
+
+.privacy-section ul {
+	list-style: disc;
+	padding-left: 1.5rem;
+	margin-bottom: .8rem;
+}
+
+.privacy-section ul li { margin-bottom: .45rem; }
+
+.privacy-section a { color: var(--nqa-violet); }
+
+.privacy-highlight {
+	background: var(--nqa-cream);
+	border-left: 4px solid var(--nqa-violet);
+	padding: 1.1rem 1.35rem;
+	margin: 1.35rem 0;
+	font-size: 1rem;
+	color: #111;
+	line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+	.privacy-hero { padding: 2.5rem 1.25rem; }
+	.privacy-body { padding: 2.5rem 1.25rem 4rem; }
+	.privacy-hero h1 { font-size: 2.2rem; }
+}
+
+/* ── 15. Tell Your Story page ────────────────────────────────────────────── */
 
 .tell-hero {
 	background: var(--nqa-violet);
