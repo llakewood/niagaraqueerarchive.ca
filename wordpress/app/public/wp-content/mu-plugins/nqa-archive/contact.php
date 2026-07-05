@@ -8,7 +8,10 @@ defined( 'ABSPATH' ) || exit;
 add_shortcode( 'nqa_contact_page', 'nqa_contact_page_shortcode' );
 
 function nqa_contact_page_shortcode() {
-	$tell_url = esc_url( home_url( '/tell/' ) );
+	$tell_url  = esc_url( home_url( '/tell/' ) );
+	$email     = get_option( 'admin_email' );
+	$email_url = esc_url( 'mailto:' . $email );
+	$email     = esc_html( $email );
 
 	$h  = '<section class="contact-hero">';
 	$h .= '<div class="contact-hero__inner">';
@@ -22,7 +25,7 @@ function nqa_contact_page_shortcode() {
 	$h .= '<p class="contact-hero__intro">Whether you have a question, want to get involved, are looking to contribute materials, or just want to learn more about what we&rsquo;re building &mdash; reach out. We&rsquo;ll get back to you as soon as we can.</p>';
 	$h .= '<div class="contact-direct">';
 	$h .= '<div class="contact-direct__label">Email us directly</div>';
-	$h .= '<div class="contact-direct__addr"><a href="mailto:thevariables@gmail.com">thevariables@gmail.com</a></div>';
+	$h .= '<div class="contact-direct__addr"><a href="' . $email_url . '">' . $email . '</a></div>';
 	$h .= '</div>';
 	$h .= '<div class="contact-note">';
 	$h .= '<strong>A note on our values</strong>';

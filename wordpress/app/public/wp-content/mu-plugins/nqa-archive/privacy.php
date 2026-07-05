@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 add_shortcode( 'nqa_privacy_page', 'nqa_privacy_page_shortcode' );
 
 function nqa_privacy_page_shortcode() {
-	$email     = 'info@niagaraqueerarchive.ca';
+	$email     = get_option( 'admin_email' );
 	$email_url = 'mailto:' . $email;
 
 	$h  = '<section class="privacy-hero">';
