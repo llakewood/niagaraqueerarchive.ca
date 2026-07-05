@@ -30,6 +30,7 @@ Historical, factual, archival. Warm but precise. Never invented.
   - `nqa-archive-controls.php` — client-side search + tag/category facets + 1/2/3 column grid picker on listing pages
   - `nqa-viewtoggle.php` — grid/list toggle on Collections page only
   - `nqa-archival-note.php` — staff-only `_nqa_archival_note` meta; shown only to logged-in editors on front end
+  - **Intake pipeline** (code is now consolidated as `nqa-archive.php` loader + `nqa-archive/` modules, v3.0.0 — the names above are feature-indicative): `stewardship.php` — shared `provenance` + `consent_status` fields on all types with a publish-gate; `submissions.php` — Tell Your Story form #61 capture as private `nqa_submission` records; `importers.php` — submission→draft converter (preserves the contributor's words verbatim) + `wp nqa import-csv` bulk importer
 - **CI:** `.github/workflows/deploy.yml` — test (PHP lint) → deploy (rsync themes + mu-plugins); `environment: production` for Maps key
 - **Google Maps key:** `NQA_GOOGLE_MAPS_KEY` stored as a GitHub `production` environment **secret** (not a variable); website/referrer-restricted to niagaraqueerarchive.ca
 
@@ -52,14 +53,16 @@ Historical, factual, archival. Warm but precise. Never invented.
 - `category` — item TYPE (article, person, org, event, place)
 - `post_tag` — decades, descriptors (e.g. `1980s`, `drag`, `flag-raising`)
 - `municipality` — 12 Niagara towns (slugs: `st-catharines`, `niagara-falls`, `welland`, `fort-erie`, `lincoln`, `pelham`, `thorold`, `grimsby`, `west-lincoln`, `niagara-on-the-lake`, `port-colborne`, `wainfleet`); use `niagara` for region-wide
-- `nqa_collection` — thematic collections (e.g. `pride-roots`, `two-spirit-indigenous-queer-niagara`, `progress-protest`)
+- `nqa_collection` — thematic collections. **Actual slugs:** `pride-roots`, `progress-protest`, `faith-inclusion`, `two-spirit-indigenous`, `trans-niagara`, `drag-performer`, `love-support`, `in-memorium`, `queer-arts-letters` (note: these differ from earlier docs — e.g. `faith-inclusion`, not `faith-and-inclusion`; `two-spirit-indigenous`, not `…-queer-niagara`)
 
 ### Key ACF fields
 
-- `relationship` — bidirectional cross-references (all types); set both sides manually or via seed script
+- `relationship` — bidirectional cross-references on all five types. Core `post` uses the code-defined **Cross Post References** group (`fields.php`; key `field_68abc016febec`, `return_format => id`) which supersedes the former DB-only group so it deploys to production. Set both sides manually or via seed script
 - `source` / `citation` — primary URL + formatted citation
 - `roles` (person), `org_type` (org), `place_type` / `still_exists` (place), `recurrence` / `organizer` (event)
 - `location` — Google Map field; **set via admin map picker only, never programmatically**
+- `provenance` — how a record entered the archive (`cited-journalism` / `community-submission` / `oral-history-interview` / `institutional-donation` / `staff-research`), plus `provenance_submitter` / `provenance_date`
+- `consent_status` — `not-required` / `pending` / `granted` / `restricted`; **`pending` or `restricted` blocks publishing** (enforced by `stewardship.php`; generalizes the per-record consent flags below into schema)
 
 ### Protected meta keys (underscore-prefixed, not shown in editor by default)
 
@@ -104,12 +107,28 @@ Wayback snapshots in progress via `./scripts/wp nqa capture-sources`.
 
 Notable records include:
 
-- Pride Niagara, OUTniagara, Fort Erie Pride, Transgender Niagara, PFLAG Niagara, Safe Space Niagara, Quest CHC, Niagara Falls CHC, Positive Living Niagara (to be expanded), Fort Erie Native Friendship Centre
+- Pride Niagara, OUTniagara, Fort Erie Pride, Transgender Niagara, PFLAG Niagara, Safe Space Niagara, Quest CHC, Niagara Falls CHC, Positive Living Niagara (org lineage now seeded: AIDS Committee of Niagara 1987 → AIDS Niagara 1990 → renamed 2014), Fort Erie Native Friendship Centre
 - Enzo De Divitiis (#450), Celeste Turner (#470), Monica Davis (#568), Russell Peter Alldread / Michelle DuBarry (#567)
 - Pride in the Park (#305), Fort Erie Pride Festival (#306), Niagara UNITY Awards (#452), Family Pride Day (#473)
 - Montebello Park (#313), St. Catharines Pride Crosswalk (#476), Envy Lounge (#451), Silver Spire United Church (#525)
 
-**Collections registered:** `pride-roots`, `progress-protest`, `two-spirit-indigenous-queer-niagara`, `faith-and-inclusion` (new, needs seeding); plus 12 municipality terms.
+**Collections registered:** see the corrected slug list under Content Model → Taxonomies; plus 12 municipality terms.
+
+### Intake pipeline built (July 2026)
+
+The community-contribution workflow is now in code (see Infrastructure): `stewardship.php` consent/provenance layer + publish-gate; `importers.php` submission→draft converter (preserves the contributor's words **verbatim**, sets consent Pending) and the `wp nqa import-csv` bulk importer. This is the path forward now that easy digital source-mining is near-saturated — the remaining depth lives in community memory and institutional holdings.
+
+### Exploratory seeding (July 2026 — drafts unless noted)
+
+Two research passes surfaced/seeded new leads:
+
+- **Niagara Falls same-sex wedding tourism, 2003** (#590, draft) — distinctive Niagara story; rule #6: re-anchor on a Niagara masthead (St. Catharines Standard / Niagara Falls Review microfilm at Brock Archives) before publishing.
+- **NCDSB Pride-flag controversy 2023–24** (#591, published) — trustee Natalia Benoit; sourced to Niagara Now / Country 89; cross-linked with NCDSB org #533.
+- **Affirming ally congregations** — Westview Christian Fellowship (#592), Unitarian Congregation of Niagara (#593). Documented negative: no MCC / Dignity / Integrity Niagara chapter located.
+- **Two-Spirit cluster** (fills a flagged gap) — Fort Erie queer Indigenous Pride drag brunch (#606) + Bella Recinos Athanasas (#604) + Jaylene Tyme (#605); the FENFC↔Pride link pass 1 was missing.
+- Cross-refs wired (Fort Erie cluster #453/#454/#455↔#306; UNITY Awards #450/#302↔#452/#270). #453 Cartier enriched with drag/AIDS-fundraising facts; personal history held pending courtesy consent.
+
+**Confirmed dead-ends online → need library/institutional intake:** pre-1980s Ontario-side gay life; pre-Envy gay bars; historical lesbian collectives / women's-music; Shaw Festival queer history; the 1980s–90s AIDS human toll (deaths, quilt panels, individual lives).
 
 ### Backlog (pending direct sourcing)
 
@@ -125,6 +144,7 @@ Notable records include:
 - Photo permissions: Justin Preston (#302), Liam Coward (#303, family), book covers (#243/#244), Pride Niagara logo (#270)
 - McTigue (#317) consent to be listed
 - Michelle DuBarry (#567) — confirm exact death date before publishing; confirm Niagara performance history (The Great Impostors toured rural Ontario broadly but specific Niagara dates not yet sourced)
+- Chantal Cartier / Marc Poisson-Leboeuf (#453) — LIVING private individual; consent set to **Pending**; public advocacy facts are in the body, but personal-history details (left home at 16, etc.) are held in the staff note pending a courtesy consent contact. Decision open: keep published, or revert to draft until consent obtained
 
 ---
 

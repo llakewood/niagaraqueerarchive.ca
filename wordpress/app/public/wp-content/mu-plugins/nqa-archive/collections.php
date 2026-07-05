@@ -367,6 +367,9 @@ function nqa_collections_page_shortcode() {
 	$h .= '<div class="col-content">';
 	$h .= '<div class="col-content__inner">';
 	$h .= nqa_collections_render();
+	// "By Location" map as the final block. The map module renders '' when there
+	// are no plottable records, so this is a no-op on an empty archive.
+	$h .= do_shortcode( '[nqa_map title="By Location" height="520"]' );
 	$h .= '</div>';
 	$h .= '</div>';
 

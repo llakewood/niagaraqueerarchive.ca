@@ -174,6 +174,58 @@ add_action(
 			)
 		);
 
+		// ---- Item Details (core `post` materials) ----
+		// Codified from the former DB-only "Item Details" group (same group +
+		// field keys) so article provenance fields are version-controlled and
+		// deploy to production. `location` is a Google Map — set via the admin
+		// picker only (rule #8); it is centred by the acf/load_field filter below.
+		acf_add_local_field_group(
+			array(
+				'key'        => 'group_6834a025610e6',
+				'title'      => 'Item Details',
+				'location'   => array( array( array( 'param' => 'post_type', 'operator' => '==', 'value' => 'post' ) ) ),
+				'menu_order' => 2,
+				'position'   => 'normal',
+				'style'      => 'default',
+				'fields'     => array(
+					array( 'key' => 'field_6834a02632781', 'label' => 'Location', 'name' => 'location', 'type' => 'google_map' ),
+					array( 'key' => 'field_6834a03732782', 'label' => 'Source', 'name' => 'source', 'type' => 'text' ),
+					array( 'key' => 'field_6834a04c32783', 'label' => 'Publisher', 'name' => 'publisher', 'type' => 'url' ),
+					array( 'key' => 'field_6834a05c32784', 'label' => 'Citation', 'name' => 'citation', 'type' => 'text' ),
+					array( 'key' => 'field_6834c970031f6', 'label' => 'Date', 'name' => 'date', 'type' => 'date_picker', 'display_format' => 'd/m/Y', 'return_format' => 'd/m/Y', 'first_day' => 1 ),
+					array( 'key' => 'field_68ba1dba55faa', 'label' => 'Link', 'name' => 'link', 'type' => 'url', 'default_value' => 'https://' ),
+					array( 'key' => 'field_68ba1de655fab', 'label' => 'Contact Person', 'name' => 'contact_person', 'type' => 'text' ),
+					array( 'key' => 'field_68ba1df755fac', 'label' => 'Phone Number', 'name' => 'phone_number', 'type' => 'text' ),
+					array( 'key' => 'field_68ba1dff55fad', 'label' => 'Email', 'name' => 'email', 'type' => 'text' ),
+				),
+			)
+		);
+
+		// ---- Cross-post references (core `post`) ----
+		// Defined in code (reusing the former DB-only "Cross Post References"
+		// group + field keys) so article posts can hold relationships that are
+		// version-controlled and deploy to production — and so the value returns
+		// as IDs, matching the entity relationship fields. Registering the same
+		// key supersedes the DB group and preserves existing values.
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_68abc015e292f',
+				'title'    => 'Cross Post References',
+				'location' => array( array( array( 'param' => 'post_type', 'operator' => '==', 'value' => 'post' ) ) ),
+				'fields'   => array(
+					array(
+						'key'           => 'field_68abc016febec',
+						'label'         => 'Related entries',
+						'name'          => 'relationship',
+						'type'          => 'relationship',
+						'post_type'     => nqa_content_types(),
+						'filters'       => array( 'search', 'post_type' ),
+						'return_format' => 'id',
+					),
+				),
+			)
+		);
+
 		// ---- nqa_collection taxonomy: featured flag ----
 		acf_add_local_field_group(
 			array(

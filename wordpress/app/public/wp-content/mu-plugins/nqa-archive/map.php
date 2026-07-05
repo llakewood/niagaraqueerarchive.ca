@@ -11,8 +11,10 @@
  *   title         — optional heading above the map
  *
  * Auto-injected:
- *   • Collections page — "By Location" section appended after the wayfinding grid
  *   • Municipality archives — filtered map inserted after the listing results
+ *
+ * The Collections page renders its map directly as the last block of the
+ * [nqa_collections_page] shortcode (collections.php), so it is not injected here.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -333,22 +335,6 @@ window.nqaInitMaps = function () {
 JS;
 	// phpcs:enable
 }
-
-// ── Auto-inject: Collections page ─────────────────────────────────────────
-
-add_filter(
-	'the_content',
-	function ( $content ) {
-		static $done = false;
-		if ( $done || ! is_page( 'collections' ) || ! in_the_loop() || ! is_main_query() ) {
-			return $content;
-		}
-		$done = true;
-		$map  = do_shortcode( '[nqa_map title="By Location" height="520"]' );
-		return $map ? $content . $map : $content;
-	},
-	15  // after collections.php at 9 and do_shortcode at 11
-);
 
 // ── Auto-inject: Municipality archive pages ────────────────────────────────
 
