@@ -174,6 +174,31 @@ add_action(
 			)
 		);
 
+		// ---- Cross-post references (core `post`) ----
+		// Defined in code (reusing the former DB-only "Cross Post References"
+		// group + field keys) so article posts can hold relationships that are
+		// version-controlled and deploy to production — and so the value returns
+		// as IDs, matching the entity relationship fields. Registering the same
+		// key supersedes the DB group and preserves existing values.
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_68abc015e292f',
+				'title'    => 'Cross Post References',
+				'location' => array( array( array( 'param' => 'post_type', 'operator' => '==', 'value' => 'post' ) ) ),
+				'fields'   => array(
+					array(
+						'key'           => 'field_68abc016febec',
+						'label'         => 'Related entries',
+						'name'          => 'relationship',
+						'type'          => 'relationship',
+						'post_type'     => nqa_content_types(),
+						'filters'       => array( 'search', 'post_type' ),
+						'return_format' => 'id',
+					),
+				),
+			)
+		);
+
 		// ---- nqa_collection taxonomy: featured flag ----
 		acf_add_local_field_group(
 			array(
