@@ -173,6 +173,31 @@ add_action(
 				),
 			)
 		);
+
+		// ---- nqa_collection taxonomy: featured flag ----
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_nqa_collection_tax',
+				'title'    => 'Collection settings',
+				'location' => array( array( array(
+					'param'    => 'taxonomy',
+					'operator' => '==',
+					'value'    => 'nqa_collection',
+				) ) ),
+				'fields'   => array(
+					array(
+						'key'           => 'field_nqa_col_featured',
+						'label'         => 'Featured collection',
+						'name'          => 'nqa_collection_featured',
+						'type'          => 'true_false',
+						'message'       => 'Show as the featured card on the Collections page',
+						'instructions'  => 'Only one collection can be featured at a time. Saving will clear the featured flag from any other collection.',
+						'default_value' => 0,
+						'ui'            => 0,
+					),
+				),
+			)
+		);
 	}
 );
 
