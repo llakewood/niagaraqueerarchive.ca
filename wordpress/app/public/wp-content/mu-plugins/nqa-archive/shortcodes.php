@@ -70,18 +70,22 @@ function nqa_hero_shortcode() {
 add_shortcode( 'nqa_featured_collection', 'nqa_featured_collection_shortcode' );
 
 function nqa_featured_collection_shortcode() {
-	// Staff can pin a collection slug via WP Options (wp_options key: nqa_featured_collection).
-	// If empty, a random published collection is chosen.
-	$pinned = get_option( 'nqa_featured_collection', '' );
-	$term   = null;
+	$term = null;
 
-	if ( $pinned ) {
-		$t = get_term_by( 'slug', (string) $pinned, 'nqa_collection' );
-		if ( $t && ! is_wp_error( $t ) ) {
-			$term = $t;
-		}
+	// Prefer a collection pinned via the ACF "Featured collection" checkbox.
+	$pinned = get_terms( array(
+		'taxonomy'   => 'nqa_collection',
+		'hide_empty' => false,
+		'meta_query' => array(
+			array( 'key' => 'nqa_collection_featured', 'value' => '1', 'compare' => '=' ),
+		),
+		'number' => 1,
+	) );
+	if ( ! is_wp_error( $pinned ) && ! empty( $pinned ) ) {
+		$term = $pinned[0];
 	}
 
+	// Fall back to a random published collection.
 	if ( ! $term ) {
 		$terms = get_terms( array( 'taxonomy' => 'nqa_collection', 'hide_empty' => true ) );
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
@@ -102,11 +106,13 @@ function nqa_featured_collection_shortcode() {
 	           ? esc_html( wp_trim_words( $term->description, 55, '&hellip;' ) )
 	           : '';
 	$count   = (int) $term->count;
+	$collections_url = esc_url( home_url( '/collections/' ) );
 
 	// Use <span> (not <div>) inside <a> so wpautop doesn't inject </p> before block children.
 	$h  = '<section class="home-featured">';
 	$h .= '<div class="home-featured__inner">';
-	$h .= '<div class="section-head"><h2>Featured Collection</h2><span class="eyebrow">Collections</span></div>';
+	$h .= '<div class="section-head"><h2>Featured Collection</h2>';
+	$h .= '<a href="' . $collections_url . '" class="eyebrow" style="text-decoration:none">View all collections &rarr;</a></div>';
 	$h .= '<a href="' . $url . '" class="col-card col-card--featured">';
 	$h .= '<span class="col-card__block" style="background:' . $colour . '"></span>';
 	$h .= '<span class="col-card__body">';

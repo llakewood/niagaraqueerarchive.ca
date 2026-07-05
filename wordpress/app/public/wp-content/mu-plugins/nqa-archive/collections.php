@@ -377,6 +377,7 @@ add_action( 'acf/save_post', function ( $post_id ) {
 		return;
 	}
 	$term_id = (int) substr( (string) $post_id, 5 );
+
 	$term    = get_term( $term_id );
 	if ( ! $term || is_wp_error( $term ) || 'nqa_collection' !== $term->taxonomy ) {
 		return;
