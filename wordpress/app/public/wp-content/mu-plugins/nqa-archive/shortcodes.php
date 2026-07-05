@@ -312,11 +312,32 @@ function nqa_newsletter_shortcode() {
 	$heading = $opt( 'home_newsletter_heading', 'Get archive updates in your inbox' );
 	$body    = $opt( 'home_newsletter_body', "New records, collection launches, and storytelling events \xe2\x80\x94 delivered when there\xe2\x80\x99s something worth telling." );
 
-	$h  = '<section class="home-newsletter">';
+	// Confirmation / error message set by the admin-post handler (newsletter.php).
+	$status  = isset( $_GET['nqa_newsletter'] ) ? sanitize_key( wp_unslash( $_GET['nqa_newsletter'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	$notices = array(
+		'ok'      => array( 'ok',  "You\xe2\x80\x99re on the list \xe2\x80\x94 we\xe2\x80\x99ll be in touch when there\xe2\x80\x99s something worth telling." ),
+		'dupe'    => array( 'ok',  "You\xe2\x80\x99re already subscribed \xe2\x80\x94 thank you for staying connected." ),
+		'invalid' => array( 'err', 'That didn\'t work. Please check your email address and try again.' ),
+	);
+	$msg     = '';
+	if ( isset( $notices[ $status ] ) ) {
+		[ $kind, $text ] = $notices[ $status ];
+		$msg = '<p class="home-newsletter__msg home-newsletter__msg--' . $kind . '" role="status">'
+			. esc_html( $text ) . '</p>';
+	}
+
+	$h  = '<section class="home-newsletter" id="newsletter">';
 	$h .= '<div class="eyebrow" style="justify-content:center;margin-bottom:.85rem">Stay connected</div>';
 	$h .= '<h2>' . esc_html( $heading ) . '</h2>';
 	$h .= '<p>' . esc_html( $body ) . '</p>';
-	$h .= '<form class="home-newsletter__form" action="' . esc_url( home_url( '/' ) ) . '" method="post" aria-label="Newsletter sign-up">';
+	$h .= $msg;
+	$h .= '<form class="home-newsletter__form" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="post" aria-label="Newsletter sign-up">';
+	$h .= '<input type="hidden" name="action" value="nqa_newsletter_signup">';
+	$h .= wp_nonce_field( 'nqa_newsletter_signup', 'nqa_newsletter_nonce', true, false );
+	// Honeypot — hidden from humans, tempting to bots.
+	$h .= '<div aria-hidden="true" style="position:absolute;left:-9999px" tabindex="-1">';
+	$h .= '<label>Website<input type="text" name="nqa_website" tabindex="-1" autocomplete="off"></label>';
+	$h .= '</div>';
 	$h .= '<label for="home-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Email address</label>';
 	$h .= '<input class="home-newsletter__input" id="home-email" type="email" name="email" placeholder="your@email.com" autocomplete="email" required>';
 	$h .= '<button type="submit" class="home-newsletter__btn">Subscribe</button>';
