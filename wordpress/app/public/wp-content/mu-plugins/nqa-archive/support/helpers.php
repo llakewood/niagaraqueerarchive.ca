@@ -111,6 +111,15 @@ function nqa_gated_field_html() : string {
 		. '</span>';
 }
 
+/**
+ * Strip empty <p> tags from page content. wpautop sometimes emits them when
+ * content has leading/trailing whitespace, and they create phantom grid items
+ * inside CSS grid layouts.
+ */
+add_filter( 'the_content', function ( $content ) {
+	return preg_replace( '/<p[^>]*>(\s|&nbsp;)*<\/p>/', '', $content );
+}, 30 );
+
 /** Render a list of post IDs as permalink links joined by $sep (skips missing). */
 function nqa_render_post_links( $ids, $sep = ', ' ) {
 	$links = array();

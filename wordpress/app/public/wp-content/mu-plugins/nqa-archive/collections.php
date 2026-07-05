@@ -221,6 +221,23 @@ function nqa_collections_recent( $limit = 6 ) {
  *    that currently have content.
  * ---------------------------------------------------------------------- */
 function nqa_collections_featured( array $registry ) {
+	// Prefer an explicitly pinned term (set via the admin checkbox).
+	$pinned = get_terms( array(
+		'taxonomy'   => 'nqa_collection',
+		'hide_empty' => false,
+		'meta_query' => array(
+			array( 'key' => 'nqa_collection_featured', 'value' => '1', 'compare' => '=' ),
+		),
+		'number'     => 1,
+	) );
+	if ( ! is_wp_error( $pinned ) && ! empty( $pinned ) ) {
+		$slug = $pinned[0]->slug;
+		if ( isset( $registry[ $slug ] ) ) {
+			return $registry[ $slug ];
+		}
+	}
+
+	// Fall back to weekly rotation among themed collections with content.
 	$candidates = array();
 	foreach ( $registry as $key => $c ) {
 		if ( 'theme' === $c['section'] && nqa_collection_count( $c ) > 0 ) {
@@ -318,8 +335,12 @@ add_shortcode( 'nqa_collections', 'nqa_collections_render' );
 add_shortcode( 'nqa_collections_page', 'nqa_collections_page_shortcode' );
 
 function nqa_collections_page_shortcode() {
-	$registry = nqa_collections_registry();
-	$featured = nqa_collections_featured( $registry );
+	$pid = get_queried_object_id();
+
+	$f = function ( string $key, string $fallback = '' ) use ( $pid ) : string {
+		$val = get_field( $key, $pid );
+		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
+	};
 
 	// Live stats.
 	$total = 0;
@@ -332,48 +353,85 @@ function nqa_collections_page_shortcode() {
 
 	$h  = '<section class="col-hero">';
 	$h .= '<div class="col-hero__inner">';
-
-	// Left: heading + lede + stats.
-	$h .= '<div>';
 	$h .= '<div class="eyebrow eyebrow--light">Collections</div>';
-	$h .= '<h1>Curated windows into Niagara&rsquo;s queer history.</h1>';
-	$h .= '<p class="col-hero__lede">Collections bring individual records together into a narrative. Each collection is a thematic lens &mdash; a way of seeing connections across people, places, eras, and communities that might not be visible record by record.</p>';
+	$h .= '<h1>' . esc_html( $f( 'col_page_heading', "Curated windows into Niagara\xe2\x80\x99s queer history." ) ) . '</h1>';
+	$h .= '<p class="col-hero__lede">' . esc_html( $f( 'col_page_lede', "Collections bring individual records together into a narrative. Each collection is a thematic lens \xe2\x80\x94 a way of seeing connections across people, places, eras, and communities that might not be visible record by record." ) ) . '</p>';
 	$h .= '<div class="col-hero__stat-row">';
 	$h .= '<div class="col-hero__stat"><div class="col-hero__stat-n">' . $collection_count . '</div><div class="col-hero__stat-l">Collections</div></div>';
 	$h .= '<div class="col-hero__stat"><div class="col-hero__stat-n">' . $total . '<span class="col-hero__stat-plus">+</span></div><div class="col-hero__stat-l">Records</div></div>';
 	$h .= '<div class="col-hero__stat"><div class="col-hero__stat-n">' . $muni_count . '</div><div class="col-hero__stat-l">Municipalities</div></div>';
 	$h .= '</div>';
-	$h .= '</div>';
-
-	// Right: featured collection card.
-	if ( $featured ) {
-		$url    = nqa_collection_link( $featured );
-		$count  = nqa_collection_count( $featured );
-		$noun   = ( 1 === $count ) ? 'item' : 'items';
-		$tag    = $url ? 'a' : 'div';
-		$href   = $url ? ' href="' . esc_url( $url ) . '"' : '';
-		$h .= '<' . $tag . ' class="nqa-col-card nqa-col-card--featured nqa-col-card--hero"' . $href . ' style="--nqa-accent:' . esc_attr( $featured['accent'] ) . ';">';
-		$h .= '<span class="nqa-col-card__block" aria-hidden="true"></span>';
-		$h .= '<span class="nqa-col-card__body">';
-		$h .= '<span class="nqa-col-card__kicker">Featured this week</span>';
-		$h .= '<span class="nqa-col-card__title">' . esc_html( $featured['title'] ) . '</span>';
-		if ( $featured['desc'] ) {
-			$h .= '<span class="nqa-col-card__desc">' . esc_html( wp_trim_words( $featured['desc'], 30, '&hellip;' ) ) . '</span>';
-		}
-		$h .= '<span class="nqa-col-card__count">' . esc_html( $count . ' ' . $noun ) . ' &rarr;</span>';
-		$h .= '</span>';
-		$h .= '</' . $tag . '>';
-	}
-
 	$h .= '</div>'; // /col-hero__inner
 	$h .= '</section>';
 
-	// Grid — featured card handled above, skip it in the grid.
 	$h .= '<div class="col-content">';
 	$h .= '<div class="col-content__inner">';
-	$h .= nqa_collections_render( true );
+	$h .= nqa_collections_render();
 	$h .= '</div>';
 	$h .= '</div>';
 
 	return $h;
 }
+
+/* -------------------------------------------------------------------------
+ * 7) Featured-collection admin: enforcement + confirmation prompt.
+ * ---------------------------------------------------------------------- */
+
+// After ACF saves nqa_collection term meta, clear the featured flag from every
+// other collection so only one can be featured at a time.
+add_action( 'acf/save_post', function ( $post_id ) {
+	if ( 0 !== strpos( (string) $post_id, 'term_' ) ) {
+		return;
+	}
+	$term_id = (int) substr( (string) $post_id, 5 );
+
+	$term    = get_term( $term_id );
+	if ( ! $term || is_wp_error( $term ) || 'nqa_collection' !== $term->taxonomy ) {
+		return;
+	}
+	if ( ! get_term_meta( $term_id, 'nqa_collection_featured', true ) ) {
+		return;
+	}
+	$others = get_terms( array( 'taxonomy' => 'nqa_collection', 'hide_empty' => false, 'exclude' => array( $term_id ) ) );
+	foreach ( (array) $others as $other ) {
+		if ( $other instanceof WP_Term ) {
+			update_term_meta( $other->term_id, 'nqa_collection_featured', '' );
+		}
+	}
+}, 20 );
+
+// Enqueue the JS confirmation prompt on nqa_collection edit screens.
+add_action( 'admin_enqueue_scripts', function ( $hook ) {
+	if ( ! in_array( $hook, array( 'edit-tags.php', 'term.php' ), true ) ) {
+		return;
+	}
+	$screen = get_current_screen();
+	if ( ! $screen || 'nqa_collection' !== $screen->taxonomy ) {
+		return;
+	}
+	// Which term is currently being edited (if any)?
+	$editing_id = isset( $_GET['tag_ID'] ) ? (int) $_GET['tag_ID'] : 0; // phpcs:ignore WordPress.Security.NonceVerification
+
+	// Is a different collection already featured?
+	$pinned = get_terms( array(
+		'taxonomy'   => 'nqa_collection',
+		'hide_empty' => false,
+		'exclude'    => $editing_id ? array( $editing_id ) : array(),
+		'meta_query' => array(
+			array( 'key' => 'nqa_collection_featured', 'value' => '1', 'compare' => '=' ),
+		),
+		'number'     => 1,
+	) );
+	$featured_name = ( ! is_wp_error( $pinned ) && ! empty( $pinned ) ) ? $pinned[0]->name : '';
+
+	wp_enqueue_script(
+		'nqa-collection-featured',
+		WPMU_PLUGIN_URL . '/nqa-archive/assets/nqa-collection-featured.js',
+		array(),
+		null,
+		true
+	);
+	wp_localize_script( 'nqa-collection-featured', 'nqaFeatured', array(
+		'currentFeatured' => $featured_name,
+	) );
+} );

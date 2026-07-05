@@ -33,6 +33,7 @@ $nqa_modules = array(
 	// Data layer.
 	'content-model.php',
 	'fields.php',
+	'page-fields.php',
 	// Admin.
 	'access.php',
 	'archival-note.php',
