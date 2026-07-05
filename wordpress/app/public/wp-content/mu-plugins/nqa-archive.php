@@ -34,6 +34,7 @@ $nqa_modules = array(
 	'content-model.php',
 	'fields.php',
 	'page-fields.php',
+	'stewardship.php',
 	// Admin.
 	'access.php',
 	'archival-note.php',
@@ -46,6 +47,8 @@ $nqa_modules = array(
 	'view-toggle.php',
 	'map.php',
 	'submissions.php',
+	'newsletter.php',
+	'importers.php',
 	'shortcodes.php',
 	'search.php',
 	'tell.php',
