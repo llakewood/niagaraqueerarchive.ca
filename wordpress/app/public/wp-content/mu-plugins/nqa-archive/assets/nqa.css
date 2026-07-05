@@ -818,6 +818,9 @@ html.nqa-view-list .nqa-col-card--featured .nqa-col-card__body { flex-wrap: wrap
 
 .nqa-form * { box-sizing: border-box; }
 
+/* wpautop backstop — hide any empty <p> tags injected around form elements */
+.nqa-form p:empty { display: none; margin: 0; padding: 0; }
+
 /* Section grouping */
 .nqa-form fieldset {
 	border: 2px solid var(--nqa-ink);
