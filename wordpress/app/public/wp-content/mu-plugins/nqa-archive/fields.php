@@ -205,6 +205,23 @@ add_action(
  * Centre the ACF Google Map "location" field on the Niagara region (approx.
  * regional centroid) at a zoom that frames the 12 municipalities.
  */
+// ── ACF JSON sync ─────────────────────────────────────────────────────────────
+// Point ACF's JSON save/load to the theme's acf-json/ directory so all field
+// groups (CPT fields + page fields) are version-controlled alongside the theme.
+
+$nqa_acf_json = get_template_directory() . '/acf-json';
+
+add_filter( 'acf/settings/save_json', function () use ( $nqa_acf_json ) {
+	return $nqa_acf_json;
+} );
+
+add_filter( 'acf/settings/load_json', function ( $paths ) use ( $nqa_acf_json ) {
+	$paths[] = $nqa_acf_json;
+	return $paths;
+} );
+
+unset( $nqa_acf_json );
+
 add_filter(
 	'acf/load_field/name=location',
 	function ( $field ) {

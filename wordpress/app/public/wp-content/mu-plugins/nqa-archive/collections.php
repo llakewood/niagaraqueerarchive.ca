@@ -335,6 +335,13 @@ add_shortcode( 'nqa_collections', 'nqa_collections_render' );
 add_shortcode( 'nqa_collections_page', 'nqa_collections_page_shortcode' );
 
 function nqa_collections_page_shortcode() {
+	$pid = get_queried_object_id();
+
+	$f = function ( string $key, string $fallback = '' ) use ( $pid ) : string {
+		$val = get_field( $key, $pid );
+		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
+	};
+
 	// Live stats.
 	$total = 0;
 	foreach ( nqa_content_types() as $type ) {
@@ -347,8 +354,8 @@ function nqa_collections_page_shortcode() {
 	$h  = '<section class="col-hero">';
 	$h .= '<div class="col-hero__inner">';
 	$h .= '<div class="eyebrow eyebrow--light">Collections</div>';
-	$h .= '<h1>Curated windows into Niagara&rsquo;s queer history.</h1>';
-	$h .= '<p class="col-hero__lede">Collections bring individual records together into a narrative. Each collection is a thematic lens &mdash; a way of seeing connections across people, places, eras, and communities that might not be visible record by record.</p>';
+	$h .= '<h1>' . esc_html( $f( 'col_page_heading', "Curated windows into Niagara\xe2\x80\x99s queer history." ) ) . '</h1>';
+	$h .= '<p class="col-hero__lede">' . esc_html( $f( 'col_page_lede', "Collections bring individual records together into a narrative. Each collection is a thematic lens \xe2\x80\x94 a way of seeing connections across people, places, eras, and communities that might not be visible record by record." ) ) . '</p>';
 	$h .= '<div class="col-hero__stat-row">';
 	$h .= '<div class="col-hero__stat"><div class="col-hero__stat-n">' . $collection_count . '</div><div class="col-hero__stat-l">Collections</div></div>';
 	$h .= '<div class="col-hero__stat"><div class="col-hero__stat-n">' . $total . '<span class="col-hero__stat-plus">+</span></div><div class="col-hero__stat-l">Records</div></div>';

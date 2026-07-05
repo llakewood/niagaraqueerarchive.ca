@@ -18,6 +18,12 @@ defined( 'ABSPATH' ) || exit;
 add_shortcode( 'nqa_hero', 'nqa_hero_shortcode' );
 
 function nqa_hero_shortcode() {
+	// Options page copy — falls back to defaults if fields are not yet saved.
+	$opt = function ( string $key, string $fallback = '' ) : string {
+		$val = get_field( $key, 'option' );
+		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
+	};
+
 	// Dynamic stat counts.
 	$total = 0;
 	foreach ( nqa_content_types() as $type ) {
@@ -28,34 +34,34 @@ function nqa_hero_shortcode() {
 	$collection_count = (int) wp_count_terms( array( 'taxonomy' => 'nqa_collection', 'hide_empty' => false ) );
 	$muni_count       = (int) wp_count_terms( array( 'taxonomy' => 'municipality',   'hide_empty' => false ) );
 
-	$collections_url = esc_url( home_url( '/collections/' ) );
-	$tell_url        = esc_url( home_url( '/tell/' ) );
+	$collections_url = esc_url( $opt( 'home_cta_1_url' ) ?: home_url( '/collections/' ) );
+	$cta2_url        = esc_url( $opt( 'home_cta_2_url' ) ?: home_url( '/collections/' ) );
+	$tell_url        = esc_url( $opt( 'home_cta_3_url' ) ?: home_url( '/tell/' ) );
 
-	// Compact string — no newlines between elements — minimises wpautop interference.
 	$h  = '<section class="home-hero">';
 	$h .= '<div class="home-hero__inner">';
 
-	// Left column: static copy.
+	// Left column.
 	$h .= '<div>';
-	$h .= '<div class="home-hero__tag">Niagara, Ontario &mdash; Est. 2025</div>';
-	$h .= '<h1>Preserving Niagara&rsquo;s <em>Queer</em> past &mdash; celebrating our living history.</h1>';
-	$h .= '<p class="home-hero__lede">A community project dedicated to cataloguing, curating, and preserving LGBTQ2S+ stories across the Niagara region &mdash; from St.&nbsp;Catharines to Fort Erie, Welland to Niagara-on-the-Lake.</p>';
+	$h .= '<div class="home-hero__tag">' . esc_html( $opt( 'home_hero_tag', "Niagara, Ontario \xe2\x80\x94 Est. 2025" ) ) . '</div>';
+	$h .= '<h1>' . esc_html( $opt( 'home_hero_heading', "Preserving Niagara\xe2\x80\x99s Queer past \xe2\x80\x94 celebrating our living history." ) ) . '</h1>';
+	$h .= '<p class="home-hero__lede">' . esc_html( $opt( 'home_hero_lede', "A community project dedicated to cataloguing, curating, and preserving LGBTQ2S+ stories across the Niagara region \xe2\x80\x94 from St.\xc2\xa0Catharines to Fort Erie, Welland to Niagara-on-the-Lake." ) ) . '</p>';
 	$h .= '<div class="home-hero__ctas">';
-	$h .= '<a href="' . $collections_url . '" class="btn btn--primary">Browse the Archive</a>';
-	$h .= '<a href="' . $collections_url . '" class="btn btn--ghost">Explore Collections</a>';
-	$h .= '<a href="' . $tell_url . '" class="btn btn--ghost">Submit Your Story</a>';
+	$h .= '<a href="' . $collections_url . '" class="btn btn--primary">' . esc_html( $opt( 'home_cta_1_label', 'Browse the Archive' ) ) . '</a>';
+	$h .= '<a href="' . $cta2_url . '" class="btn btn--ghost">' . esc_html( $opt( 'home_cta_2_label', 'Explore Collections' ) ) . '</a>';
+	$h .= '<a href="' . $tell_url . '" class="btn btn--ghost">' . esc_html( $opt( 'home_cta_3_label', 'Submit Your Story' ) ) . '</a>';
 	$h .= '</div>';
 	$h .= '</div>';
 
 	// Right column: live stats.
 	$h .= '<div class="home-hero__stats">';
-	$h .= '<div class="home-hero__stats-title">Archive at a Glance</div>';
+	$h .= '<div class="home-hero__stats-title">' . esc_html( $opt( 'home_stats_title', 'Archive at a Glance' ) ) . '</div>';
 	$h .= '<div class="home-hero__stat-grid">';
-	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $total . '<em>+</em></div><div class="home-hero__stat-label">Records</div><div class="home-hero__stat-sub">People, orgs, events, places</div></div>';
-	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $article_count . '</div><div class="home-hero__stat-label">Archival Articles</div><div class="home-hero__stat-sub">Niagara press, sourced &amp; preserved</div></div>';
+	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $total . '<em>+</em></div><div class="home-hero__stat-label">Records</div><div class="home-hero__stat-sub">' . esc_html( $opt( 'home_stat_records_sub', 'People, orgs, events, places' ) ) . '</div></div>';
+	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $article_count . '</div><div class="home-hero__stat-label">Archival Articles</div><div class="home-hero__stat-sub">' . esc_html( $opt( 'home_stat_articles_sub', 'Niagara press, sourced &amp; preserved' ) ) . '</div></div>';
 	$h .= '<hr class="home-hero__stat-divider">';
-	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $collection_count . '</div><div class="home-hero__stat-label">Collections</div><div class="home-hero__stat-sub">Themed, curated sets</div></div>';
-	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $muni_count . '</div><div class="home-hero__stat-label">Municipalities</div><div class="home-hero__stat-sub">Across the Niagara region</div></div>';
+	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $collection_count . '</div><div class="home-hero__stat-label">Collections</div><div class="home-hero__stat-sub">' . esc_html( $opt( 'home_stat_collections_sub', 'Themed, curated sets' ) ) . '</div></div>';
+	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $muni_count . '</div><div class="home-hero__stat-label">Municipalities</div><div class="home-hero__stat-sub">' . esc_html( $opt( 'home_stat_muni_sub', 'Across the Niagara region' ) ) . '</div></div>';
 	$h .= '</div>';
 	$h .= '</div>';
 
@@ -108,11 +114,15 @@ function nqa_featured_collection_shortcode() {
 	$count   = (int) $term->count;
 	$collections_url = esc_url( home_url( '/collections/' ) );
 
-	// Use <span> (not <div>) inside <a> so wpautop doesn't inject </p> before block children.
+	$opt = function ( string $key, string $fallback = '' ) : string {
+		$val = get_field( $key, 'option' );
+		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
+	};
+
 	$h  = '<section class="home-featured">';
 	$h .= '<div class="home-featured__inner">';
-	$h .= '<div class="section-head"><h2>Featured Collection</h2>';
-	$h .= '<a href="' . $collections_url . '" class="eyebrow" style="text-decoration:none">View all collections &rarr;</a></div>';
+	$h .= '<div class="section-head"><h2>' . esc_html( $opt( 'global_featured_label', 'Featured Collection' ) ) . '</h2>';
+	$h .= '<a href="' . $collections_url . '" class="eyebrow" style="text-decoration:none">' . esc_html( $opt( 'global_view_all_collections', "View all collections \xe2\x86\x92" ) ) . '</a></div>';
 	$h .= '<a href="' . $url . '" class="col-card col-card--featured">';
 	$h .= '<span class="col-card__block" style="background:' . $colour . '"></span>';
 	$h .= '<span class="col-card__body">';
@@ -204,10 +214,114 @@ function nqa_recent_records_shortcode( $atts ) {
 
 	wp_reset_postdata();
 
+	$opt = function ( string $key, string $fallback = '' ) : string {
+		$val = get_field( $key, 'option' );
+		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
+	};
+
 	$collections_url = esc_url( home_url( '/collections/' ) );
 	return '<section class="home-recent"><div class="home-recent__inner">'
-		. '<div class="section-head"><h2>Recently Added</h2>'
-		. '<a href="' . $collections_url . '" class="eyebrow" style="text-decoration:none">View all records &rarr;</a></div>'
+		. '<div class="section-head"><h2>' . esc_html( $opt( 'home_recent_heading', 'Recently Added' ) ) . '</h2>'
+		. '<a href="' . $collections_url . '" class="eyebrow" style="text-decoration:none">' . esc_html( $opt( 'home_recent_link', 'View all records →' ) ) . '</a></div>'
 		. '<div class="home-recent__grid">' . $cards . '</div>'
 		. '</div></section>';
+}
+
+// ── Principles ────────────────────────────────────────────────────────────────
+
+add_shortcode( 'nqa_principles', 'nqa_principles_shortcode' );
+
+function nqa_principles_shortcode() {
+	$opt = function ( string $key, string $fallback = '' ) : string {
+		$val = get_field( $key, 'option' );
+		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
+	};
+
+	$principles = array(
+		array(
+			'num'  => $opt( 'home_principle_1_num',  '01' ),
+			'head' => $opt( 'home_principle_1_head', 'Catalogue' ),
+			'body' => $opt( 'home_principle_1_body', 'Gather and record the documents, stories, and materials that make up our shared history — newspaper articles, photographs, personal accounts, event records.' ),
+		),
+		array(
+			'num'  => $opt( 'home_principle_2_num',  '02' ),
+			'head' => $opt( 'home_principle_2_head', 'Curate' ),
+			'body' => $opt( 'home_principle_2_body', 'Organize entries into meaningful collections that reflect our diverse identities and experiences — by theme, era, municipality, and community.' ),
+		),
+		array(
+			'num'  => $opt( 'home_principle_3_num',  '03' ),
+			'head' => $opt( 'home_principle_3_head', 'Preserve' ),
+			'body' => $opt( 'home_principle_3_body', 'Ensure these histories are cared for and carried forward — with source liveness checks, Wayback Machine captures, and careful consent management.' ),
+		),
+	);
+
+	$h  = '<div class="home-principles">';
+	$h .= '<div class="home-principles__inner">';
+	foreach ( $principles as $p ) {
+		$h .= '<div class="home-principle">';
+		$h .= '<div class="home-principle__n">' . esc_html( $p['num'] ) . '</div>';
+		$h .= '<h3>' . esc_html( $p['head'] ) . '</h3>';
+		$h .= '<p>' . esc_html( $p['body'] ) . '</p>';
+		$h .= '</div>';
+	}
+	$h .= '</div>';
+	$h .= '</div>';
+
+	return $h;
+}
+
+// ── Submit CTA ────────────────────────────────────────────────────────────────
+
+add_shortcode( 'nqa_submit_cta', 'nqa_submit_cta_shortcode' );
+
+function nqa_submit_cta_shortcode() {
+	$opt = function ( string $key, string $fallback = '' ) : string {
+		$val = get_field( $key, 'option' );
+		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
+	};
+
+	$heading  = $opt( 'home_cta_block_heading', 'Your story belongs here.' );
+	$body     = $opt( 'home_cta_block_body', 'The Niagara Queer Archive is only as complete as the stories shared with it. Whether you have a memory, a photograph, a document, or an artifact — we want to hear from you.' );
+	$l1       = $opt( 'home_cta_block_l1', 'Submit your story' );
+	$u1       = esc_url( $opt( 'home_cta_block_u1' ) ?: home_url( '/tell/' ) );
+	$l2       = $opt( 'home_cta_block_l2', 'Learn about the archive' );
+	$u2       = esc_url( $opt( 'home_cta_block_u2' ) ?: home_url( '/about/' ) );
+
+	$h  = '<section class="home-submit-cta">';
+	$h .= '<h2>' . esc_html( $heading ) . '</h2>';
+	$h .= '<p>' . esc_html( $body ) . '</p>';
+	$h .= '<div class="ctas">';
+	$h .= '<a href="' . $u1 . '" class="btn btn--primary">' . esc_html( $l1 ) . '</a>';
+	$h .= '<a href="' . $u2 . '" class="btn btn--outline">' . esc_html( $l2 ) . '</a>';
+	$h .= '</div>';
+	$h .= '</section>';
+
+	return $h;
+}
+
+// ── Newsletter ────────────────────────────────────────────────────────────────
+
+add_shortcode( 'nqa_newsletter', 'nqa_newsletter_shortcode' );
+
+function nqa_newsletter_shortcode() {
+	$opt = function ( string $key, string $fallback = '' ) : string {
+		$val = get_field( $key, 'option' );
+		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
+	};
+
+	$heading = $opt( 'home_newsletter_heading', 'Get archive updates in your inbox' );
+	$body    = $opt( 'home_newsletter_body', "New records, collection launches, and storytelling events \xe2\x80\x94 delivered when there\xe2\x80\x99s something worth telling." );
+
+	$h  = '<section class="home-newsletter">';
+	$h .= '<div class="eyebrow" style="justify-content:center;margin-bottom:.85rem">Stay connected</div>';
+	$h .= '<h2>' . esc_html( $heading ) . '</h2>';
+	$h .= '<p>' . esc_html( $body ) . '</p>';
+	$h .= '<form class="home-newsletter__form" action="' . esc_url( home_url( '/' ) ) . '" method="post" aria-label="Newsletter sign-up">';
+	$h .= '<label for="home-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Email address</label>';
+	$h .= '<input class="home-newsletter__input" id="home-email" type="email" name="email" placeholder="your@email.com" autocomplete="email" required>';
+	$h .= '<button type="submit" class="home-newsletter__btn">Subscribe</button>';
+	$h .= '</form>';
+	$h .= '</section>';
+
+	return $h;
 }
