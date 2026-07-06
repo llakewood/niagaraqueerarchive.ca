@@ -326,6 +326,19 @@ function nqa_newsletter_shortcode() {
 			. esc_html( $text ) . '</p>';
 	}
 
+	// Municipality checkboxes — self-reported connection to Niagara towns, stored
+	// against the subscriber for future audience filtering. The `niagara`
+	// region-wide term is dropped; a subscriber picks the specific place(s).
+	$niagara = get_term_by( 'slug', 'niagara', 'municipality' );
+	$munis   = get_terms( array(
+		'taxonomy'   => 'municipality',
+		'hide_empty' => false,
+		'exclude'    => $niagara ? array( (int) $niagara->term_id ) : array(),
+	) );
+	if ( is_wp_error( $munis ) ) {
+		$munis = array();
+	}
+
 	$h  = '<section class="home-newsletter" id="newsletter">';
 	$h .= '<div class="eyebrow" style="justify-content:center;margin-bottom:.85rem">Stay connected</div>';
 	$h .= '<h2>' . esc_html( $heading ) . '</h2>';
@@ -338,9 +351,36 @@ function nqa_newsletter_shortcode() {
 	$h .= '<div aria-hidden="true" style="position:absolute;left:-9999px" tabindex="-1">';
 	$h .= '<label>Website<input type="text" name="nqa_website" tabindex="-1" autocomplete="off"></label>';
 	$h .= '</div>';
-	$h .= '<label for="home-email" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Email address</label>';
+
+	// Email + submit — the required, always-visible row.
+	$h .= '<div class="home-newsletter__row">';
+	$h .= '<label for="home-email" class="home-newsletter__sr">Email address</label>';
 	$h .= '<input class="home-newsletter__input" id="home-email" type="email" name="email" placeholder="your@email.com" autocomplete="email" required>';
 	$h .= '<button type="submit" class="home-newsletter__btn">Subscribe</button>';
+	$h .= '</div>';
+
+	// Optional details — name + municipalities for future audience filtering.
+	$h .= '<div class="home-newsletter__more">';
+	$h .= '<label class="home-newsletter__field" for="home-name">';
+	$h .= '<span class="home-newsletter__field-label">Name <em>(optional)</em></span>';
+	$h .= '<input class="home-newsletter__text" id="home-name" type="text" name="nqa_name" autocomplete="name">';
+	$h .= '</label>';
+
+	if ( $munis ) {
+		$h .= '<fieldset class="home-newsletter__munis">';
+		$h .= '<legend class="home-newsletter__field-label">Where in Niagara are you? <em>(optional)</em></legend>';
+		$h .= '<div class="home-newsletter__chips">';
+		foreach ( $munis as $m ) {
+			$h .= '<label class="home-newsletter__chip">';
+			$h .= '<input type="checkbox" name="nqa_municipalities[]" value="' . esc_attr( $m->slug ) . '">';
+			$h .= '<span>' . esc_html( $m->name ) . '</span>';
+			$h .= '</label>';
+		}
+		$h .= '</div>';
+		$h .= '</fieldset>';
+	}
+	$h .= '</div>'; // /home-newsletter__more
+
 	$h .= '</form>';
 	$h .= '</section>';
 

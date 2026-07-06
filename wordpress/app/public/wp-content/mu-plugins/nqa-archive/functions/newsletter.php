@@ -7,6 +7,11 @@
  * record (admin-reviewable, no public URL), then redirect back to the form with a
  * status flag the shortcode reads to show a confirmation/error message.
  *
+ * Beyond the required email we also capture two optional profile fields — a
+ * display name (`_nqa_name`) and self-reported municipalities
+ * (`_nqa_municipalities`, validated slugs against the `municipality` taxonomy) —
+ * for future audience segmentation/filtering.
+ *
  * The privacy policy (page-fields.php §Newsletter) already discloses that we store
  * the subscriber's email address and honour unsubscribe requests.
  */
@@ -94,10 +99,26 @@ function nqa_newsletter_handle() : void {
 		nqa_newsletter_redirect( $back, 'dupe' );
 	}
 
+	// Optional profile fields — a display name and self-reported municipalities
+	// (validated against the taxonomy) for future audience filtering.
+	$name = sanitize_text_field( wp_unslash( $_POST['nqa_name'] ?? '' ) );
+	$name = mb_substr( $name, 0, 120 );
+
+	$munis = array();
+	if ( ! empty( $_POST['nqa_municipalities'] ) && is_array( $_POST['nqa_municipalities'] ) ) {
+		foreach ( wp_unslash( $_POST['nqa_municipalities'] ) as $slug ) {
+			$slug = sanitize_key( $slug );
+			if ( $slug && term_exists( $slug, 'municipality' ) ) {
+				$munis[] = $slug;
+			}
+		}
+		$munis = array_values( array_unique( $munis ) );
+	}
+
 	$post_id = wp_insert_post(
 		array(
 			'post_type'   => 'nqa_subscriber',
-			'post_title'  => $email,
+			'post_title'  => $name ?: $email,
 			'post_status' => 'private',
 		)
 	);
@@ -107,6 +128,12 @@ function nqa_newsletter_handle() : void {
 
 	update_post_meta( $post_id, '_nqa_email', $email );
 	update_post_meta( $post_id, '_nqa_source', 'homepage' );
+	if ( $name ) {
+		update_post_meta( $post_id, '_nqa_name', $name );
+	}
+	if ( $munis ) {
+		update_post_meta( $post_id, '_nqa_municipalities', $munis );
+	}
 
 	nqa_newsletter_redirect( $back, 'ok' );
 }
@@ -127,6 +154,8 @@ add_filter(
 		return array_merge(
 			array( 'cb' => $cols['cb'] ?? '<input type="checkbox">' ),
 			array( 'nqa_email' => 'Email' ),
+			array( 'nqa_name' => 'Name' ),
+			array( 'nqa_munis' => 'Municipalities' ),
 			array( 'date' => 'Subscribed' )
 		);
 	}
@@ -138,6 +167,21 @@ add_action(
 		if ( 'nqa_email' === $col ) {
 			$email = get_post_meta( $post_id, '_nqa_email', true );
 			echo $email ? esc_html( $email ) : '&mdash;';
+		} elseif ( 'nqa_name' === $col ) {
+			$name = get_post_meta( $post_id, '_nqa_name', true );
+			echo $name ? esc_html( $name ) : '&mdash;';
+		} elseif ( 'nqa_munis' === $col ) {
+			$munis = get_post_meta( $post_id, '_nqa_municipalities', true );
+			if ( empty( $munis ) || ! is_array( $munis ) ) {
+				echo '&mdash;';
+				return;
+			}
+			$names = array();
+			foreach ( $munis as $slug ) {
+				$term    = get_term_by( 'slug', $slug, 'municipality' );
+				$names[] = $term ? $term->name : $slug;
+			}
+			echo esc_html( implode( ', ', $names ) );
 		}
 	},
 	10,

@@ -1744,6 +1744,16 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 }
 .home-newsletter p { font-size: 1rem; color: #333; margin-bottom: 1.5rem; }
 .home-newsletter__form {
+	max-width: 560px;
+	margin: 0 auto;
+}
+.home-newsletter__sr {
+	position: absolute;
+	width: 1px; height: 1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+}
+.home-newsletter__row {
 	display: flex;
 	justify-content: center;
 	max-width: 480px;
@@ -1759,6 +1769,56 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	background: var(--nqa-base);
 }
 .home-newsletter__input:focus { outline: 3px solid var(--nqa-yellow); outline-offset: 2px; }
+
+/* Optional details — name + municipality chips */
+.home-newsletter__more {
+	max-width: 480px;
+	margin: 1.5rem auto 0;
+	text-align: left;
+}
+.home-newsletter__field { display: block; margin-bottom: 1.25rem; }
+.home-newsletter__field-label {
+	display: block;
+	font-family: 'Space Mono', 'Courier New', monospace;
+	font-size: .78rem;
+	font-weight: 700;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	margin-bottom: .5rem;
+}
+.home-newsletter__field-label em { font-style: normal; font-weight: 400; text-transform: none; color: #555; }
+.home-newsletter__text {
+	width: 100%;
+	padding: .7rem 1rem;
+	border: 2px solid var(--nqa-ink);
+	font-family: 'Space Mono', 'Courier New', monospace;
+	font-size: 1rem;
+	background: var(--nqa-base);
+}
+.home-newsletter__text:focus { outline: 3px solid var(--nqa-yellow); outline-offset: 2px; }
+.home-newsletter__munis { border: 0; padding: 0; margin: 0; }
+.home-newsletter__chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .5rem;
+}
+.home-newsletter__chip {
+	display: inline-flex;
+	align-items: center;
+	gap: .4rem;
+	padding: .4rem .75rem;
+	border: 2px solid var(--nqa-ink);
+	background: var(--nqa-base);
+	font-family: 'Space Mono', 'Courier New', monospace;
+	font-size: .82rem;
+	cursor: pointer;
+	user-select: none;
+	transition: background .12s ease, box-shadow .12s ease;
+}
+.home-newsletter__chip:hover { box-shadow: 3px 3px 0 var(--nqa-ink); }
+.home-newsletter__chip input { accent-color: var(--nqa-violet); margin: 0; }
+.home-newsletter__chip:has(input:checked) { background: var(--nqa-pink); }
+.home-newsletter__chip:has(input:focus-visible) { outline: 3px solid var(--nqa-yellow); outline-offset: 2px; }
 .home-newsletter__btn {
 	padding: .8rem 1.35rem;
 	background: var(--nqa-violet);
