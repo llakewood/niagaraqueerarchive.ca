@@ -1,54 +1,104 @@
-# Porting the live site into Local by Flywheel
+# Environments & data flow
 
-Goal: get an exact copy of the production WordPress site
-(`niagaraqueerarchive.ca`, hosted on Dreamhost) running locally in Local by
-Flywheel, then wire this git repository to it for development.
+> **Status: the port is complete.** The site now lives on production
+> (`niagaraqueerarchive.ca`, Dreamhost). It will **not** be ported again.
+> Going forward the production database is the single source of truth: it is
+> written to **remotely** — through the WordPress admin (CMS) and WP-CLI over
+> SSH — and mirrored *down* to Local only for development. The one-time
+> "pull the live site into Local" procedure is kept at the bottom for the record.
+>
+> Editors: for how to *use* the archive (intake, consent, cross-referencing),
+> see **[FOR-EDITORS.md](FOR-EDITORS.md)**. This document is the technical /
+> environments reference.
 
-## Recommended method — "Pull" with a migration plugin
+## The model
 
-This is the lowest-risk path and survives Dreamhost's server config without
-manual SQL surgery.
+```text
+   CODE  ───────────────────────────────────────────────►  PRODUCTION
+   (this git repo: themes + mu-plugins)   git push main      Dreamhost
+                                          → GitHub Actions
+                                          → rsync wp-content
 
-### 1. Capture the live site
-On the **production** site (`wp-admin`):
-1. Install **All-in-One WP Migration** (or **Duplicator**). AIO is simplest.
-2. Export → download the `.wpress` archive. This bundles the database, uploads,
-   themes, and plugins into one file.
-3. *(Safety)* Also take a Dreamhost panel backup / snapshot before any changes.
+   DATABASE / CONTENT / UPLOADS  ◄────────────────────────  PRODUCTION
+   (posts, ACF field *values*, taxonomy,   ./scripts/db-pull  (authoritative)
+    options, intake submissions)           (one-way, prod→local)
+```
 
-### 2. Create the Local site
-1. In Local: **+ Add Local Site** → name it `niagaraqueerarchive` → "Preferred"
-   environment (matches typical Dreamhost: PHP 8.x, MySQL, nginx/Apache).
-2. Start the site, open its `wp-admin`.
-3. Install the **same** migration plugin and **Import** the `.wpress` file.
-4. Local's import bumps the upload size limit automatically if needed.
+Two separate pipelines, two separate directions:
 
-### 3. Point this repo at the Local site
-Local stores the site at:
-`~/Local Sites/niagaraqueerarchive/app/public/`
+| Layer | Source of truth | How it moves | Direction |
+| --- | --- | --- | --- |
+| **Code** — themes, mu-plugins, ACF field **group definitions** | this git repo | push to `main` → CI → rsync (`.github/workflows/deploy.yml`) | local → prod |
+| **Data** — posts, ACF field **values**, taxonomy, options, uploads, intake submissions | production DB | edit on prod (CMS or `./scripts/wp-prod`); `./scripts/db-pull` to refresh local | prod → local (read-only mirror) |
 
-You have two clean options:
+The golden rule that follows: **never full-clone local → prod again.** Intake
+submissions now arrive on the live site; a push from local would clobber them.
 
-- **A. Repo holds only custom code (recommended).** Keep this repo where it is.
-  Symlink or copy the custom theme/plugin folders between here and Local's
-  `app/public/wp-content/`. CI deploys just those folders. Core/uploads/db never
-  enter git. This keeps the repo small and the public repo free of site dumps.
+### ACF: field groups vs. field values
 
-- **B. Repo lives inside `app/public/`.** `git init` inside Local's public
-  folder and use the same `.gitignore`. Simpler symlinking, but you must be
-  strict about the ignore rules so core/uploads/db stay out.
+This trips people up, so it's worth stating plainly:
 
-For a public archive repo, **Option A** is preferred.
+- **Field *group* definitions** (which fields exist, their keys/types) are
+  **code** — defined in `mu-plugins/nqa-archive/*.php` and shipped via git → CI.
+  **Never build or edit a field group in the prod admin UI**; it won't be in git,
+  and the next deploy won't know about it. Edit the PHP and push to `main`.
+- **Field *values*** (the data entered into those fields on a given record) are
+  **content** — they live in the DB and are edited on prod like any other content.
 
-### 4. Verify
-- Local site loads, login works, media displays, permalinks resolve
-  (Settings → Permalinks → Save once to flush rewrite rules).
-- `wp-content/themes` + `plugins` match production.
+## Everyday workflows
 
-## Deploy back to production
-The `.github/workflows/deploy.yml` scaffold deploys tracked theme/plugin files
-to Dreamhost over SFTP on push to `main`. Add these repo **secrets**
-(Settings → Secrets and variables → Actions):
+### Manage content / ACF values / intake on production
+
+Use the admin at `https://www.niagaraqueerarchive.ca/wp-admin`, or drive WP-CLI
+against the live DB with the wrapper:
+
+```bash
+./scripts/wp-prod <any wp-cli command>          # runs ON the server, over SSH
+
+# examples
+./scripts/wp-prod post list --post_type=nqa_submission --post_status=private
+./scripts/wp-prod post list --post_type=nqa_person --post_status=draft
+./scripts/wp-prod db export ~/nqa-backup-$(date +%F).sql   # backup, server-side
+```
+
+`wp-prod` touches the **live** site — there is no undo. Prefer read-only
+commands, and take a server-side `db export` before any bulk write.
+
+### Develop code against real data
+
+```bash
+./scripts/db-pull                 # refresh local DB from prod (one-way)
+./scripts/db-pull --with-uploads  # also pull the media library down
+```
+
+Then develop the theme / mu-plugins locally with `./scripts/wp` as usual. When
+the code is ready, `git push` to `main` and CI deploys it. Your local DB changes
+are throwaway — the next `db-pull` overwrites them, and that's intended.
+
+### Deploy code
+
+```bash
+git push origin main    # → GitHub Actions → rsync themes + mu-plugins to Dreamhost
+```
+
+Nothing else deploys. The database, `wp-config.php`, and `uploads/` are owned by
+production and are never pushed from here.
+
+## Access & credentials
+
+Local WP-CLI wrapper: `./scripts/wp` (Local's PHP + MySQL socket).
+Prod WP-CLI wrapper: `./scripts/wp-prod` (SSH to Dreamhost).
+
+| Thing | Value |
+| --- | --- |
+| Prod host | `pdx1-shared-a2-02.dreamhost.com` |
+| Prod user | `dh_enz88s` |
+| SSH key | `~/.ssh/nqa_deploy` (mirrors the `DH_SFTP_KEY` deploy secret) |
+| Prod WP root | `/home/dh_enz88s/niagaraqueerarchive.ca` (wp-config here; `wp-content/` is the rsync target) |
+| Prod `wp` | `/usr/bin/wp` (PHP 8.2) · table prefix `wp_` |
+| Canonical URL | `https://www.niagaraqueerarchive.ca` (bare domain 301s → www) |
+
+CI deploy secrets (GitHub → Settings → Secrets and variables → Actions):
 
 | Secret | Value |
 | --- | --- |
@@ -56,11 +106,31 @@ to Dreamhost over SFTP on push to `main`. Add these repo **secrets**
 | `DH_SFTP_USER` | SFTP/shell username |
 | `DH_SFTP_KEY`  | Private SSH key (passwordless) authorized on Dreamhost |
 | `DH_REMOTE_PATH` | Absolute path to the live `wp-content` |
-| `NQA_GOOGLE_MAPS_KEY` | Google Maps API key; CI injects it into `mu-plugins/0-nqa-runtime-config.php` on the server (never committed) |
+| `NQA_GOOGLE_MAPS_KEY` | Google Maps key; CI injects it into `mu-plugins/0-nqa-runtime-config.php` on the server (never committed). Stored as a **`production` environment** secret. |
 
-Never deploy `wp-config.php`, the database, or `uploads/` — production owns those.
+---
 
-## Database / content changes
-Database changes (new posts, taxonomy, settings) are **content**, not code — they
-are made directly in production's `wp-admin` (or staged in Local and migrated
-deliberately). Git tracks code; it does not sync the database.
+## Appendix — how the initial port was done (historical)
+
+Kept for the record. This is a **one-time** procedure; it should not be repeated
+now that production is authoritative.
+
+The live site was pulled into Local by Flywheel and this repo wired to it:
+
+1. **Capture the live site** — export via All-in-One WP Migration (or Duplicator),
+   or a full `wp db export` + `uploads/` rsync.
+2. **Create the Local site** — Local → **+ Add Local Site** → `niagaraqueerarchive`
+   → Preferred environment (PHP 8.x, MySQL). Import the archive.
+3. **Wire the repo** — this repo holds only custom code (themes + mu-plugins);
+   symlink/copy those into Local's `app/public/wp-content/`. Core, uploads, and
+   the DB never enter git.
+4. **Verify** — site loads, login works, media displays, permalinks resolve
+   (Settings → Permalinks → Save once to flush).
+
+The subsequent local → prod **full DB clone** (done 2026-07-06) is likewise
+one-time: local prefix `wp_`, prod was `wp_x232e8_`; imported the local dump,
+ran `wp config set table_prefix wp_` on prod, search-replaced
+`http://niagaraqueerarchiveca.local` → `https://www.niagaraqueerarchive.ca`, and
+rsynced uploads. Full clone preserves post IDs (so ACF ID-based `relationship`
+fields survive — a WXR export/import would break them). **That direction is now
+closed:** prod is the source of truth; use `./scripts/db-pull` to go the other way.

@@ -2,8 +2,18 @@
 
 **Live site:** <https://niagaraqueerarchive.ca> (Dreamhost)
 **Local dev:** Local by Flywheel — `niagaraqueerarchiveca.local`
-**WP-CLI wrapper:** `./scripts/wp` (Local's PHP + socket; use for all wp-cli commands)
+**WP-CLI wrapper (local):** `./scripts/wp` (Local's PHP + socket)
+**WP-CLI wrapper (prod):** `./scripts/wp-prod` (SSH to Dreamhost — the live DB)
+**Refresh local from prod:** `./scripts/db-pull` (one-way, prod → local)
 **Deploy:** push to `main` → GitHub Actions → rsync to Dreamhost (`wp-content/` only)
+
+**Data flow (post-launch):** production is the single source of truth for the
+DB. Content, ACF field *values*, taxonomy, and the intake pipeline are managed
+**remotely** (CMS or `./scripts/wp-prod`); `db-pull` mirrors prod → local for code
+dev. **Never full-clone local → prod** (it would clobber live intake submissions).
+Code (themes + mu-plugins + ACF field *group* definitions) still flows local →
+prod via git → CI only. See `docs/PORTING.md` (environments) and
+`docs/FOR-EDITORS.md` (editorial + intake handbook).
 
 ---
 
@@ -220,15 +230,27 @@ Currently a solo project. Questions raised in the brainstorm that need decisions
 ## Running the site locally
 
 ```bash
-# WP-CLI (always use the wrapper)
-./scripts/wp [command]
+# WP-CLI — local (Local by Flywheel) vs production (Dreamhost, the live DB)
+./scripts/wp [command]        # local mirror
+./scripts/wp-prod [command]   # LIVE site over SSH — no undo; back up before bulk writes
 
-# Common seed workflow
+# Refresh local from prod (one-way; overwrites local DB)
+./scripts/db-pull                 # DB only
+./scripts/db-pull --with-uploads  # also pull the media library
+
+# Common seed workflow (local; drafts only)
 ./scripts/wp eval-file /path/to/seed-script.php
 
 # Preservation capture
 ./scripts/wp nqa capture-sources --all
 ./scripts/wp nqa check-sources --all
+
+## Map Location Update for seeded data
+./scripts/wp eval-file /private/tmp/claude-501/-Users-lakewood-Sites-apps-niagaraqueerarchive-ca/f7e14cd0-4d01-4e4d-8e3c-92b0b1e5c116/scratchpad/geocode-places.php
+
+
 ```
 
 Seed scripts go in the session scratchpad — never committed to git.
+Content/intake work happens on **prod** now (CMS or `wp-prod`); local is a
+throwaway mirror refreshed via `db-pull`. Full details: `docs/PORTING.md`.
