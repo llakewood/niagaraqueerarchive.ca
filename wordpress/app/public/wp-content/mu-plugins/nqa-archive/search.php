@@ -151,11 +151,12 @@ add_action( 'wp_enqueue_scripts', function () {
 		return;
 	}
 
+	$js_path = WPMU_PLUGIN_DIR . '/nqa-archive/assets/nqa-search.js';
 	wp_enqueue_script(
 		'nqa-search',
 		WPMU_PLUGIN_URL . '/nqa-archive/assets/nqa-search.js',
 		array(),
-		NQA_VERSION,
+		file_exists( $js_path ) ? (string) filemtime( $js_path ) : NQA_VERSION,
 		true
 	);
 

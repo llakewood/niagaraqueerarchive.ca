@@ -10,11 +10,12 @@ defined( 'ABSPATH' ) || exit;
 add_action(
 	'wp_enqueue_scripts',
 	function () {
+		$css_path = WPMU_PLUGIN_DIR . '/nqa-archive/assets/nqa.css';
 		wp_enqueue_style(
 			'nqa',
 			WPMU_PLUGIN_URL . '/nqa-archive/assets/nqa.css',
 			array(),
-			NQA_VERSION
+			file_exists( $css_path ) ? (string) filemtime( $css_path ) : NQA_VERSION
 		);
 		wp_add_inline_style( 'nqa', nqa_css_vars( ':root' ) );
 	},
