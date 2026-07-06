@@ -244,6 +244,11 @@ Currently a solo project. Questions raised in the brainstorm that need decisions
 # Preservation capture
 ./scripts/wp nqa capture-sources --all
 ./scripts/wp nqa check-sources --all
+
+## Map Location Update for seeded data
+./scripts/wp eval-file /private/tmp/claude-501/-Users-lakewood-Sites-apps-niagaraqueerarchive-ca/f7e14cd0-4d01-4e4d-8e3c-92b0b1e5c116/scratchpad/geocode-places.php
+
+
 ```
 
 Seed scripts go in the session scratchpad — never committed to git.
