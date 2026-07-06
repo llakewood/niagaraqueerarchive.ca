@@ -11,6 +11,21 @@
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * A doorway's intro text. For taxonomy-backed doorways (thematic collections
+ * and the municipalities) this is the term's Description field — edited in the
+ * CMS, not hard-coded — so curators own the copy. Returns '' when unset.
+ * Stripped to plain text for the card; the term-archive page renders the
+ * description block itself.
+ */
+function nqa_term_intro( string $taxonomy, string $slug ) : string {
+	$term = get_term_by( 'slug', $slug, $taxonomy );
+	if ( ! $term || is_wp_error( $term ) ) {
+		return '';
+	}
+	return trim( wp_strip_all_tags( (string) $term->description ) );
+}
+
 /* -------------------------------------------------------------------------
  * 1) The collection registry.
  *    Each entry is a curated doorway. `kind` decides how its link + count
@@ -59,7 +74,6 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'pride-roots',
 			'title'   => 'Pride Roots',
-			'desc'    => 'The first marches, the early organizers, the fights for space and visibility. Documents how a Pride movement took root in small cities and towns across Niagara — outside the major urban centres that usually define the Canadian Pride story.',
 			'accent'  => $pal['violet'],
 		),
 		'progress-protest'      => array(
@@ -67,7 +81,6 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'progress-protest',
 			'title'   => 'Progress & Protest',
-			'desc'    => 'Records of advocacy and public action: campaigns, controversies, and the moments Niagara\'s queer community refused to stay quiet. Rainbow crosswalks, flag-raising ceremonies, school board battles — this collection maps the political landscape.',
 			'accent'  => $pal['yellow'],
 		),
 		'community-organizing'  => array(
@@ -91,7 +104,6 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'queer-arts-letters',
 			'title'   => 'Queer Arts & Letters',
-			'desc'    => 'Books, drag performers, writers, markets, and the arts spaces that gave Niagara\'s queer community somewhere to be seen. Includes the performers, publishers, and venues that made cultural life possible.',
 			'accent'  => $pal['pink'],
 		),
 		'trans-niagara'         => array(
@@ -99,7 +111,6 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'trans-niagara',
 			'title'   => 'Trans Niagara',
-			'desc'    => 'The trans-specific thread through Niagara\'s queer history: advocacy organizations, visibility events, and the people who built support structures that didn\'t yet exist.',
 			'accent'  => $pal['yellow'],
 		),
 		'two-spirit-indigenous' => array(
@@ -107,7 +118,6 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'two-spirit-indigenous',
 			'title'   => 'Two-Spirit & Indigenous Queer Niagara',
-			'desc'    => 'Centres Indigenous queer and Two-Spirit histories in a region whose territory has been home to Haudenosaunee and Anishinaabe peoples since long before colonial settlement. These records are often thinly sourced; this collection holds what has been documented and marks what still needs to be gathered.',
 			'accent'  => $pal['violet'],
 		),
 		'faith-inclusion'       => array(
@@ -115,7 +125,6 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'faith-inclusion',
 			'title'   => 'Faith & Inclusion',
-			'desc'    => 'Documents the relationship between queer people and faith communities in Niagara: the congregations that made space, the denominations that pushed back, and the individuals who found or lost a spiritual home because of who they are.',
 			'accent'  => $pal['pink'],
 		),
 		'drag-performer'        => array(
@@ -123,7 +132,6 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'drag-performer',
 			'title'   => 'Drag Performers',
-			'desc'    => 'Kings, queens, and performers who built audiences and community from Niagara stages. The art form as documentation: drag as history, as survival, as joy.',
 			'accent'  => $pal['yellow'],
 		),
 		'love-support'          => array(
@@ -131,7 +139,6 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'love-support',
 			'title'   => 'Love & Support',
-			'desc'    => 'Ally organizations, PFLAG chapters, support networks, and the institutions that stood beside Niagara\'s queer community — documented with clear framing as partners and supporters.',
 			'accent'  => $pal['violet'],
 		),
 		'in-memorium'           => array(
@@ -139,12 +146,25 @@ function nqa_collections_registry() {
 			'kind'    => 'collection',
 			'term'    => 'in-memorium',
 			'title'   => 'In Memoriam',
-			'desc'    => 'Records of loss: people who have died, places that have closed, organizations that no longer exist. A space to honour what has ended while keeping it part of the permanent record.',
 			'accent'  => $pal['pink'],
 		),
 	);
 
-	return array_merge( $by_place, $by_theme );
+	// Intros are now CMS-owned: thematic collections and municipalities take
+	// their card text from the term's Description field, resolved here so the
+	// grid stays query-driven. CPT-backed doorways have no term, so they keep
+	// the inline `desc` fallback set above.
+	$registry = array_merge( $by_place, $by_theme );
+	foreach ( $registry as &$c ) {
+		if ( 'collection' === $c['kind'] ) {
+			$c['desc'] = nqa_term_intro( 'nqa_collection', $c['term'] );
+		} elseif ( 'municipality' === $c['kind'] ) {
+			$c['desc'] = nqa_term_intro( 'municipality', $c['term'] );
+		}
+	}
+	unset( $c );
+
+	return $registry;
 }
 
 /* -------------------------------------------------------------------------

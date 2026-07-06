@@ -39,6 +39,7 @@ $nqa_modules = array(
 	'access.php',
 	'archival-note.php',
 	'preservation.php',
+	'geocode.php',
 	// Front end.
 	'item-details.php',
 	'collections.php',
