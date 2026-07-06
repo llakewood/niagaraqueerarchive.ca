@@ -54,12 +54,12 @@ That is the same PHP `./scripts/wp` resolves internally.
 
 - **Block theme** `wp-content/themes/nqa`. Templates in `templates/`, parts in `parts/`. The homepage is `front-page.html`, assembled entirely from shortcodes; the assigned front page's own body is never rendered (see FOR-EDITORS §9 for the editor-facing consequence).
 - **All custom PHP lives in mu-plugins**, auto-loaded. Since v3.0.0 it's consolidated behind one loader:
-  - **`nqa-archive.php`** — the loader. Defines `NQA_VERSION` and `require`s each module listed in `$nqa_modules`, in order. **Add a module** by dropping a file in `nqa-archive/` and adding it to that array.
-  - **`nqa-archive/` modules** (grouped as the loader groups them):
-    - *Foundations:* `support/palette.php` (the pinned colour palette → CSS vars), `support/helpers.php`, `support/assets.php` (enqueues `nqa.css`)
-    - *Data layer:* `content-model.php` (registers the 4 CPTs + `municipality` / `nqa_collection` taxonomies), `fields.php` + `page-fields.php` (ACF field groups: record fields, page content, and the **Site Copy** options page), `stewardship.php` (shared `provenance` + `consent_status` fields with the publish-gate)
-    - *Admin:* `access.php`, `archival-note.php` (staff-only `_nqa_archival_note`), `preservation.php` (Wayback capture, source liveness, private full-text), `geocode.php` (`wp nqa geocode`)
-    - *Front end:* `item-details.php`, `collections.php` (Collections grid + `[nqa_collections]`), `listing.php` + `listing-controls.php`, `view-toggle.php`, `map.php`, `submissions.php` (form #61 → `nqa_submission`), `newsletter.php`, `importers.php` (submission→draft + `wp nqa import-csv`), `shortcodes.php` (homepage sections), `search.php`, `tell.php`, `contact.php`, `privacy.php`, `forms.php`
+  - **`nqa-archive.php`** — the loader. Defines `NQA_VERSION` and `require`s each module listed in `$nqa_modules`, in order (support → functions → presentation). **Add a module** by dropping a file in the right subfolder and adding its path to that array.
+  - **`nqa-archive/` modules** are organised into four folders:
+    - **`support/`** — foundations: `palette.php` (the pinned colour palette → CSS vars), `helpers.php`, `assets.php` (enqueues `nqa.css`)
+    - **`functions/`** — logic (data model, ACF fields, admin, intake, CLI tools): `content-model.php` (the 4 CPTs + `municipality` / `nqa_collection` taxonomies), `fields.php` + `page-fields.php` (ACF field groups: record fields, page content, the **Site Copy** options page), `stewardship.php` (`provenance` + `consent_status` + publish-gate), `access.php`, `archival-note.php` (staff-only `_nqa_archival_note`), `preservation.php` (Wayback capture, source liveness, private full-text; `wp nqa capture-sources`/`check-sources`), `geocode.php` (`wp nqa geocode`), `leads.php` (`wp nqa leads` — cross-ref gaps + content leads), `importers.php` (submission→draft + `wp nqa import-csv`), `submissions.php` (form #61 → `nqa_submission`), `newsletter.php`, `forms.php`, `shortcodes.php` (homepage sections)
+    - **`presentation/`** — front-end views/pages/panels: `item-details.php`, `collections.php` (Collections grid + `[nqa_collections]`), `listing.php` + `listing-controls.php`, `view-toggle.php`, `map.php`, `search.php`, `tell.php`, `contact.php`, `privacy.php`
+    - **`assets/`** — static `nqa.css` + JS (referenced by literal `/nqa-archive/assets/…` paths, so they're unaffected by where the PHP lives)
   - **`0-nqa-runtime-config.php`** — **not in git**; written on the server by CI to inject `NQA_GOOGLE_MAPS_KEY`. The `0-` prefix loads it before `nqa-archive.php`.
 
 ### ACF: field *groups* are code, field *values* are content
@@ -160,9 +160,21 @@ All via `./scripts/wp` (local) or `./scripts/wp-prod` (live):
 # Bulk import — CSV → draft records (see FOR-EDITORS §7 for columns)
 ./scripts/wp nqa import-csv file.csv --type=nqa_place --dry-run
 
+# Research aid (read-only, never writes) — mines bodies + preservation text
+./scripts/wp nqa leads                       # both: gaps + content leads
+./scripts/wp nqa leads --gaps                # records mentioned but not cross-linked
+./scripts/wp nqa leads --leads --min=3       # candidate new entries (>=3 records)
+./scripts/wp nqa leads --leads --format=csv  # pipe to a spreadsheet
+
 # Seed scripts (local, drafts only) — kept in the scratchpad, never committed
 ./scripts/wp eval-file /path/to/seed-script.php
 ```
+
+`leads` is purely deterministic (no external API): `--gaps` matches existing
+record titles/aliases against every record's body + `_nqa_archive_text` and
+reports mentions that aren't in the `relationship` field; `--leads` surfaces
+recurring multi-word Title-Case phrases that match no record. Treat both as a
+worklist — seed drafts by hand (rule #2).
 
 > `wp nqa geocode` needs `NQA_GOOGLE_MAPS_KEY` for a real run (it's injected into `0-nqa-runtime-config.php`). Locally that file may not have the key — run `--dry-run` locally to validate, and do the real geocode on prod where the key exists.
 
