@@ -2,7 +2,7 @@
 
 A practical guide for anyone adding to, reviewing, or curating the archive. Before your dig in, read **Rules & consent** and **Historic vs. living** — they are the ones that protect people.
 
-For the technical side (environments, deploys, database), see [PORTING.md](PORTING.md). This document is about the *editorial* work.
+For the technical side (environments, deploys, database), see [FOR-DEVS.md](FOR-DEVS.md). This document is about the *editorial* work.
 
 ---
 
@@ -83,7 +83,7 @@ These are the non-negotiables. They come first, ahead of completeness or speed.
    Private emails, phone numbers, and home addresses are not — ever.
 5. **Allies are allies.** Organizations like PFLAG, Rise Against Bullying, or a school board are included with clear framing as **ally/partner**, not as queer organizations. Be precise about the relationship.
 6. **Niagara mastheads only** for journalistic sources (see §2).
-7. **Google Map `location` field is set via the admin map picker only** — never programmatically, never from a CSV. There is a script available at server side for mapping from the Address field to bulk fill in empty Google Map fields. Ask server admin.
+7. **Google Map `location` field is set via the admin map picker only** — never from a CSV, and not by hand-editing coordinates. *One sanctioned exception:* a server-side geocoder (`wp nqa geocode`) can bulk-fill records that have **no** pin yet, from their Address / title. It never overwrites a pin you placed by hand, and **every pin it sets must still be reviewed in the admin before publishing** (closed venues and region-wide orgs are easily mislocated). It's a maintenance command run by the server admin (`./scripts/wp-prod nqa geocode`), not an everyday editor action.
 
 ### The consent field
 
@@ -285,4 +285,4 @@ Some things look like page copy but are generated, and must be changed in code (
 | Bulk-add from a spreadsheet | `./scripts/wp-prod nqa import-csv file.csv` |
 | Set a map pin | Admin **map picker** only (never CSV/code) |
 | Link two records | **Relationship** field — on **both** records |
-| Manage live content from the terminal | `./scripts/wp-prod …` (see PORTING.md) |
+| Manage live content from the terminal | `./scripts/wp-prod …` (see FOR-DEVS.md) |

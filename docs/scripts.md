@@ -40,7 +40,7 @@ or `wp-prod`). Local is a throwaway mirror you refresh with `db-pull`. Code
 local → prod via `git push main` → GitHub Actions. **Never full-clone
 local → prod** (it would clobber live intake submissions).
 
-Full details: [PORTING.md](PORTING.md) (environments & data flow) and
+Full details: [FOR-DEVS.md](FOR-DEVS.md) (environments & data flow) and
 [FOR-EDITORS.md](FOR-EDITORS.md) (editorial + intake handbook).
 
 ## Usage
@@ -69,6 +69,6 @@ Full details: [PORTING.md](PORTING.md) (environments & data flow) and
 ## Recreating the scripts
 
 Because `scripts/` isn't tracked, a fresh clone won't have them. They're
-documented in [PORTING.md](PORTING.md) (§ Access & credentials + the workflow
+documented in [FOR-DEVS.md](FOR-DEVS.md) (§ Access & credentials + the workflow
 sections); recreate `wp-prod` and `db-pull` from there, or copy them from an
 existing working checkout.
