@@ -21,41 +21,45 @@ define( 'NQA_VERSION', '3.0.0' );
 define( 'NQA_DIR', __DIR__ . '/nqa-archive' );
 
 /**
- * Load order matters: shared support (palette, helpers, base assets) first, then
- * the content model + fields (data layer), then the front-end and admin features
- * that build on them. Every module self-registers its own hooks.
+ * Modules are organised into three folders:
+ *   support/       — shared foundations (palette, helpers, base assets)
+ *   functions/     — logic: content model, ACF fields, admin, intake, CLI tools
+ *   presentation/  — front-end views: single-record panels, listings, pages
+ * (static assets live in assets/). Load order: support first, then functions
+ * (the data layer + tools other code builds on), then presentation. Every
+ * module self-registers its own hooks.
  */
 $nqa_modules = array(
 	// Shared foundations.
 	'support/palette.php',
 	'support/helpers.php',
 	'support/assets.php',
-	// Data layer.
-	'content-model.php',
-	'fields.php',
-	'page-fields.php',
-	'stewardship.php',
-	// Admin.
-	'access.php',
-	'archival-note.php',
-	'preservation.php',
-	'geocode.php',
-	// Front end.
-	'item-details.php',
-	'collections.php',
-	'listing.php',
-	'listing-controls.php',
-	'view-toggle.php',
-	'map.php',
-	'submissions.php',
-	'newsletter.php',
-	'importers.php',
-	'shortcodes.php',
-	'search.php',
-	'tell.php',
-	'contact.php',
-	'privacy.php',
-	'forms.php',
+	// Functions — data model + fields, then admin / intake / CLI.
+	'functions/content-model.php',
+	'functions/fields.php',
+	'functions/page-fields.php',
+	'functions/stewardship.php',
+	'functions/access.php',
+	'functions/archival-note.php',
+	'functions/preservation.php',
+	'functions/geocode.php',
+	'functions/leads.php',
+	'functions/importers.php',
+	'functions/submissions.php',
+	'functions/newsletter.php',
+	'functions/forms.php',
+	'functions/shortcodes.php',
+	// Presentation — front-end views, pages, panels.
+	'presentation/item-details.php',
+	'presentation/collections.php',
+	'presentation/listing.php',
+	'presentation/listing-controls.php',
+	'presentation/view-toggle.php',
+	'presentation/map.php',
+	'presentation/search.php',
+	'presentation/tell.php',
+	'presentation/contact.php',
+	'presentation/privacy.php',
 );
 
 foreach ( $nqa_modules as $nqa_module ) {

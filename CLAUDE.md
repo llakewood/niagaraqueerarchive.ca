@@ -33,8 +33,10 @@ Historical, factual, archival. Warm but precise. Never invented.
 
 WordPress on Local by Flywheel; Twenty Twenty-Five block theme (no child theme).
 All custom code lives in **mu-plugins**, consolidated behind the `nqa-archive.php`
-loader + `nqa-archive/` modules (v3.0.0). The intake pipeline, preservation,
-collections, geocoding, and ACF field groups all live there.
+loader + `nqa-archive/` modules (v3.0.0), organised into `support/` (foundations),
+`functions/` (logic: content model, ACF fields, admin, intake, CLI tools),
+`presentation/` (front-end views/pages/panels), and `assets/` (static). The intake
+pipeline, preservation, collections, geocoding, and ACF field groups all live there.
 
 **Full architecture, the module list, CI/deploy, SSH creds, and the ACF
 groups-vs-values rule are in `docs/FOR-DEVS.md`.** Highlights Claude touches often:
@@ -43,9 +45,13 @@ groups-vs-values rule are in `docs/FOR-DEVS.md`.** Highlights Claude touches oft
   with publish-gate) · `submissions.php` (Tell Your Story form #61 → private
   `nqa_submission`) · `importers.php` (submission→draft converter, preserves the
   contributor's words verbatim, + `wp nqa import-csv`)
-- **`wp nqa geocode`** (`geocode.php`) — bulk-fills EMPTY map pins from
+- **`wp nqa geocode`** (`functions/geocode.php`) — bulk-fills EMPTY map pins from
   address/title (Ontario-biased; skips hand-set pins) — the one sanctioned
   exception to rule #8
+- **`wp nqa leads`** (`functions/leads.php`) — read-only research aid: `--gaps`
+  finds records mentioned by name in another's body/preservation text but not
+  linked via `relationship`; `--leads` surfaces recurring Title-Case phrases that
+  match no record (candidate new entries). Reports only; never writes
 - **Collection/municipality card intros** are CMS-owned (taxonomy term Description
   via `nqa_term_intro()`); collection *titles* stay in the `collections.php` registry
 - **Google Maps key** `NQA_GOOGLE_MAPS_KEY` — GitHub `production` environment secret
@@ -256,6 +262,10 @@ Currently a solo project. Questions raised in the brainstorm that need decisions
 # every pin in the admin afterward. Run on prod: ./scripts/wp-prod nqa geocode
 ./scripts/wp nqa geocode --dry-run          # preview queries, writes nothing
 ./scripts/wp nqa geocode --type=nqa_place   # fill empty place pins
+
+# Research aid (read-only): cross-reference gaps + new-entry content leads
+./scripts/wp nqa leads --gaps               # mentioned-but-not-linked records
+./scripts/wp nqa leads --leads --min=2      # candidate new entries in the text
 ```
 
 Seed scripts go in the session scratchpad — never committed to git.
