@@ -2,18 +2,20 @@
 
 **Live site:** <https://niagaraqueerarchive.ca> (Dreamhost)
 **Local dev:** Local by Flywheel — `niagaraqueerarchiveca.local`
-**WP-CLI wrapper (local):** `./scripts/wp` (Local's PHP + socket)
-**WP-CLI wrapper (prod):** `./scripts/wp-prod` (SSH to Dreamhost — the live DB)
-**Refresh local from prod:** `./scripts/db-pull` (one-way, prod → local)
-**Deploy:** push to `main` → GitHub Actions → rsync to Dreamhost (`wp-content/` only)
+**WP-CLI:** always use the wrappers — `./scripts/wp` (local) / `./scripts/wp-prod`
+(live Dreamhost DB over SSH). The bare `wp` and system `php` are broken on this
+machine (missing icu dylib); the wrappers use Local's bundled PHP.
+**Refresh local from prod:** `./scripts/db-pull` (one-way, prod → local).
+**Deploy:** push `main` → GitHub Actions → rsync `wp-content/` to Dreamhost.
 
-**Data flow (post-launch):** production is the single source of truth for the
-DB. Content, ACF field *values*, taxonomy, and the intake pipeline are managed
-**remotely** (CMS or `./scripts/wp-prod`); `db-pull` mirrors prod → local for code
-dev. **Never full-clone local → prod** (it would clobber live intake submissions).
-Code (themes + mu-plugins + ACF field *group* definitions) still flows local →
-prod via git → CI only. See `docs/PORTING.md` (environments) and
-`docs/FOR-EDITORS.md` (editorial + intake handbook).
+**Data flow (post-launch):** production is the single source of truth for the DB.
+Content, ACF field *values*, taxonomy, and intake are managed **remotely** (CMS or
+`./scripts/wp-prod`); `db-pull` mirrors prod → local for code dev. **Never
+full-clone local → prod** (it would clobber live intake submissions). Code (themes
++ mu-plugins + ACF field *group* definitions) flows local → prod via git → CI only.
+
+**Docs:** `docs/FOR-DEVS.md` (setup, environments, deploy, architecture, commands)
+· `docs/FOR-EDITORS.md` (editorial + intake handbook).
 
 ---
 
@@ -27,22 +29,26 @@ Historical, factual, archival. Warm but precise. Never invented.
 
 ---
 
-## Infrastructure (complete)
+## Infrastructure
 
-- WordPress on Local by Flywheel; Twenty Twenty-Five block theme (no child theme)
-- All custom code lives in **mu-plugins** (auto-loaded):
-  - `nqa-cpt.php` — registers `nqa_person`, `nqa_org`, `nqa_event`, `nqa_place`; `nqa_entity_post_types()` returns the 4 types
-  - `nqa-fields.php` — ACF field groups for all types; `relationship` field on all
-  - `nqa-archive-display.php` — renders Archive details panel on single posts
-  - `nqa-preservation.php` — Wayback Machine capture, source liveness checks, private full-text storage
-  - `nqa-collections.php` — `nqa_collection` taxonomy, Collections page grid, shortcode `[nqa_collections]`
-  - `nqa-archives.php` — styled archive/listing pages
-  - `nqa-archive-controls.php` — client-side search + tag/category facets + 1/2/3 column grid picker on listing pages
-  - `nqa-viewtoggle.php` — grid/list toggle on Collections page only
-  - `nqa-archival-note.php` — staff-only `_nqa_archival_note` meta; shown only to logged-in editors on front end
-  - **Intake pipeline** (code is now consolidated as `nqa-archive.php` loader + `nqa-archive/` modules, v3.0.0 — the names above are feature-indicative): `stewardship.php` — shared `provenance` + `consent_status` fields on all types with a publish-gate; `submissions.php` — Tell Your Story form #61 capture as private `nqa_submission` records; `importers.php` — submission→draft converter (preserves the contributor's words verbatim) + `wp nqa import-csv` bulk importer
-- **CI:** `.github/workflows/deploy.yml` — test (PHP lint) → deploy (rsync themes + mu-plugins); `environment: production` for Maps key
-- **Google Maps key:** `NQA_GOOGLE_MAPS_KEY` stored as a GitHub `production` environment **secret** (not a variable); website/referrer-restricted to niagaraqueerarchive.ca
+WordPress on Local by Flywheel; Twenty Twenty-Five block theme (no child theme).
+All custom code lives in **mu-plugins**, consolidated behind the `nqa-archive.php`
+loader + `nqa-archive/` modules (v3.0.0). The intake pipeline, preservation,
+collections, geocoding, and ACF field groups all live there.
+
+**Full architecture, the module list, CI/deploy, SSH creds, and the ACF
+groups-vs-values rule are in `docs/FOR-DEVS.md`.** Highlights Claude touches often:
+
+- **Intake pipeline** — `stewardship.php` (shared `provenance` + `consent_status`
+  with publish-gate) · `submissions.php` (Tell Your Story form #61 → private
+  `nqa_submission`) · `importers.php` (submission→draft converter, preserves the
+  contributor's words verbatim, + `wp nqa import-csv`)
+- **`wp nqa geocode`** (`geocode.php`) — bulk-fills EMPTY map pins from
+  address/title (Ontario-biased; skips hand-set pins) — the one sanctioned
+  exception to rule #8
+- **Collection/municipality card intros** are CMS-owned (taxonomy term Description
+  via `nqa_term_intro()`); collection *titles* stay in the `collections.php` registry
+- **Google Maps key** `NQA_GOOGLE_MAPS_KEY` — GitHub `production` environment secret
 
 ---
 
@@ -93,7 +99,7 @@ Historical, factual, archival. Warm but precise. Never invented.
 5. **Allies are allies.** Organizations like Rise Against Bullying, PFLAG, NCDSB — include with clear framing as ally/partner, NOT as queer organizations.
 6. **National wire/syndicated articles excluded.** Niagara masthead only (Niagara This Week, St. Catharines Standard, etc.).
 7. **DB content not in git.** Seed scripts live in the scratchpad. Only code is committed.
-8. **`location` ACF field** — Google Map type; set via admin map picker only.
+8. **`location` ACF field** — Google Map type; set via admin map picker only. **One sanctioned exception:** `wp nqa geocode` (mu-plugin `geocode.php`) bulk-fills records that have **no** pin yet from the `address`/title (Ontario-biased); it never overwrites a hand-set pin (without `--overwrite`), and every result must be reviewed in the admin before publishing.
 9. **Consent flags:**
    - Colleen McTigue (#317) — consent required before publishing
    - Liam Coward (#303) — family permission required for portrait
@@ -245,12 +251,13 @@ Currently a solo project. Questions raised in the brainstorm that need decisions
 ./scripts/wp nqa capture-sources --all
 ./scripts/wp nqa check-sources --all
 
-## Map Location Update for seeded data
-./scripts/wp eval-file /private/tmp/claude-501/-Users-lakewood-Sites-apps-niagaraqueerarchive-ca/f7e14cd0-4d01-4e4d-8e3c-92b0b1e5c116/scratchpad/geocode-places.php
-
-
+# Map: bulk-fill EMPTY location pins from the address/title (Ontario-biased).
+# Sanctioned exception to rule #8 — never overwrites a hand-set pin; review
+# every pin in the admin afterward. Run on prod: ./scripts/wp-prod nqa geocode
+./scripts/wp nqa geocode --dry-run          # preview queries, writes nothing
+./scripts/wp nqa geocode --type=nqa_place   # fill empty place pins
 ```
 
 Seed scripts go in the session scratchpad — never committed to git.
 Content/intake work happens on **prod** now (CMS or `wp-prod`); local is a
-throwaway mirror refreshed via `db-pull`. Full details: `docs/PORTING.md`.
+throwaway mirror refreshed via `db-pull`. Full details: `docs/FOR-DEVS.md`.
