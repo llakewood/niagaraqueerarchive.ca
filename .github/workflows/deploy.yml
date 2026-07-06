@@ -111,6 +111,28 @@ jobs:
             echo 'Retired mu-plugins removed (if present).'
           "
 
+      # The nqa-archive/ modules were reorganised into functions/ and
+      # presentation/ subfolders. Because the rsync has no --delete, the old
+      # flat copies at nqa-archive/*.php would linger. They aren't auto-loaded
+      # (they're a directory below mu-plugins/) and the loader now points only at
+      # the subfolders, so they're inert — but remove them to avoid dead clutter.
+      # rm -f is a no-op once they're gone.
+      - name: Remove superseded flat nqa-archive module files on production
+        if: steps.check.outputs.deploy == 'true'
+        run: |
+          SSH='ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -p 22'
+          ARCH="${{ secrets.DH_REMOTE_PATH }}/mu-plugins/nqa-archive"
+          $SSH "${{ secrets.DH_SFTP_USER }}@${{ secrets.DH_SFTP_HOST }}" "
+            cd '$ARCH' || exit 0
+            rm -f access.php archival-note.php content-model.php fields.php \
+                  forms.php geocode.php importers.php newsletter.php \
+                  page-fields.php preservation.php shortcodes.php stewardship.php \
+                  submissions.php collections.php contact.php item-details.php \
+                  listing-controls.php listing.php map.php privacy.php \
+                  search.php tell.php view-toggle.php
+            echo 'Superseded flat nqa-archive modules removed (if present).'
+          "
+
       # Generate the runtime-secrets mu-plugin from a GitHub Secret and ship it.
       # The key value is never in git and is masked in logs. Skipped (with a
       # warning) if the secret isn't set yet, so deploys don't hard-fail.
