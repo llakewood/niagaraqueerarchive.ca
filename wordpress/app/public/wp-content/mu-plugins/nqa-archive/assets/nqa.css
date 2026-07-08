@@ -99,6 +99,26 @@ body.archive .wp-block-post-title a:hover {
 	text-decoration-thickness: 2px;
 }
 
+/* Make the whole card clickable, not just the title. The title's link
+   stretches to cover the card via an ::after overlay (the card is
+   position: relative), so a click anywhere opens the entry. Inner links
+   (date, excerpt, terms) are lifted above the overlay so they remain
+   independently clickable. */
+body.archive .wp-block-query .wp-block-post-title a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+
+body.archive .wp-block-query .wp-block-post-date a,
+body.archive .wp-block-query .wp-block-post-content a,
+body.archive .wp-block-query .wp-block-post-excerpt a,
+body.archive .wp-block-query .wp-block-post-terms a {
+	position: relative;
+	z-index: 2;
+}
+
 body.archive .wp-block-post-date {
 	margin: 0 0 .5rem;
 	font-family: var(--nqa-mono);
