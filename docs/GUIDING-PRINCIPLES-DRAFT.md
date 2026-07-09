@@ -1,6 +1,6 @@
 # Niagara Queer Archive — Guiding Principles
 
-**Status: Discussion draft — v0.1, 8 July 2026**
+**Status: Discussion draft — v0.2, 8 July 2026**
 
 > This is a *starting point*, not a rulebook. It exists to give us something
 > concrete to react to, dis/agree with, and shape together. Nothing here is
@@ -64,7 +64,9 @@ Naming this matters as much as naming what we are:
   clearly as allies — not folded in as though they were queer organizations.
 - **Not a finished thing.** Gaps are expected and named openly, especially where the
   digital record runs out (pre-1980s life, the AIDS-crisis human toll, lesbian and
-  women's-music collectives, etc.).
+  women's-music collectives, intersex lives and history, etc.). Naming a gap is the
+  first step to filling it — and some gaps (like intersex representation) reflect the
+  historical record's silences, not the community's absence.
 
 ### Near-term objectives (open to revision)
 
@@ -163,6 +165,55 @@ point at things we actually do.
   chooses to publish. Nothing auto-publishes.
 - **Staff notes stay private.** Working notes and uncertainties live in protected
   fields, not in the public record.
+
+### Names, gender, and deadnaming
+
+An LGBTQ2S+ archive carries a specific, non-negotiable duty here: **we do not
+deadname or misgender living people.** When someone has transitioned or changed
+their name, the name and gender they use *now* are the correct ones — full stop —
+and they take precedence over whatever a historical source called them.
+
+This is the sharpest version of the tension this whole document is about: our
+sources are historical documents, and an older article may name a person by a name
+they no longer use. We don't rewrite or falsify a third-party source — but we are
+under no obligation to *repeat* its wording, and we control everything the archive
+itself writes and shows. So:
+
+- **Our own text uses the person's current name and pronouns** — in the record
+  title, body, slug/URL, tags, captions, and every public field. A deadname never
+  appears in anything NQA authors.
+- **We don't surface a deadname from a source.** Where a cited article contains one,
+  we link to the source rather than reproduce the name in our text. Our private
+  preservation text stays private (it already is by default), and any publicly shown
+  excerpt is redacted so the deadname isn't exposed.
+- **We don't build outing or deadnaming links.** A record must not be cross-linked to
+  an old article in a way that publicly reveals a person's former name or the fact of
+  their transition. When in doubt we break or hide the *public link* — not the
+  person's privacy.
+- **Being trans is not a "reveal."** We note a transition only where the person has
+  made it public *and* consents — never as a disclosure the archive makes on their
+  behalf.
+
+**When a living, identifiable person is involved, this is consent-led and
+person-first.** Where we can reach them, we ask what they want — correct the name,
+restrict the record, remove it entirely, or keep it with their own framing — and we
+follow their wishes. Until it's resolved we **default to caution: restrict or
+unpublish** the affected material rather than leave a deadname public. We would
+always rather a record be briefly missing than actively harm someone.
+
+*This is not hypothetical. It has already come up: an older article names a person
+who has since transitioned, and a linked record repeated the former name. Fixing
+that specific record — correcting the name, scrubbing the deadname from public view,
+and restricting it pending contact — is an immediate obligation; the rule above is
+how we keep the next one from happening.*
+
+This connects to the "right to be removed or corrected" above and the process in §5.
+
+> **Open questions:** How do we reconcile long-term archival integrity (the source
+> *did* use that name) with the absolute duty not to deadname — do we keep a redacted
+> note of the discrepancy in staff-only fields, and if so, who may see it? Do we want
+> a simple, public "request a name or pronoun correction" path, so trans community
+> members never have to argue for their own dignity?
 
 ### Privacy
 
