@@ -1,6 +1,6 @@
 # Niagara Queer Archive — Guiding Principles
 
-**Status: Discussion draft — v0.3, 8 July 2026**
+**Status: Discussion draft — v0.4, 8 July 2026**
 
 > This is a *starting point*, not a rulebook. It exists to give us something
 > concrete to react to, dis/agree with, and shape together. Nothing here is
@@ -229,6 +229,28 @@ This connects to the "right to be removed or corrected" above and the process in
 > note of the discrepancy in staff-only fields, and if so, who may see it? Do we want
 > a simple, public "request a name or pronoun correction" path, so trans community
 > members never have to argue for their own dignity?
+
+**Sample outreach note.** A starting point so anyone on the team can make first
+contact with a warm, consent-first tone. Adapt it to the person and the situation —
+it works for a name/pronoun correction, a consent check, or any first hello:
+
+> Hi [Name],
+>
+> I'm reaching out from the Niagara Queer Archive — a small community project
+> documenting LGBTQ2S+ history across Niagara. Your public work came up as part of
+> that history, and while building a record we realized we may have gotten something
+> important wrong: [we'd used a name you no longer use / we want to be sure we have
+> your name, pronouns, and story right].
+>
+> We've already [taken it offline / corrected it], and nothing stays up that you're
+> not comfortable with. You're in the driver's seat: we're glad to correct it, change
+> how you're described, restrict it, or take it down entirely — whatever you'd prefer.
+> And if you'd ever like to add to it in your own words, we'd be honoured.
+>
+> No rush and no pressure at all. Thank you for everything you've given this community.
+>
+> Warmly,
+> [Your name] · Niagara Queer Archive · [contact]
 
 ### Privacy
 
