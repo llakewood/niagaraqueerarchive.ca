@@ -1,6 +1,6 @@
 # Niagara Queer Archive — Guiding Principles
 
-**Status: Discussion draft — v0.4, 8 July 2026**
+**Status: Discussion draft — v0.5, 8 July 2026**
 
 > This is a *starting point*, not a rulebook. It exists to give us something
 > concrete to react to, dis/agree with, and shape together. Nothing here is
@@ -209,6 +209,14 @@ itself writes and shows. So:
   made it public *and* consents — never as a disclosure the archive makes on their
   behalf.
 
+**The archived source stays true.** Our *public* record is kept short and links out
+to the published article; the source's original wording — deadname included — is
+preserved only in the private preservation text. We treat that private copy as a
+faithful, un-redacted mirror of what was actually published: it is never shown, so it
+does no public harm, it keeps the archive honest about the historical record, and it
+may be useful for future research. The duty not to deadname governs everything
+**public**; the private mirror stays true to the source.
+
 **When a living, identifiable person is involved, this is consent-led and
 person-first.** Where we can reach them, we ask what they want — correct the name,
 restrict the record, remove it entirely, or keep it with their own framing — and we
@@ -224,11 +232,10 @@ how we keep the next one from happening.*
 
 This connects to the "right to be removed or corrected" above and the process in §5.
 
-> **Open questions:** How do we reconcile long-term archival integrity (the source
-> *did* use that name) with the absolute duty not to deadname — do we keep a redacted
-> note of the discrepancy in staff-only fields, and if so, who may see it? Do we want
-> a simple, public "request a name or pronoun correction" path, so trans community
-> members never have to argue for their own dignity?
+> **Open questions:** Who may see the private preservation text that holds a
+> deadname — every editor, or a narrower role? And do we want a simple, public
+> "request a name or pronoun correction" path, so trans community members never have
+> to argue for their own dignity?
 
 **Sample outreach note.** A starting point so anyone on the team can make first
 contact with a warm, consent-first tone. Adapt it to the person and the situation —
