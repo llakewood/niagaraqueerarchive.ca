@@ -17,6 +17,12 @@
  */
 
 
+/* Main content region sits flush under the header — no leading gap. */
+#nqa-main {
+	margin-top: 0;
+}
+
+
 /* ── 1. Archive listing ──────────────────────────────────────────────────── */
 
 body.archive .wp-block-query-title {
