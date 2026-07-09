@@ -1,6 +1,6 @@
 # Niagara Queer Archive — Guiding Principles
 
-**Status: Discussion draft — v0.2, 8 July 2026**
+**Status: Discussion draft — v0.3, 8 July 2026**
 
 > This is a *starting point*, not a rulebook. It exists to give us something
 > concrete to react to, dis/agree with, and shape together. Nothing here is
@@ -117,6 +117,21 @@ participate.
   how they're credited (by name, anonymously, or withheld) and can change their mind.
 - **Care over speed.** No contribution is worth publishing before it's been handled
   with the consent and sourcing care in §3.
+
+### Representation gaps (open)
+
+Diversity isn't only about who *runs* the archive — it's about who it *documents*.
+Right now we have a Two-Spirit / Indigenous collection, but little or nothing yet
+represents Latinx, asexual and aromantic (ace/aro), intersex, bisexual+, and other
+communities who are part of — or align themselves with — the queer community.
+
+> **Open question:** Which communities are underrepresented or missing, and which of
+> those gaps are ours to actively close? For each, how do we build intake
+> relationships *with* that community rather than speaking for it or waiting for it to
+> come to us? (Intersex is already flagged in §1 as a record-silence: a July 2026
+> research pass found no digitally sourceable Niagara intersex material, so it needs
+> institutional/community intake — Quest CHC, Hamilton Trans Health Coalition,
+> Intersex Canada, Egale.)
 
 ### The student-labour question (open)
 
