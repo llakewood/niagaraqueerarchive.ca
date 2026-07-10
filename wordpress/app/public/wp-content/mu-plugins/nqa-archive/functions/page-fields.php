@@ -3,8 +3,10 @@
  * ACF field groups for page-level editable content regions.
  *
  * Two mechanisms, applied where they fit:
- *   Options page ("Site Copy") — homepage hero and global UI labels that have
- *     no natural WP editor context. Accessed with get_field('key', 'option').
+ *   Front-page group ("Site Copy") — homepage hero and global UI labels. ACF
+ *     options pages are Pro-only, so this group is attached to the static front
+ *     page (page_type == front_page) and read via get_field('key',
+ *     nqa_home_page_id()) — see shortcodes.php.
  *   Page-specific groups — attached by page_template location rule; one group
  *     per shortcode-driven page. Accessed with get_field('key', $page_id).
  *
@@ -23,28 +25,17 @@ add_action(
 			return;
 		}
 
-		// ── Options page registration ─────────────────────────────────────────
-
-		if ( function_exists( 'acf_add_options_page' ) ) {
-			acf_add_options_page( array(
-				'page_title'  => 'Site Copy',
-				'menu_title'  => 'Site Copy',
-				'menu_slug'   => 'nqa-site-copy',
-				'capability'  => 'edit_pages',
-				'redirect'    => false,
-				'parent_slug' => 'options-general.php',
-			) );
-		}
-
-		// ── Options page: homepage hero + global labels ───────────────────────
+		// NOTE: ACF options pages are Pro-only. These homepage fields are
+		// attached to the static front page instead (location rule below),
+		// and read by the homepage shortcodes via nqa_home_page_id().
 
 		acf_add_local_field_group( array(
 			'key'      => 'group_nqa_options',
 			'title'    => 'Site Copy',
 			'location' => array( array( array(
-				'param'    => 'options_page',
+				'param'    => 'page_type',
 				'operator' => '==',
-				'value'    => 'nqa-site-copy',
+				'value'    => 'front_page',
 			) ) ),
 			'fields'   => array(
 

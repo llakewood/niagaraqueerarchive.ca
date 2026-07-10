@@ -13,14 +13,27 @@
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Post ID that stores the homepage "Site Copy" field values.
+ *
+ * These fields live on the static front page (ACF free has no options pages),
+ * so every homepage shortcode reads them from the front page regardless of
+ * which page is currently being viewed. Returns 0 if no static front page is
+ * set, in which case get_field() yields null and the shortcodes fall back to
+ * their hardcoded defaults.
+ */
+function nqa_home_page_id() : int {
+	return (int) get_option( 'page_on_front' );
+}
+
 // ── Hero ──────────────────────────────────────────────────────────────────────
 
 add_shortcode( 'nqa_hero', 'nqa_hero_shortcode' );
 
 function nqa_hero_shortcode() {
-	// Options page copy — falls back to defaults if fields are not yet saved.
+	// Homepage "Site Copy" fields — falls back to defaults if not yet saved.
 	$opt = function ( string $key, string $fallback = '' ) : string {
-		$val = get_field( $key, 'option' );
+		$val = get_field( $key, nqa_home_page_id() );
 		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
 	};
 
@@ -128,7 +141,7 @@ function nqa_featured_collection_shortcode() {
 	$collections_url = esc_url( home_url( '/collections/' ) );
 
 	$opt = function ( string $key, string $fallback = '' ) : string {
-		$val = get_field( $key, 'option' );
+		$val = get_field( $key, nqa_home_page_id() );
 		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
 	};
 
@@ -228,7 +241,7 @@ function nqa_recent_records_shortcode( $atts ) {
 	wp_reset_postdata();
 
 	$opt = function ( string $key, string $fallback = '' ) : string {
-		$val = get_field( $key, 'option' );
+		$val = get_field( $key, nqa_home_page_id() );
 		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
 	};
 
@@ -246,7 +259,7 @@ add_shortcode( 'nqa_principles', 'nqa_principles_shortcode' );
 
 function nqa_principles_shortcode() {
 	$opt = function ( string $key, string $fallback = '' ) : string {
-		$val = get_field( $key, 'option' );
+		$val = get_field( $key, nqa_home_page_id() );
 		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
 	};
 
@@ -289,7 +302,7 @@ add_shortcode( 'nqa_submit_cta', 'nqa_submit_cta_shortcode' );
 
 function nqa_submit_cta_shortcode() {
 	$opt = function ( string $key, string $fallback = '' ) : string {
-		$val = get_field( $key, 'option' );
+		$val = get_field( $key, nqa_home_page_id() );
 		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
 	};
 
@@ -318,7 +331,7 @@ add_shortcode( 'nqa_newsletter', 'nqa_newsletter_shortcode' );
 
 function nqa_newsletter_shortcode() {
 	$opt = function ( string $key, string $fallback = '' ) : string {
-		$val = get_field( $key, 'option' );
+		$val = get_field( $key, nqa_home_page_id() );
 		return ( $val !== null && $val !== '' && $val !== false ) ? (string) $val : $fallback;
 	};
 
