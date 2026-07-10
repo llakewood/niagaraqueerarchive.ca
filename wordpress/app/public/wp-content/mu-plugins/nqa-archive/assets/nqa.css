@@ -1684,6 +1684,54 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	margin: .25rem 0;
 }
 
+/* Hero search bar (right column, above the stats panel) */
+.home-hero__aside { display: flex; flex-direction: column; gap: 1.25rem; }
+.home-hero__search-label {
+	display: block;
+	font-family: 'Space Mono', 'Courier New', monospace;
+	font-weight: 700;
+	letter-spacing: .18em;
+	text-transform: uppercase;
+	font-size: .8rem;
+	color: var(--nqa-yellow);
+	margin-bottom: .6rem;
+}
+.home-hero__search-bar {
+	display: flex;
+	border: 2px solid rgba(255,255,255,.25);
+	background: rgba(255,255,255,.06);
+}
+.home-hero__search-input {
+	flex: 1;
+	min-width: 0;
+	padding: .9rem 1.1rem;
+	background: transparent;
+	border: 0;
+	color: var(--nqa-base);
+	font-family: 'Space Mono', 'Courier New', monospace;
+	font-size: 1rem;
+	caret-color: var(--nqa-yellow);
+}
+.home-hero__search-input::placeholder { color: rgba(255,255,255,.4); }
+.home-hero__search-input:focus { outline: 3px solid var(--nqa-yellow); outline-offset: -3px; }
+.home-hero__search-btn {
+	padding: .9rem 1.4rem;
+	background: var(--nqa-yellow);
+	color: var(--nqa-ink);
+	border: 0;
+	border-left: 2px solid rgba(255,255,255,.2);
+	font-family: 'Space Mono', 'Courier New', monospace;
+	font-size: .8rem;
+	font-weight: 700;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background .12s;
+}
+.home-hero__search-btn:hover { background: var(--nqa-pink); }
+.home-hero__search-btn:focus-visible { outline: 3px solid var(--nqa-violet); outline-offset: 2px; }
+
 /* Principles strip */
 .home-principles {
 	background: var(--nqa-cream);

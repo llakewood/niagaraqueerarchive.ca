@@ -192,6 +192,13 @@
 
 		if ( ! formEl || ! inputEl || ! countEl || ! listEl ) return;
 
+		// Pre-fill from a ?q= URL param (e.g. the homepage hero search bar)
+		const initialQ = ( new URLSearchParams( window.location.search ).get( 'q' ) || '' ).trim();
+		if ( initialQ ) {
+			state.q       = initialQ;
+			inputEl.value = initialQ;
+		}
+
 		// Sidebar chip delegation
 		const sidebar = document.getElementById( 'nqa-search-sidebar' );
 		if ( sidebar ) sidebar.addEventListener( 'click', onChipClick );

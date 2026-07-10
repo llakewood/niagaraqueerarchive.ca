@@ -34,9 +34,10 @@ function nqa_hero_shortcode() {
 	$collection_count = (int) wp_count_terms( array( 'taxonomy' => 'nqa_collection', 'hide_empty' => false ) );
 	$muni_count       = (int) wp_count_terms( array( 'taxonomy' => 'municipality',   'hide_empty' => false ) );
 
-	$collections_url = esc_url( $opt( 'home_cta_1_url' ) ?: home_url( '/collections/' ) );
-	$cta2_url        = esc_url( $opt( 'home_cta_2_url' ) ?: home_url( '/collections/' ) );
-	$tell_url        = esc_url( $opt( 'home_cta_3_url' ) ?: home_url( '/tell/' ) );
+	$browse_url = esc_url( $opt( 'home_cta_1_url' ) ?: home_url( '/search/' ) );
+	$cta2_url   = esc_url( $opt( 'home_cta_2_url' ) ?: home_url( '/collections/' ) );
+	$tell_url   = esc_url( $opt( 'home_cta_3_url' ) ?: home_url( '/tell/' ) );
+	$search_url = esc_url( home_url( '/search/' ) );
 
 	$h  = '<section class="home-hero">';
 	$h .= '<div class="home-hero__inner">';
@@ -47,13 +48,24 @@ function nqa_hero_shortcode() {
 	$h .= '<h1>' . esc_html( $opt( 'home_hero_heading', "Preserving Niagara\xe2\x80\x99s Queer past \xe2\x80\x94 celebrating our living history." ) ) . '</h1>';
 	$h .= '<p class="home-hero__lede">' . esc_html( $opt( 'home_hero_lede', "A community project dedicated to cataloguing, curating, and preserving LGBTQ2S+ stories across the Niagara region \xe2\x80\x94 from St.\xc2\xa0Catharines to Fort Erie, Welland to Niagara-on-the-Lake." ) ) . '</p>';
 	$h .= '<div class="home-hero__ctas">';
-	$h .= '<a href="' . $collections_url . '" class="btn btn--primary">' . esc_html( $opt( 'home_cta_1_label', 'Browse the Archive' ) ) . '</a>';
+	$h .= '<a href="' . $browse_url . '" class="btn btn--primary">' . esc_html( $opt( 'home_cta_1_label', 'Browse the Archive' ) ) . '</a>';
 	$h .= '<a href="' . $cta2_url . '" class="btn btn--ghost">' . esc_html( $opt( 'home_cta_2_label', 'Explore Collections' ) ) . '</a>';
 	$h .= '<a href="' . $tell_url . '" class="btn btn--ghost">' . esc_html( $opt( 'home_cta_3_label', 'Submit Your Story' ) ) . '</a>';
 	$h .= '</div>';
 	$h .= '</div>';
 
-	// Right column: live stats.
+	// Right column: search bar + live stats.
+	$h .= '<div class="home-hero__aside">';
+
+	// Search bar — submits to the Search page (?q=…), which honours the query on load.
+	$h .= '<form class="home-hero__search" role="search" method="get" action="' . $search_url . '">';
+	$h .= '<label class="home-hero__search-label" for="nqa-hero-search">' . esc_html( $opt( 'home_search_label', 'Search the archive' ) ) . '</label>';
+	$h .= '<div class="home-hero__search-bar">';
+	$h .= '<input type="search" id="nqa-hero-search" name="q" class="home-hero__search-input" placeholder="' . esc_attr( $opt( 'home_search_placeholder', "People, places, orgs, events\xe2\x80\xa6" ) ) . '" autocomplete="off">';
+	$h .= '<button type="submit" class="home-hero__search-btn">Search</button>';
+	$h .= '</div>';
+	$h .= '</form>';
+
 	$h .= '<div class="home-hero__stats">';
 	$h .= '<div class="home-hero__stats-title">' . esc_html( $opt( 'home_stats_title', 'Archive at a Glance' ) ) . '</div>';
 	$h .= '<div class="home-hero__stat-grid">';
@@ -63,7 +75,8 @@ function nqa_hero_shortcode() {
 	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $collection_count . '</div><div class="home-hero__stat-label">Collections</div><div class="home-hero__stat-sub">' . esc_html( $opt( 'home_stat_collections_sub', 'Themed, curated sets' ) ) . '</div></div>';
 	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $muni_count . '</div><div class="home-hero__stat-label">Municipalities</div><div class="home-hero__stat-sub">' . esc_html( $opt( 'home_stat_muni_sub', 'Across the Niagara region' ) ) . '</div></div>';
 	$h .= '</div>';
-	$h .= '</div>';
+	$h .= '</div>'; // /home-hero__stats
+	$h .= '</div>'; // /home-hero__aside
 
 	$h .= '</div>'; // /home-hero__inner
 	$h .= '</section>';
