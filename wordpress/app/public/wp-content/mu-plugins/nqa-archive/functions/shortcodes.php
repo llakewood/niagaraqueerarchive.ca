@@ -49,8 +49,8 @@ function nqa_hero_shortcode() {
 	$h .= '<p class="home-hero__lede">' . esc_html( $opt( 'home_hero_lede', "A community project dedicated to cataloguing, curating, and preserving LGBTQ2S+ stories across the Niagara region \xe2\x80\x94 from St.\xc2\xa0Catharines to Fort Erie, Welland to Niagara-on-the-Lake." ) ) . '</p>';
 	$h .= '<div class="home-hero__ctas">';
 	$h .= '<a href="' . $browse_url . '" class="btn btn--primary">' . esc_html( $opt( 'home_cta_1_label', 'Browse the Archive' ) ) . '</a>';
-	$h .= '<a href="' . $cta2_url . '" class="btn btn--ghost">' . esc_html( $opt( 'home_cta_2_label', 'Explore Collections' ) ) . '</a>';
-	$h .= '<a href="' . $tell_url . '" class="btn btn--ghost">' . esc_html( $opt( 'home_cta_3_label', 'Submit Your Story' ) ) . '</a>';
+	$h .= '<a href="' . $cta2_url . '" class="btn btn--outline">' . esc_html( $opt( 'home_cta_2_label', 'Explore Collections' ) ) . '</a>';
+	$h .= '<a href="' . $tell_url . '" class="btn btn--outline">' . esc_html( $opt( 'home_cta_3_label', 'Submit Your Story' ) ) . '</a>';
 	$h .= '</div>';
 	$h .= '</div>';
 

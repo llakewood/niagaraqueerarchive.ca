@@ -289,12 +289,10 @@ function nqa_collections_card_html( array $c, $featured = false ) {
 	$tag     = $url ? 'a' : 'div';
 	$href    = $url ? ' href="' . esc_url( $url ) . '"' : '';
 
+	// Single-line markup: newlines between the inline spans would be turned into
+	// stray <br> tags by wpautop when this shortcode renders inside the_content.
 	ob_start();
-	?>
-	<<?php echo $tag; ?> class="<?php echo esc_attr( $classes ); ?>"<?php echo $href; ?> style="--nqa-accent:<?php echo esc_attr( $accent ); ?>;--nqa-title:<?php echo esc_attr( $title_color ); ?>;">
-		<span class="nqa-col-card__block" aria-hidden="true"></span>
-		<span class="nqa-col-card__body"><?php if ( $featured ) : ?><span class="nqa-col-card__kicker">Featured this week</span><?php endif; ?><span class="nqa-col-card__title"><?php echo esc_html( $c['title'] ); ?></span><?php if ( '' !== trim( (string) $c['desc'] ) ) : ?><span class="nqa-col-card__desc"><?php echo esc_html( $c['desc'] ); ?></span><?php endif; ?><span class="nqa-col-card__count"><?php echo esc_html( $count . ' ' . $noun ); ?></span></span>
-	</<?php echo $tag; ?>><?php
+	?><<?php echo $tag; ?> class="<?php echo esc_attr( $classes ); ?>"<?php echo $href; ?> style="--nqa-accent:<?php echo esc_attr( $accent ); ?>;--nqa-title:<?php echo esc_attr( $title_color ); ?>;"><span class="nqa-col-card__block" aria-hidden="true"></span><span class="nqa-col-card__body"><?php if ( $featured ) : ?><span class="nqa-col-card__kicker">Featured this week</span><?php endif; ?><span class="nqa-col-card__title"><?php echo esc_html( $c['title'] ); ?></span><?php if ( '' !== trim( (string) $c['desc'] ) ) : ?><span class="nqa-col-card__desc"><?php echo esc_html( $c['desc'] ); ?></span><?php endif; ?><span class="nqa-col-card__count"><?php echo esc_html( $count . ' ' . $noun ); ?></span></span></<?php echo $tag; ?>><?php
 	return ob_get_clean();
 }
 

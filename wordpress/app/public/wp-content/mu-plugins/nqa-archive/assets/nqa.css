@@ -1568,7 +1568,7 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	color: var(--nqa-base);
 	border-color: rgba(255,255,255,.4);
 }
-.btn--ghost:hover { background: rgba(255,255,255,.1); border-color: var(--nqa-base); }
+.btn--ghost:hover { background: rgba(255,255,255,1); color: var(--nqa-ink); border-color: var(--nqa-base); }
 .btn--outline {
 	background: var(--nqa-base);
 	color: var(--nqa-ink);
