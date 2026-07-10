@@ -68,10 +68,16 @@ add_action(
 
 		$data = $submission->get_posted_data();
 
-		$name  = sanitize_text_field( $data['your-name'] ?? '' );
-		$title = $name !== ''
-			? $name . ' — ' . current_time( 'Y-m-d' )
-			: 'Anonymous — ' . current_time( 'Y-m-d H:i' );
+		$name        = sanitize_text_field( $data['your-name'] ?? '' );
+		$story_title = sanitize_text_field( $data['story-title'] ?? '' );
+
+		// Prefer the submitter's own Title (form field #61); fall back to the
+		// name + date stamp so the submission is never left untitled.
+		$title = $story_title !== ''
+			? $story_title
+			: ( $name !== ''
+				? $name . ' — ' . current_time( 'Y-m-d' )
+				: 'Anonymous — ' . current_time( 'Y-m-d H:i' ) );
 
 		$post_id = wp_insert_post(
 			array(
@@ -88,6 +94,7 @@ add_action(
 
 		// Store submitted fields as private meta.
 		$meta = array(
+			'_nqa_sub_title'  => $story_title,
 			'_nqa_sub_name'   => $name ?: '(anonymous)',
 			'_nqa_sub_email'  => sanitize_email( $data['your-email'] ?? '' ),
 			'_nqa_sub_phone'  => sanitize_text_field( $data['your-telephone'] ?? '' ),
@@ -174,6 +181,7 @@ function nqa_submission_meta_box( WP_Post $post ) : void {
 	wp_nonce_field( 'nqa_sub_status_save', 'nqa_sub_nonce' );
 
 	$fields = array(
+		'Title'           => get_post_meta( $post->ID, '_nqa_sub_title', true ),
 		'Submitter'       => get_post_meta( $post->ID, '_nqa_sub_name', true ),
 		'Email'           => get_post_meta( $post->ID, '_nqa_sub_email', true ),
 		'Phone'           => get_post_meta( $post->ID, '_nqa_sub_phone', true ),
