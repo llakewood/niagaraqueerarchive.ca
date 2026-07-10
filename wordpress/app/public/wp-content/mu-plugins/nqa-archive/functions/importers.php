@@ -46,11 +46,14 @@ function nqa_create_record_from_submission( int $submission_id, string $type ) {
 	$loc   = get_post_meta( $submission_id, '_nqa_sub_loc', true );
 	$att   = (int) get_post_meta( $submission_id, '_nqa_sub_attachment', true );
 
-	// Title: the submitter's name for a person record; a neutral working title
-	// otherwise (the archivist renames on review).
-	$title = ( 'nqa_person' === $type && $name && '(anonymous)' !== $name )
-		? $name
-		: 'Submission ' . $submission_id . ' — needs a title';
+	// Title: prefer the submitter's own Title, then the submitter's name for a
+	// person record; a neutral working title otherwise (the archivist renames on review).
+	$sub_title = get_post_meta( $submission_id, '_nqa_sub_title', true );
+	$title = $sub_title
+		? $sub_title
+		: ( ( 'nqa_person' === $type && $name && '(anonymous)' !== $name )
+			? $name
+			: 'Submission ' . $submission_id . ' — needs a title' );
 
 	$record_id = wp_insert_post(
 		array(
