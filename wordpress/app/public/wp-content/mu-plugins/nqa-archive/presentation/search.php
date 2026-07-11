@@ -128,12 +128,12 @@ function nqa_search_endpoint( WP_REST_Request $req ) {
 			'id'         => $pid,
 			'type'       => $post_type,
 			'type_label' => $type_label,
-			'title'      => get_the_title(),
-			'excerpt'    => wp_trim_words( get_the_excerpt(), 30, '…' ),
+			'title'      => nqa_decode_entities( get_the_title() ),
+			'excerpt'    => nqa_decode_entities( wp_trim_words( get_the_excerpt(), 30, '…' ) ),
 			'permalink'  => get_permalink(),
-			'muni'       => $muni_name,
-			'collection' => $coll_name,
-			'decades'    => $decade_tags,
+			'muni'       => nqa_decode_entities( $muni_name ),
+			'collection' => nqa_decode_entities( $coll_name ),
+			'decades'    => array_map( 'nqa_decode_entities', $decade_tags ),
 		);
 	}
 	wp_reset_postdata();

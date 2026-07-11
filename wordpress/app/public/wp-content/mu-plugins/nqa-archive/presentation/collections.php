@@ -226,7 +226,7 @@ function nqa_collections_recent( $limit = 6 ) {
 	$out = array();
 	foreach ( $q->posts as $p ) {
 		$out[] = array(
-			'title' => get_the_title( $p ),
+			'title' => nqa_decode_entities( get_the_title( $p ) ),
 			'url'   => get_permalink( $p ),
 			'date'  => get_the_date( 'M Y', $p ),
 		);

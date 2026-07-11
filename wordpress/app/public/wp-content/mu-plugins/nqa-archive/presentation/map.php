@@ -160,7 +160,7 @@ function nqa_map_markers( array $types, array $munis, array $colls ) : array {
 		$type      = get_post_type( $id );
 		$markers[] = array(
 			'id'      => $id,
-			'title'   => get_the_title( $id ),
+			'title'   => nqa_decode_entities( get_the_title( $id ) ),
 			'url'     => get_permalink( $id ),
 			'lat'     => (float) $loc['lat'],
 			'lng'     => (float) $loc['lng'],

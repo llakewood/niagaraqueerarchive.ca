@@ -144,7 +144,7 @@
 			( post.decades || [] ).forEach( d => metaParts.push( d ) );
 
 			const metaHtml = metaParts.length
-				? '<span class="cat-card__meta">' + metaParts.map( m => '<span>' + esc( m ) + '</span>' ).join( '' ) + '</span>'
+				? '<span class="cat-card__meta">' + esc( metaParts.join( ', ' ) ) + '</span>'
 				: '';
 
 			a.innerHTML =

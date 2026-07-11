@@ -135,7 +135,7 @@ function nqa_submission_convert_box( WP_Post $post ) : void {
 			'<p>Draft record created: <strong><a href="%s">%s</a></strong>.</p>'
 			. '<p class="description">Its consent is set to <em>Pending</em>, so it can\'t be published until you record consent.</p>',
 			esc_url( get_edit_post_link( $created ) ),
-			esc_html( get_the_title( $created ) )
+			esc_html( nqa_decode_entities( get_the_title( $created ) ) )
 		);
 		return;
 	}
@@ -209,7 +209,7 @@ add_action(
 				. 'Consent is <strong>Pending</strong> — record consent before publishing.'
 				. '</p></div>',
 				esc_url( get_edit_post_link( (int) $ok ) ),
-				esc_html( get_the_title( (int) $ok ) )
+				esc_html( nqa_decode_entities( get_the_title( (int) $ok ) ) )
 			);
 		}
 

@@ -17,6 +17,17 @@ function nqa_content_types() {
 	return array_merge( array( 'post' ), nqa_entity_post_types() );
 }
 
+/**
+ * Decode the HTML entities that wptexturize et al. bake into titles and
+ * excerpts (curly quotes → &#8217;, en/em dashes, &nbsp;…) back to their real
+ * Unicode characters. Use this on any get_the_title()/get_the_excerpt() value
+ * before it is escaped again with esc_html() or handed to JS: escaping already
+ * escaped content double-encodes it, rendering a literal "&#8217;" on the page.
+ */
+function nqa_decode_entities( $str ) {
+	return html_entity_decode( (string) $str, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+}
+
 /** Normalize an ACF relationship value (ids or post objects) to an int array. */
 function nqa_normalize_ids( $val ) {
 	$val = is_array( $val ) ? $val : ( $val ? array( $val ) : array() );
@@ -125,7 +136,7 @@ function nqa_render_post_links( $ids, $sep = ', ' ) {
 	$links = array();
 	foreach ( $ids as $rid ) {
 		if ( $rid && get_post_status( $rid ) ) {
-			$links[] = '<a href="' . esc_url( get_permalink( $rid ) ) . '">' . esc_html( get_the_title( $rid ) ) . '</a>';
+			$links[] = '<a href="' . esc_url( get_permalink( $rid ) ) . '">' . esc_html( nqa_decode_entities( get_the_title( $rid ) ) ) . '</a>';
 		}
 	}
 	return $links ? implode( $sep, $links ) : '';
