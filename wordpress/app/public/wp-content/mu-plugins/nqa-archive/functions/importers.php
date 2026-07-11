@@ -86,6 +86,13 @@ function nqa_create_record_from_submission( int $submission_id, string $type ) {
 		$record_id
 	);
 
+	// Story / Memory: the contributor is the storyteller. Carry their name (or
+	// credit preference) into the field verbatim; the free-text location is left
+	// for the archivist to set on the map picker (rule #8).
+	if ( 'nqa_story' === $type ) {
+		update_field( 'field_nqa_sty_teller', $name ?: ( $credit ?: '(anonymous)' ), $record_id );
+	}
+
 	// Best-effort municipality match from the free-text location field.
 	if ( $loc ) {
 		$term = get_term_by( 'name', $loc, 'municipality' ) ?: get_term_by( 'slug', sanitize_title( $loc ), 'municipality' );
@@ -143,6 +150,7 @@ function nqa_submission_convert_box( WP_Post $post ) : void {
 	wp_nonce_field( 'nqa_convert', 'nqa_convert_nonce' );
 
 	$labels = array(
+		'nqa_story'  => 'Story / Memory',
 		'nqa_person' => 'Person',
 		'nqa_org'    => 'Organization',
 		'nqa_event'  => 'Event',
@@ -232,6 +240,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			'nqa_org'    => array( 'org_type', 'status', 'founded', 'dissolved', 'website', 'contact_person', 'email', 'phone_number' ),
 			'nqa_place'  => array( 'place_type', 'address', 'years_active', 'still_exists' ),
 			'nqa_event'  => array( 'recurrence', 'start_date', 'end_date' ),
+			'nqa_story'  => array( 'storyteller', 'story_date' ),
 			'post'       => array(),
 		);
 	}

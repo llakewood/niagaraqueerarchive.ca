@@ -53,7 +53,11 @@ add_filter(
 add_action(
 	'add_meta_boxes',
 	function () {
-		foreach ( nqa_archival_note_types() as $pt ) {
+		// Articles + entity CPTs carry the note, plus `nqa_submission` — the
+		// submission Status field explicitly points archivists to "Archivist
+		// notes below" to record their review, so the box must exist there too.
+		$types = array_merge( nqa_archival_note_types(), array( 'nqa_submission' ) );
+		foreach ( $types as $pt ) {
 			add_meta_box(
 				'nqa-archival-note-box',
 				'Archival note (staff only)',
