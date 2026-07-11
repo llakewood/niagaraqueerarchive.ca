@@ -174,6 +174,24 @@ add_action(
 			)
 		);
 
+		// ---- Resource (community directory) ----
+		// A front-facing support-service listing, not an archive record — so it
+		// carries only public contact details (never the personal emails/phones
+		// from the outreach sheet; rule #4) and no provenance/relationship fields.
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_nqa_resource',
+				'title'    => 'Resource details',
+				'location' => $loc( 'nqa_resource' ),
+				'fields'   => array(
+					array( 'key' => 'field_nqa_res_website', 'label' => 'Website', 'name' => 'website', 'type' => 'url' ),
+					array( 'key' => 'field_nqa_res_phone', 'label' => 'Phone', 'name' => 'phone_number', 'type' => 'text', 'instructions' => 'Public service line only.' ),
+					array( 'key' => 'field_nqa_res_email', 'label' => 'Email', 'name' => 'email', 'type' => 'text', 'instructions' => 'Public/general inbox only — never a personal address.' ),
+					array( 'key' => 'field_nqa_res_service_area', 'label' => 'Service area', 'name' => 'service_area', 'type' => 'text', 'instructions' => 'e.g. "Niagara region", "St. Catharines", "Ontario", "Canada-wide".' ),
+				),
+			)
+		);
+
 		// ---- Item Details (core `post` materials) ----
 		// Codified from the former DB-only "Item Details" group (same group +
 		// field keys) so article provenance fields are version-controlled and
