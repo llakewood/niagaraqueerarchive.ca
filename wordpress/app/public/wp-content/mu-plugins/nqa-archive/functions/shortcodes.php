@@ -207,8 +207,8 @@ function nqa_recent_records_shortcode( $atts ) {
 		$post_type  = get_post_type();
 		$type_label = $type_labels[ $post_type ] ?? ucfirst( $post_type );
 		$permalink  = get_permalink();
-		$title      = get_the_title();
-		$excerpt    = wp_trim_words( get_the_excerpt(), 20, '&hellip;' );
+		$title      = nqa_decode_entities( get_the_title() );
+		$excerpt    = nqa_decode_entities( wp_trim_words( get_the_excerpt(), 20, '&hellip;' ) );
 
 		$muni_terms = get_the_terms( get_the_ID(), 'municipality' );
 		$muni       = ( $muni_terms && ! is_wp_error( $muni_terms ) )

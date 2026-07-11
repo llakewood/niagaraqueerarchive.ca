@@ -220,7 +220,7 @@ function nqa_submission_meta_box( WP_Post $post ) : void {
 
 	if ( $att_id ) {
 		$url  = wp_get_attachment_url( $att_id );
-		$name = get_the_title( $att_id );
+		$name = nqa_decode_entities( get_the_title( $att_id ) );
 		if ( $url ) {
 			echo '<p style="margin-bottom:1rem"><strong>Attached file:</strong> '
 				. '<a href="' . esc_url( $url ) . '" target="_blank">' . esc_html( $name ?: basename( $url ) ) . '</a></p>';
