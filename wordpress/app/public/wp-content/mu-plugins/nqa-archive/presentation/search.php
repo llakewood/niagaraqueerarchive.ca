@@ -96,6 +96,7 @@ function nqa_search_endpoint( WP_REST_Request $req ) {
 		'nqa_org'    => 'Organization',
 		'nqa_event'  => 'Event',
 		'nqa_place'  => 'Place',
+		'nqa_story'  => 'Story / Memory',
 	);
 
 	$posts = array();

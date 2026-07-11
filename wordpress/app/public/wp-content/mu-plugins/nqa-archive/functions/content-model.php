@@ -1,9 +1,12 @@
 <?php
 /**
- * The archive's content model: the four entity "authority record" post types
- * (Person / Organization / Event / Place) and the thematic `nqa_collection`
- * taxonomy. Archival materials remain core `post` (classified by format); the
- * shared `municipality` + `post_tag` + `nqa_collection` taxonomies join them.
+ * The archive's content model: the five entity "authority record" post types
+ * (Person / Organization / Event / Place / Story) and the thematic
+ * `nqa_collection` taxonomy. Archival materials remain core `post` (classified by
+ * format); the shared `municipality` + `post_tag` + `nqa_collection` taxonomies
+ * join them. Stories & Memories are first-person accounts — the heart of the
+ * archive — anchored to a time and place like an event, but distinct from
+ * source journalism (`post`).
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -73,6 +76,19 @@ add_action(
 					'description' => 'A place or venue (authority record).',
 					'menu_icon'   => 'dashicons-location',
 					'rewrite'     => array( 'slug' => 'place', 'with_front' => false ),
+				)
+			)
+		);
+
+		register_post_type(
+			'nqa_story',
+			array_merge(
+				$common,
+				array(
+					'labels'      => nqa_cpt_labels( 'Story / Memory', 'Stories & Memories' ),
+					'description' => 'A first-person story or memory — the heart of the archive. Anchored to a time and place, but distinct from source journalism.',
+					'menu_icon'   => 'dashicons-format-quote',
+					'rewrite'     => array( 'slug' => 'story', 'with_front' => false ),
 				)
 			)
 		);

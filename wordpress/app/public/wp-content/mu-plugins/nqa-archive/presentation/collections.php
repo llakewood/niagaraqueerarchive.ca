@@ -69,6 +69,14 @@ function nqa_collections_registry() {
 	}
 
 	$by_theme = array(
+		'stories-memories'      => array(
+			'section' => 'theme',
+			'kind'    => 'cpt',
+			'term'    => 'nqa_story',
+			'title'   => 'Stories & Memories',
+			'desc'    => 'First-person accounts from the community — the heart of the archive, in the tellers\' own words.',
+			'accent'  => $pal['pink'],
+		),
 		'pride-roots'           => array(
 			'section' => 'theme',
 			'kind'    => 'collection',

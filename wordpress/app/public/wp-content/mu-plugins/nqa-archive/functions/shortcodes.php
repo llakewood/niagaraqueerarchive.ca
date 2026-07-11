@@ -185,6 +185,7 @@ function nqa_recent_records_shortcode( $atts ) {
 		'nqa_org'    => 'Organization',
 		'nqa_event'  => 'Event',
 		'nqa_place'  => 'Place',
+		'nqa_story'  => 'Story / Memory',
 	);
 
 	$query = new WP_Query( array(

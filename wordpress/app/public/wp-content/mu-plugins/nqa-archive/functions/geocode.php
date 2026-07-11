@@ -122,7 +122,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				WP_CLI::error( 'ACF is not available.' );
 			}
 
-			$allowed   = array( 'nqa_place', 'nqa_org', 'nqa_event' );
+			$allowed   = array( 'nqa_place', 'nqa_org', 'nqa_event', 'nqa_story' );
 			$type      = $assoc['type'] ?? '';
 			$overwrite = ! empty( $assoc['overwrite'] );
 			$dry       = ! empty( $assoc['dry-run'] );

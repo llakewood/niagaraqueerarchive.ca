@@ -6,7 +6,7 @@
  * Attributes:
  *   municipality  — comma-separated municipality slugs (default: all)
  *   collection    — comma-separated nqa_collection slugs (default: all)
- *   post_type     — comma-separated post types (default: nqa_place,nqa_org,nqa_event)
+ *   post_type     — comma-separated post types (default: nqa_place,nqa_org,nqa_event,nqa_story)
  *   height        — map height in pixels (default: 480)
  *   title         — optional heading above the map
  *
@@ -35,7 +35,7 @@ function nqa_map_render( $atts ) {
 		array(
 			'municipality' => '',
 			'collection'   => '',
-			'post_type'    => 'nqa_place,nqa_org,nqa_event',
+			'post_type'    => 'nqa_place,nqa_org,nqa_event,nqa_story',
 			'height'       => '480',
 			'title'        => '',
 		),
@@ -60,6 +60,7 @@ function nqa_map_render( $atts ) {
 		'nqa_place' => 'Places',
 		'nqa_org'   => 'Organizations',
 		'nqa_event' => 'Events',
+		'nqa_story' => 'Stories & Memories',
 	);
 	$present_types = array_unique( array_column( $markers, 'type' ) );
 	$multi_type    = count( $present_types ) > 1;
@@ -144,6 +145,7 @@ function nqa_map_markers( array $types, array $munis, array $colls ) : array {
 		'nqa_place' => 'Place',
 		'nqa_org'   => 'Organization',
 		'nqa_event' => 'Event',
+		'nqa_story' => 'Story / Memory',
 	);
 
 	$subscriber = current_user_can( 'read' );
@@ -234,11 +236,12 @@ window.nqaInitMaps = function () {
 
 	var STYLE = {$style};
 
-	// NQA palette: violet for places, distinct tones for orgs + events
+	// NQA palette: violet for places, distinct tones for orgs + events + stories
 	var PIN = {
 		nqa_place: { fill: '#503AA8', stroke: '#2b1e6e' },
 		nqa_org:   { fill: '#b44fb4', stroke: '#6d2a6d' },
-		nqa_event: { fill: '#e8b800', stroke: '#7a6200' }
+		nqa_event: { fill: '#e8b800', stroke: '#7a6200' },
+		nqa_story: { fill: '#F6CFF4', stroke: '#503AA8' }
 	};
 
 	function makePinIcon(type) {

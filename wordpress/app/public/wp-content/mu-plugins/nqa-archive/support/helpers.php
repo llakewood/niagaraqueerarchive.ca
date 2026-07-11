@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 /** The entity "authority record" post types (entities only, not materials). */
 function nqa_entity_post_types() {
-	return array( 'nqa_person', 'nqa_org', 'nqa_event', 'nqa_place' );
+	return array( 'nqa_person', 'nqa_org', 'nqa_event', 'nqa_place', 'nqa_story' );
 }
 
 /** All archive content: core `post` (materials) plus the four entity CPTs. */
@@ -49,6 +49,7 @@ function nqa_is_historical( int $post_id ) : bool {
 			return $meta !== '' && ! (bool) $meta;
 
 		case 'nqa_event':
+		case 'nqa_story':
 		case 'post':
 			return true; // archival by nature
 
@@ -87,6 +88,9 @@ function nqa_active_period( int $post_id ) : string {
 			$end   = get_field( 'end_date', $post_id );
 			if ( $start && $end && $start !== $end ) { return $start . ' – ' . $end; }
 			return $start ?: ( $end ?: '' );
+
+		case 'nqa_story':
+			return (string) ( get_field( 'story_date', $post_id ) ?? '' );
 
 		default:
 			return '';

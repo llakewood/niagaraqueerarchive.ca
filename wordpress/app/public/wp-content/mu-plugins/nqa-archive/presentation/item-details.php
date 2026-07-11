@@ -55,6 +55,16 @@ function nqa_field_specs( $post_type ) {
 				array( 'link', 'Link', 'url' ),
 			);
 			break;
+		case 'nqa_story':
+			$specs = array(
+				array( 'storyteller', 'Storyteller', 'text' ),
+				array( 'story_date', 'When', 'text' ),
+				array( 'location', 'Location', 'map' ), // stories are archival by nature
+				array( 'source', 'Source', 'text' ),
+				array( 'citation', 'Citation', 'text' ),
+				array( 'link', 'Link', 'url' ),
+			);
+			break;
 		case 'nqa_place':
 			$specs = array(
 				array( 'place_type', 'Type', 'select' ),

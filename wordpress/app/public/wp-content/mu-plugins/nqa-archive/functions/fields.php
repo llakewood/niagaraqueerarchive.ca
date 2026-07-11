@@ -174,6 +174,26 @@ add_action(
 			)
 		);
 
+		// ---- Story / Memory ----
+		// First-person accounts: the heart of the archive. Like an event, a story
+		// happens at a time and place, so it carries a (flexible) date + a map
+		// location; unlike an event, the emphasis is the teller's own words.
+		acf_add_local_field_group(
+			array(
+				'key'      => 'group_nqa_story',
+				'title'    => 'Story / Memory details',
+				'location' => $loc( 'nqa_story' ),
+				'fields'   => array_merge(
+					array(
+						array( 'key' => 'field_nqa_sty_teller', 'label' => 'Storyteller', 'name' => 'storyteller', 'type' => 'text', 'instructions' => 'Who is telling this story. Withhold private contact details (rule #4).' ),
+						array( 'key' => 'field_nqa_sty_date', 'label' => 'When it happened', 'name' => 'story_date', 'type' => 'text', 'instructions' => 'Free text — a memory can be approximate. e.g. "Summer 1990", "c. 1985", "the late 1970s".' ),
+						array( 'key' => 'field_nqa_sty_loc', 'label' => 'Location', 'name' => 'location', 'type' => 'google_map' ),
+					),
+					$provenance( 'nqa_sty' )
+				),
+			)
+		);
+
 		// ---- Item Details (core `post` materials) ----
 		// Codified from the former DB-only "Item Details" group (same group +
 		// field keys) so article provenance fields are version-controlled and
