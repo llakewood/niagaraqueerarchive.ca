@@ -328,6 +328,29 @@ body.archive .wp-block-post.nqa-hidden { display: none !important; }
 
 /* ── 3. Archive details panel ────────────────────────────────────────────── */
 
+.nqa-featured-image {
+	margin: 0 0 2rem;
+	border: 2px solid var(--nqa-ink);
+	box-shadow: 7px 7px 0 var(--nqa-violet);
+	background: var(--nqa-cream);
+	line-height: 0;
+}
+
+.nqa-featured-image__img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.nqa-featured-image__caption {
+	line-height: 1.5;
+	padding: .7rem 1rem;
+	border-block-start: 2px solid var(--nqa-ink);
+	font-family: var(--nqa-mono);
+	font-size: .78rem;
+	color: var(--nqa-ink);
+}
+
 .nqa-item-details {
 	margin-block-start: 3rem;
 	background: var(--nqa-cream);
@@ -453,6 +476,7 @@ body.archive .wp-block-post.nqa-hidden { display: none !important; }
 .nqa-gated--pending { font-style: italic; color: #555; }
 
 @media (max-width: 480px) {
+	.nqa-featured-image { box-shadow: 4px 4px 0 var(--nqa-violet); }
 	.nqa-item-details { box-shadow: 4px 4px 0 var(--nqa-violet); }
 	.nqa-item-details__row { grid-template-columns: 1fr; gap: .25rem; }
 	.nqa-item-details dt { padding-block-start: 0; }
@@ -2213,7 +2237,7 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 }
 
 /* Body layout */
-.search-body { padding: 2.5rem 2rem 5rem; }
+.search-body { padding: 2.5rem 2rem 3.5rem; }
 .search-body__inner {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -2221,10 +2245,22 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	grid-template-columns: 220px 1fr;
 	gap: 3rem;
 	align-items: start;
+	/* Bound the two-column area to the viewport so neither the filter list nor
+	   the results grow the page — each column scrolls within itself and the
+	   footer sits just below. dvh tracks mobile browser chrome; vh is fallback. */
+	height: calc(100vh - 6rem);
+	height: calc(100dvh - 6rem);
+	min-height: 460px;
 }
 
-/* Sidebar */
-.search-sidebar { position: sticky; top: 1.5rem; }
+/* Sidebar — scrolls internally so every filter stays reachable */
+.search-sidebar {
+	align-self: start;
+	max-height: 100%;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	padding-right: .5rem;
+}
 
 .search-filter-group { margin-bottom: 1.75rem; }
 
@@ -2268,6 +2304,13 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 .search-chip:focus-visible { outline: 3px solid var(--nqa-yellow); outline-offset: 2px; }
 
 /* Results pane */
+.search-results {
+	display: flex;
+	flex-direction: column;
+	max-height: 100%;
+	min-height: 0;
+}
+
 .search-results__head {
 	display: flex;
 	align-items: center;
@@ -2297,7 +2340,22 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 }
 .search-results__sort:focus-visible { outline: 3px solid var(--nqa-yellow); outline-offset: 2px; }
 
-.search-results__list { display: flex; flex-direction: column; gap: 1rem; }
+.search-results__head { flex: 0 0 auto; }
+
+.search-results__list {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	/* Fill the remaining pane height and scroll within, instead of growing the
+	   page. flex-shrink + min-height:0 lets it clip below its content height. */
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	/* Room for the scrollbar and the cards' offset drop-shadows so the internal
+	   overflow doesn't clip them (overflow-y:auto also clips overflow-x). */
+	padding: .25rem .85rem 1rem .35rem;
+}
 
 /* Status messages */
 .search-empty,
@@ -2326,14 +2384,27 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 
 /* Responsive: Search */
 @media (max-width: 900px) {
+	/* Stack columns and return to natural page flow — the filters sit above the
+	   results, so the viewport-bounding is not needed. The results list keeps a
+	   viewport cap so it still scrolls within itself rather than running long. */
 	.search-body__inner {
 		grid-template-columns: 1fr;
+		height: auto;
+		min-height: 0;
 	}
 	.search-sidebar {
-		position: static;
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: 1rem 2rem;
+		max-height: none;
+		overflow: visible;
+		padding-right: 0;
+	}
+	.search-results { max-height: none; }
+	.search-results__list {
+		flex: 0 1 auto;
+		max-height: calc(100vh - 9rem);
+		max-height: calc(100dvh - 9rem);
 	}
 }
 @media (max-width: 600px) {

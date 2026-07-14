@@ -215,10 +215,33 @@ function nqa_render_item_details( $post_id ) {
 	return $out;
 }
 
+/** Featured image for a single record, shown above the body when one is set. */
+function nqa_render_featured_image( $post_id ) {
+	if ( ! has_post_thumbnail( $post_id ) ) {
+		return '';
+	}
+	$img = get_the_post_thumbnail(
+		$post_id,
+		'large',
+		array( 'class' => 'nqa-featured-image__img', 'loading' => 'eager' )
+	);
+	if ( '' === $img ) {
+		return '';
+	}
+	$caption = wp_get_attachment_caption( get_post_thumbnail_id( $post_id ) );
+	$fig     = '<figure class="nqa-featured-image">' . $img;
+	if ( $caption ) {
+		$fig .= '<figcaption class="nqa-featured-image__caption">' . esc_html( $caption ) . '</figcaption>';
+	}
+	$fig .= '</figure>';
+	return $fig;
+}
+
 add_filter(
 	'the_content',
 	function ( $content ) {
 		if ( is_singular( nqa_content_types() ) && in_the_loop() && is_main_query() ) {
+			$content  = nqa_render_featured_image( get_the_ID() ) . $content;
 			$content .= nqa_render_item_details( get_the_ID() );
 		}
 		return $content;
