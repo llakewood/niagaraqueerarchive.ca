@@ -149,9 +149,11 @@ function nqa_hero_upcoming_events( callable $opt ) : string {
 
 	$h  = '<div class="home-hero__events">';
 	$h .= '<div class="home-hero__events-title">' . esc_html( $opt( 'home_events_title', 'Upcoming Events' ) ) . '</div>';
+	$add_url = esc_url( home_url( '/list-an-event/' ) );
 	$h .= $cards
 		? $cards
-		: '<p class="home-hero__events-empty">' . esc_html( $opt( 'home_events_empty', 'No upcoming events scheduled just yet.' ) ) . '</p>';
+		: '<p class="home-hero__events-empty">' . esc_html( $opt( 'home_events_empty', 'No upcoming events scheduled just yet.' ) )
+			. ' <a class="home-hero__events-link" href="' . $add_url . '">' . esc_html( $opt( 'home_events_add', 'Add an event.' ) ) . '</a></p>';
 	$h .= '<a class="home-hero__events-link" href="' . $events_url . '">' . esc_html( $opt( 'home_events_link', "See all Upcoming Events \xe2\x86\x92" ) ) . '</a>';
 	$h .= '</div>';
 

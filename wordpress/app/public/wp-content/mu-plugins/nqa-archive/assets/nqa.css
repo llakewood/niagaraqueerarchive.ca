@@ -1845,7 +1845,7 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	text-decoration: none;
 	border-bottom: 1px solid transparent;
 }
-.home-hero__events-link:hover { border-bottom-color: var(--nqa-yellow); }
+.home-hero__events-link:hover { color: var(--nqa-base); border-bottom-color: var(--nqa-base); }
 .home-hero__events-link:focus-visible { outline: 2px solid var(--nqa-yellow); outline-offset: 2px; }
 
 /* Principles strip */
