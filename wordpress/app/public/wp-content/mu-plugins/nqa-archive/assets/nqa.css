@@ -1616,23 +1616,6 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 	gap: 4rem;
 	align-items: center;
 }
-.home-hero__tag {
-	font-family: 'Space Mono', 'Courier New', monospace;
-	font-weight: 700;
-	letter-spacing: .2em;
-	text-transform: uppercase;
-	color: var(--nqa-yellow);
-	margin-bottom: 1.25rem;
-	display: flex;
-	align-items: center;
-	gap: .6rem;
-}
-.home-hero__tag::before {
-	content: "";
-	width: 2rem;
-	height: .4rem;
-	background: linear-gradient(90deg, var(--nqa-yellow) 0 33%, var(--nqa-pink) 0 66%, rgba(255,255,255,.3) 0);
-}
 .home-hero h1 {
 	font-family: 'Fraunces', Georgia, serif;
 	font-size: clamp(2.5rem, 5vw, 4.2rem);
