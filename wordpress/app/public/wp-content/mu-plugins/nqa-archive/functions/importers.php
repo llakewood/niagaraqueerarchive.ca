@@ -179,8 +179,17 @@ add_action(
 			return; // already converted
 		}
 
-		$type   = sanitize_key( $_POST['nqa_convert_type'] ?? '' );
-		$result = nqa_create_record_from_submission( $post_id, $type );
+		$type = sanitize_key( $_POST['nqa_convert_type'] ?? '' );
+
+		// Event submissions carry structured date/venue/organizer fields; route them
+		// through the event converter so those map across. Manual conversion always
+		// produces a draft (consent Pending) — auto-publish only happens on submission
+		// by a trusted organizer (see events.php).
+		if ( 'nqa_event' === $type && 'event' === get_post_meta( $post_id, '_nqa_sub_kind', true ) ) {
+			$result = nqa_create_event_from_submission( $post_id, false );
+		} else {
+			$result = nqa_create_record_from_submission( $post_id, $type );
+		}
 
 		if ( is_wp_error( $result ) ) {
 			set_transient( 'nqa_convert_err_' . get_current_user_id(), $result->get_error_message(), 60 );
@@ -231,7 +240,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			'nqa_person' => array( 'pronouns', 'born', 'died', 'aliases', 'roles' ),
 			'nqa_org'    => array( 'org_type', 'status', 'founded', 'dissolved', 'website', 'contact_person', 'email', 'phone_number' ),
 			'nqa_place'  => array( 'place_type', 'address', 'years_active', 'still_exists' ),
-			'nqa_event'  => array( 'recurrence', 'start_date', 'end_date' ),
+			'nqa_event'  => array( 'recurrence', 'start_date', 'end_date', 'organizer', 'submitted_address' ),
 			'post'       => array(),
 		);
 	}

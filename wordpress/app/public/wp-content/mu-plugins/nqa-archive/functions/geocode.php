@@ -58,7 +58,8 @@ function nqa_geocode_query_string( string $query ) {
 }
 
 /**
- * Build the geocode query for a record: prefer the `address` field (places),
+ * Build the geocode query for a record: prefer an address text field (place's
+ * `address`, or an event's `submitted_address` from a community submission), and
  * fall back to title + municipality.
  *
  * @return array{query:string,source:string}
@@ -70,14 +71,17 @@ function nqa_geocode_build_query( int $id ) : array {
 		? $muni_terms[0] . ', Ontario, Canada'
 		: 'Niagara Region, Ontario, Canada';
 
-	if ( 'nqa_place' === get_post_type( $id ) ) {
-		$address = (string) get_field( 'address', $id );
+	$type       = get_post_type( $id );
+	$addr_field = 'nqa_place' === $type ? 'address' : ( 'nqa_event' === $type ? 'submitted_address' : '' );
+
+	if ( $addr_field ) {
+		$address = (string) get_field( $addr_field, $id );
 		if ( trim( $address ) !== '' ) {
 			$q = trim( $address );
 			if ( stripos( $q, 'ontario' ) === false && stripos( $q, $muni_terms[0] ?? '' ) === false ) {
 				$q .= ', ' . $muni;
 			}
-			return array( 'query' => $q, 'source' => 'address field' );
+			return array( 'query' => $q, 'source' => $addr_field . ' field' );
 		}
 	}
 

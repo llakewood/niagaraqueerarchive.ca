@@ -46,6 +46,7 @@ $nqa_modules = array(
 	'functions/leads.php',
 	'functions/importers.php',
 	'functions/submissions.php',
+	'functions/events.php',
 	'functions/newsletter.php',
 	'functions/forms.php',
 	'functions/shortcodes.php',
