@@ -65,6 +65,11 @@ add_action(
 				array( 'key' => 'field_nqa_opt_stat3_sub',    'label' => 'Collections — subtitle',    'name' => 'home_stat_collections_sub','type' => 'text', 'default_value' => 'Themed, curated sets' ),
 				array( 'key' => 'field_nqa_opt_stat4_sub',    'label' => 'Municipalities — subtitle', 'name' => 'home_stat_muni_sub',       'type' => 'text', 'default_value' => 'Across the Niagara region' ),
 
+				array( 'key' => 'field_nqa_opt_events_title', 'label' => 'Upcoming events — heading',   'name' => 'home_events_title', 'type' => 'text', 'default_value' => 'Upcoming Events' ),
+				array( 'key' => 'field_nqa_opt_events_empty', 'label' => 'Upcoming events — empty note', 'name' => 'home_events_empty', 'type' => 'text', 'default_value' => 'No upcoming events scheduled just yet.' ),
+				array( 'key' => 'field_nqa_opt_events_link',  'label' => 'Upcoming events — link label', 'name' => 'home_events_link',  'type' => 'text', 'default_value' => 'See all Upcoming Events →' ),
+				array( 'key' => 'field_nqa_opt_events_url',   'label' => 'Upcoming events — link URL',   'name' => 'home_events_url',   'type' => 'url',  'instructions' => 'Leave blank to use the Events archive.' ),
+
 				// ─ Principles section ─────────────────────────────────────────
 				array( 'key' => 'field_nqa_opt_tab_principles', 'label' => 'Homepage — Principles', 'name' => '', 'type' => 'tab', 'placement' => 'top' ),
 
