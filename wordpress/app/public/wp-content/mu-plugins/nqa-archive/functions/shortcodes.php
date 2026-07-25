@@ -57,7 +57,6 @@ function nqa_hero_shortcode() {
 
 	// Left column.
 	$h .= '<div>';
-	$h .= '<div class="home-hero__tag">' . esc_html( $opt( 'home_hero_tag', "Niagara, Ontario \xe2\x80\x94 Est. 2025" ) ) . '</div>';
 	$h .= '<h1>' . esc_html( $opt( 'home_hero_heading', "Preserving Niagara\xe2\x80\x99s Queer past \xe2\x80\x94 celebrating our living history." ) ) . '</h1>';
 	$h .= '<p class="home-hero__lede">' . esc_html( $opt( 'home_hero_lede', "A community project dedicated to cataloguing, curating, and preserving LGBTQ2S+ stories across the Niagara region \xe2\x80\x94 from St.\xc2\xa0Catharines to Fort Erie, Welland to Niagara-on-the-Lake." ) ) . '</p>';
 	$h .= '<div class="home-hero__ctas">';
