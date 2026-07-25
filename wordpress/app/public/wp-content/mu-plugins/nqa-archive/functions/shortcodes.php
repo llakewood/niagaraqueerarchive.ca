@@ -102,7 +102,7 @@ function nqa_hero_shortcode() {
  * @param callable $opt Site-copy reader from the hero shortcode.
  */
 function nqa_hero_upcoming_events( callable $opt ) : string {
-	$events_url = esc_url( $opt( 'home_events_url' ) ?: home_url( '/nqa_event/' ) );
+	$events_url = esc_url( $opt( 'home_events_url' ) ?: get_post_type_archive_link( 'nqa_event' ) ?: home_url( '/event/' ) );
 
 	$query = new WP_Query( array(
 		'post_type'           => 'nqa_event',
