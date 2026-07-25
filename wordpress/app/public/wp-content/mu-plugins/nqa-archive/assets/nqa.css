@@ -1604,7 +1604,7 @@ body.archive .wp-block-query .wp-block-post-terms a:hover {
 .home-hero {
 	background: var(--nqa-violet);
 	border-bottom: 2px solid var(--nqa-ink);
-	padding: 5rem 2rem 4.5rem;
+	padding: 1rem 2rem 4.5rem;
 	position: relative;
 	overflow: hidden;
 }
