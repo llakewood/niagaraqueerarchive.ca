@@ -131,6 +131,7 @@ add_action(
 						array( 'key' => 'field_nqa_evt_recur', 'label' => 'Recurrence', 'name' => 'recurrence', 'type' => 'text', 'instructions' => 'e.g. Annual.' ),
 						array( 'key' => 'field_nqa_evt_org', 'label' => 'Organizer', 'name' => 'organizer', 'type' => 'relationship', 'post_type' => array( 'nqa_org' ), 'return_format' => 'id' ),
 						array( 'key' => 'field_nqa_evt_venue', 'label' => 'Venue', 'name' => 'venue', 'type' => 'relationship', 'post_type' => array( 'nqa_place' ), 'return_format' => 'id' ),
+						array( 'key' => 'field_nqa_evt_submitted_address', 'label' => 'Address (as submitted)', 'name' => 'submitted_address', 'type' => 'text', 'instructions' => 'Raw location from a community event submission. Shown on the page and used by wp nqa geocode to seed the pin; clear it once you have linked a Venue place or set the map.' ),
 						array( 'key' => 'field_nqa_evt_loc', 'label' => 'Location', 'name' => 'location', 'type' => 'google_map' ),
 					),
 					$provenance( 'nqa_evt' )

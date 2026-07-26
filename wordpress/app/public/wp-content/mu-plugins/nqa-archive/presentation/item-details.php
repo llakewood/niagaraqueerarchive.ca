@@ -49,7 +49,8 @@ function nqa_field_specs( $post_type ) {
 				array( 'recurrence', 'Recurrence', 'text' ),
 				array( 'organizer', 'Organizer', 'rel' ),
 				array( 'venue', 'Venue', 'rel' ),
-				array( 'location', 'Location', 'map' ), // events are always historical
+				array( 'submitted_address', 'Where', 'text' ), // raw address until a Venue/pin is set
+				array( 'location', 'Location', 'map' ),
 				array( 'source', 'Source', 'text' ),
 				array( 'citation', 'Citation', 'text' ),
 				array( 'link', 'Link', 'url' ),
@@ -196,12 +197,20 @@ function nqa_render_item_details( $post_id ) {
 		return '';
 	}
 
-	// Historical badge: shown when the record is categorically past.
-	$era = '';
-	if ( nqa_is_historical( $post_id ) ) {
-		$period = nqa_active_period( $post_id );
-		$era    = '<div class="nqa-item-details__era">'
-			. '<span class="nqa-item-details__era-label">Historical record</span>'
+	// Era badge. An event that hasn't happened yet is flagged "Upcoming"; once its
+	// date passes it is simply a past record. Everything else categorically past
+	// gets the "Historical record" badge.
+	$era    = '';
+	$period = nqa_active_period( $post_id );
+	if ( nqa_event_is_upcoming( $post_id ) ) {
+		$era = '<div class="nqa-item-details__era nqa-item-details__era--upcoming">'
+			. '<span class="nqa-item-details__era-label">Upcoming event</span>'
+			. ( $period ? '<span class="nqa-item-details__era-period">' . esc_html( $period ) . '</span>' : '' )
+			. '</div>';
+	} elseif ( nqa_is_historical( $post_id ) ) {
+		$label = ( 'nqa_event' === get_post_type( $post_id ) ) ? 'Past event' : 'Historical record';
+		$era   = '<div class="nqa-item-details__era">'
+			. '<span class="nqa-item-details__era-label">' . esc_html( $label ) . '</span>'
 			. ( $period ? '<span class="nqa-item-details__era-period">' . esc_html( $period ) . '</span>' : '' )
 			. '</div>';
 	}

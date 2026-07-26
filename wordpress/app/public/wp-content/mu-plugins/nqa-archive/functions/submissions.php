@@ -366,7 +366,10 @@ add_action(
 add_action(
 	'wp_footer',
 	function () : void {
-		if ( ! is_page( 49 ) ) {
+		// Runs on both intake pages: Tell Your Story (#49) and List an Event
+		// (slug `list-an-event`). The safety prompt and thank-you panel are generic
+		// to any CF7 submission on these pages.
+		if ( ! is_page( array( 49, 'list-an-event' ) ) ) {
 			return;
 		}
 

@@ -50,7 +50,6 @@ function nqa_hero_shortcode() {
 	$browse_url = esc_url( $opt( 'home_cta_1_url' ) ?: home_url( '/search/' ) );
 	$cta2_url   = esc_url( $opt( 'home_cta_2_url' ) ?: home_url( '/collections/' ) );
 	$tell_url   = esc_url( $opt( 'home_cta_3_url' ) ?: home_url( '/tell/' ) );
-	$search_url = esc_url( home_url( '/search/' ) );
 
 	$h  = '<section class="home-hero">';
 	$h .= '<div class="home-hero__inner">';
@@ -67,17 +66,8 @@ function nqa_hero_shortcode() {
 	$h .= '</div>';
 	$h .= '</div>';
 
-	// Right column: search bar + live stats.
+	// Right column: live stats + upcoming events.
 	$h .= '<div class="home-hero__aside">';
-
-	// Search bar — submits to the Search page (?q=…), which honours the query on load.
-	$h .= '<form class="home-hero__search" role="search" method="get" action="' . $search_url . '">';
-	$h .= '<label class="home-hero__search-label" for="nqa-hero-search">' . esc_html( $opt( 'home_search_label', 'Search the archive' ) ) . '</label>';
-	$h .= '<div class="home-hero__search-bar">';
-	$h .= '<input type="search" id="nqa-hero-search" name="q" class="home-hero__search-input" placeholder="' . esc_attr( $opt( 'home_search_placeholder', "People, places, orgs, events\xe2\x80\xa6" ) ) . '" autocomplete="off">';
-	$h .= '<button type="submit" class="home-hero__search-btn">Search</button>';
-	$h .= '</div>';
-	$h .= '</form>';
 
 	$h .= '<div class="home-hero__stats">';
 	$h .= '<div class="home-hero__stats-title">' . esc_html( $opt( 'home_stats_title', 'Archive at a Glance' ) ) . '</div>';
@@ -89,10 +79,83 @@ function nqa_hero_shortcode() {
 	$h .= '<div class="home-hero__stat"><div class="home-hero__stat-n">' . $muni_count . '</div><div class="home-hero__stat-label">Municipalities</div><div class="home-hero__stat-sub">' . esc_html( $opt( 'home_stat_muni_sub', 'Across the Niagara region' ) ) . '</div></div>';
 	$h .= '</div>';
 	$h .= '</div>'; // /home-hero__stats
+
+	// Upcoming events feed (up to 3), pulled from published nqa_event start dates.
+	$h .= nqa_hero_upcoming_events( $opt );
+
 	$h .= '</div>'; // /home-hero__aside
 
 	$h .= '</div>'; // /home-hero__inner
 	$h .= '</section>';
+
+	return $h;
+}
+
+/**
+ * Upcoming-events panel for the hero aside.
+ *
+ * Lists up to 3 published events whose `start_date` (Y-m-d) is today or later,
+ * soonest first, each linking to its record, plus a "see all" link to the event
+ * archive. Renders the panel header + link even when nothing is scheduled so the
+ * aside stays balanced with the stats panel above it.
+ *
+ * @param callable $opt Site-copy reader from the hero shortcode.
+ */
+function nqa_hero_upcoming_events( callable $opt ) : string {
+	$events_url = esc_url( $opt( 'home_events_url' ) ?: get_post_type_archive_link( 'nqa_event' ) ?: home_url( '/event/' ) );
+
+	$query = new WP_Query( array(
+		'post_type'           => 'nqa_event',
+		'post_status'         => 'publish',
+		'posts_per_page'      => 3,
+		'meta_key'            => 'start_date',
+		'orderby'             => 'meta_value',
+		'order'               => 'ASC',
+		'ignore_sticky_posts' => true,
+		'meta_query'          => array(
+			array(
+				'key'     => 'start_date',
+				'value'   => current_time( 'Y-m-d' ),
+				'compare' => '>=',
+				'type'    => 'DATE',
+			),
+		),
+	) );
+
+	$cards = '';
+	while ( $query->have_posts() ) {
+		$query->the_post();
+
+		$start = (string) get_field( 'start_date' ); // Y-m-d
+		$ts    = $start ? strtotime( $start ) : false;
+		$date  = $ts
+			? '<span class="home-hero__event-date"><em>' . esc_html( date_i18n( 'M', $ts ) ) . '</em><b>' . esc_html( date_i18n( 'j', $ts ) ) . '</b></span>'
+			: '';
+
+		$venue_terms = get_the_terms( get_the_ID(), 'municipality' );
+		$venue       = ( $venue_terms && ! is_wp_error( $venue_terms ) )
+			? esc_html( $venue_terms[0]->name )
+			: '';
+
+		$cards .= sprintf(
+			'<a class="home-hero__event" href="%s">%s<span class="home-hero__event-body"><span class="home-hero__event-title">%s</span>%s</span></a>',
+			esc_url( get_permalink() ),
+			$date,
+			esc_html( nqa_decode_entities( get_the_title() ) ),
+			$venue ? '<span class="home-hero__event-meta">' . $venue . '</span>' : ''
+		);
+	}
+	wp_reset_postdata();
+
+	$h  = '<div class="home-hero__events">';
+	$h .= '<div class="home-hero__events-title">' . esc_html( $opt( 'home_events_title', 'Upcoming Events' ) ) . '</div>';
+	$add_url = esc_url( home_url( '/list-an-event/' ) );
+	$h .= $cards
+		? $cards
+		: '<p class="home-hero__events-empty">' . esc_html( $opt( 'home_events_empty', 'No upcoming events scheduled just yet.' ) )
+			. ' <a class="home-hero__events-link" href="' . $add_url . '">' . esc_html( $opt( 'home_events_add', 'Add an event.' ) ) . '</a></p>';
+	$h .= '<a class="home-hero__events-link" href="' . $events_url . '">' . esc_html( $opt( 'home_events_link', "See all Upcoming Events \xe2\x86\x92" ) ) . '</a>';
+	$h .= '</div>';
 
 	return $h;
 }

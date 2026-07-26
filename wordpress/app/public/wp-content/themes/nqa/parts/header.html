@@ -1,5 +1,15 @@
 <!-- wp:html -->
-<div class="site-stripe" aria-hidden="true"></div>
+<div class="topbar">
+	<div class="topbar__inner">
+		<form class="topbar__search" role="search" method="get" action="/search/">
+			<input type="search" name="q" class="topbar__search-input" placeholder="Search the archive…" aria-label="Search the archive" autocomplete="off">
+			<button type="submit" class="topbar__search-btn">Search</button>
+		</form>
+		<nav class="topbar__links" aria-label="Utility navigation">
+			<a href="/contact-us/">Contact</a>
+		</nav>
+	</div>
+</div>
 <header class="site-header">
 	<div class="site-header__inner">
 		<a href="/" class="site-header__logo" aria-label="Niagara Queer Archive – home">
@@ -7,14 +17,11 @@
 			<div class="site-header__logo-text">Niagara Queer Archive<span>Niagara, Canada</span></div>
 			<!-- <img class="site-header__logo-mark" aria-hidden="true" src="/wp-content/themes/nqa/parts/nqa-logo.png" /> -->
 		</a>
-		<nav class="site-nav" aria-label="Site navigation">
-			<a href="/about/">About</a>
-			<a href="/collections/">Collections</a>
-			<a href="/search/">Search</a>
-			<a href="/tell/">Tell Your Story</a>
-			<a href="/resources/">Resources</a>
-			<a href="/contact-us/">Contact</a>
-		</nav>
+<!-- /wp:html -->
+
+<!-- wp:shortcode -->[nqa_menu location="nqa-header" nav_class="site-nav" aria="Site navigation" list_class="site-nav__list"]<!-- /wp:shortcode -->
+
+<!-- wp:html -->
 	</div>
 </header>
 <!-- /wp:html -->

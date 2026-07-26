@@ -69,6 +69,32 @@ function nqa_is_historical( int $post_id ) : bool {
 }
 
 /**
+ * True when an event has not happened yet — its end date (or start date, if no
+ * end) is today or later. A community-submitted event is "upcoming" (promo) until
+ * that moment, then simply an archival record of a past event; the DB never
+ * changes, only the label. Recurring events (a `recurrence` value) are never
+ * treated as past. Returns false for non-events and events with no dates.
+ */
+function nqa_event_is_upcoming( int $post_id ) : bool {
+	if ( 'nqa_event' !== get_post_type( $post_id ) ) {
+		return false;
+	}
+	if ( trim( (string) get_field( 'recurrence', $post_id ) ) !== '' ) {
+		return true;
+	}
+	// ACF date_picker (return_format Y-m-d) → compare on date only, in site time.
+	// Normalize both sides to YYYYMMDD so the check is timezone-stable at midnight.
+	$end   = (string) get_field( 'end_date', $post_id );
+	$start = (string) get_field( 'start_date', $post_id );
+	$when  = $end ?: $start;
+	if ( $when === '' ) {
+		return false;
+	}
+	$when_ts = strtotime( $when );
+	return $when_ts && gmdate( 'Ymd', $when_ts ) >= current_time( 'Ymd' );
+}
+
+/**
  * Human-readable active period derived from existing date fields.
  * Returns '' when no date data is available.
  */
