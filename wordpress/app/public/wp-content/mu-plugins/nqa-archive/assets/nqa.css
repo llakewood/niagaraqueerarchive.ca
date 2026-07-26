@@ -1287,6 +1287,15 @@ html.nqa-view-list .nqa-col-card--featured .nqa-col-card__body { flex-wrap: wrap
 	gap: 0;
 }
 
+.site-nav__list {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
 .site-nav a {
 	display: block;
 	padding: 0 1rem;
@@ -1305,9 +1314,9 @@ html.nqa-view-list .nqa-col-card--featured .nqa-col-card__body { flex-wrap: wrap
 }
 
 .site-nav a:hover { color: var(--nqa-base); background: rgba(255,255,255,.1); }
-.site-nav a.current-menu-item,
+.site-nav .current-menu-item > a,
 .site-nav a[aria-current="page"] { color: var(--nqa-yellow); }
-.site-nav a:last-child { border-right: 1px solid rgba(255,255,255,.15); }
+.site-nav__list li:last-child a { border-right: 1px solid rgba(255,255,255,.15); }
 .site-nav a:focus-visible { outline: 3px solid var(--nqa-yellow); outline-offset: -3px; }
 
 /* Site footer */
