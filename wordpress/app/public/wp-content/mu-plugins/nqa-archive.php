@@ -52,6 +52,7 @@ $nqa_modules = array(
 	'functions/shortcodes.php',
 	// Presentation — front-end views, pages, panels.
 	'presentation/navigation.php',
+	'presentation/calendar.php',
 	'presentation/item-details.php',
 	'presentation/collections.php',
 	'presentation/resources.php',
