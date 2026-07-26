@@ -42,7 +42,6 @@ add_action(
 				// ─ Homepage hero ─────────────────────────────────────────────
 				array( 'key' => 'field_nqa_opt_tab_hero', 'label' => 'Homepage — Hero', 'name' => '', 'type' => 'tab', 'placement' => 'top' ),
 
-				array( 'key' => 'field_nqa_opt_hero_tag',     'label' => 'Location tag', 'name' => 'home_hero_tag',     'type' => 'text',     'default_value' => 'Niagara, Ontario — Est. 2025', 'instructions' => 'Small label shown above the headline.' ),
 				array( 'key' => 'field_nqa_opt_hero_heading', 'label' => 'Headline',     'name' => 'home_hero_heading', 'type' => 'text',     'default_value' => 'Preserving Niagara\'s Queer past — celebrating our living history.' ),
 				array( 'key' => 'field_nqa_opt_hero_lede',    'label' => 'Lede',         'name' => 'home_hero_lede',    'type' => 'textarea', 'rows' => 3, 'default_value' => 'A community project dedicated to cataloguing, curating, and preserving LGBTQ2S+ stories across the Niagara region — from St. Catharines to Fort Erie, Welland to Niagara-on-the-Lake.' ),
 
