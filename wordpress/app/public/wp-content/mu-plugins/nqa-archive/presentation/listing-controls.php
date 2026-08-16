@@ -23,6 +23,12 @@ add_action(
 		if ( $q->is_archive() ) {
 			$q->set( 'posts_per_page', 200 );
 		}
+		// People read as a name list, so order them A–Z by title rather than by
+		// the date the record happened to be seeded.
+		if ( $q->is_post_type_archive( 'nqa_person' ) ) {
+			$q->set( 'orderby', 'title' );
+			$q->set( 'order', 'ASC' );
+		}
 	}
 );
 
