@@ -21,14 +21,20 @@ jobs:
         with:
           php-version: '8.2'
 
+      # Lint themes AND mu-plugins: all the custom code lives in mu-plugins, so
+      # linting only the theme would let a fatal parse error deploy to production.
       - name: PHP lint (syntax check all tracked PHP)
         run: |
-          THEMES=wordpress/app/public/wp-content/themes
-          if [ -d "$THEMES" ]; then
-            find "$THEMES" -name '*.php' -print0 | xargs -0 -r -I{} php -l "{}"
-          else
-            echo "No theme files yet — nothing to lint."
-          fi
+          CONTENT=wordpress/app/public/wp-content
+          FOUND=0
+          for DIR in "$CONTENT/themes" "$CONTENT/mu-plugins"; do
+            if [ -d "$DIR" ]; then
+              echo "Linting $DIR"
+              find "$DIR" -name '*.php' -print0 | xargs -0 -r -I{} php -l "{}"
+              FOUND=1
+            fi
+          done
+          [ "$FOUND" = "1" ] || echo "No PHP to lint yet."
 
   deploy:
     name: Deploy to production

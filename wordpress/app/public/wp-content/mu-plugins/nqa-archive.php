@@ -62,6 +62,7 @@ $nqa_modules = array(
 	'presentation/map.php',
 	'presentation/search.php',
 	'presentation/tell.php',
+	'presentation/list-event.php',
 	'presentation/contact.php',
 	'presentation/privacy.php',
 );

@@ -215,6 +215,43 @@ add_action(
 			),
 		) );
 
+		// ── List an Event page ────────────────────────────────────────────────
+
+		acf_add_local_field_group( array(
+			'key'      => 'group_nqa_list_event',
+			'title'    => 'List an Event content',
+			'location' => array( array( array(
+				'param'    => 'page_template',
+				'operator' => '==',
+				'value'    => 'page-list-an-event',
+			) ) ),
+			'fields'   => array(
+				// Hero
+				array( 'key' => 'field_nqa_evt_h1',   'label' => 'Hero heading', 'name' => 'evt_hero_heading', 'type' => 'text',     'default_value' => 'List an event.' ),
+				array( 'key' => 'field_nqa_evt_lede', 'label' => 'Hero lede',    'name' => 'evt_hero_lede',    'type' => 'textarea', 'rows' => 3, 'default_value' => 'Running something for Niagara\'s LGBTQ2S+ communities — a Pride event, a fundraiser, a meet-up, a performance? Tell us, and it gets a page here. The listing promotes the event now, and stays on as part of the record once the date passes.' ),
+				// Sidebar
+				array( 'key' => 'field_nqa_evt_sb_h',     'label' => 'Sidebar heading',    'name' => 'evt_sidebar_heading', 'type' => 'text',     'default_value' => 'Before you submit' ),
+				array( 'key' => 'field_nqa_evt_sb_body',  'label' => 'Sidebar intro',      'name' => 'evt_sidebar_body',    'type' => 'textarea', 'rows' => 3, 'default_value' => 'Every listing becomes a permanent, linkable page — which matters most when an event has no other home online. Share it, print the link, and it keeps working after the event is over.' ),
+				array( 'key' => 'field_nqa_evt_sb_items', 'label' => 'Sidebar list items', 'name' => 'evt_sidebar_items',   'type' => 'textarea', 'rows' => 6, 'instructions' => 'One item per line. HTML allowed (e.g. <strong>Label</strong> Body text).', 'default_value' => "<strong>Upcoming events only</strong> This form is for events that haven't happened yet. For a past event you remember, use <a href=\"/tell/\">Tell Your Story</a> instead.\n<strong>A location is required</strong> We need a venue or address to place the event on the map and the calendar.\n<strong>An archivist reviews first</strong> Listings are read before they go live, usually within a few days. Regular organizers can be set up to publish directly — just ask.\n<strong>Only list what's yours to list</strong> Submit events you organize, or have permission to publicize." ),
+				// Form column
+				array( 'key' => 'field_nqa_evt_form_h', 'label' => 'Form heading', 'name' => 'evt_form_heading', 'type' => 'text', 'default_value' => 'Event details' ),
+				// FAQ
+				array( 'key' => 'field_nqa_evt_faq_h',  'label' => 'FAQ heading',      'name' => 'evt_faq_heading',    'type' => 'text', 'default_value' => 'Frequently Asked Questions' ),
+				array( 'key' => 'field_nqa_evt_faq_1q', 'label' => 'FAQ 1 — question', 'name' => 'evt_faq_1_question', 'type' => 'text', 'default_value' => 'What kinds of events can I list?' ),
+				array( 'key' => 'field_nqa_evt_faq_1a', 'label' => 'FAQ 1 — answer',   'name' => 'evt_faq_1_answer',   'type' => 'textarea', 'rows' => 6, 'instructions' => 'One item per line renders as a bullet list. A single block of text renders as a paragraph.', 'default_value' => "Pride events, marches, and flag raisings\nDrag and other performances\nFundraisers and community benefits\nSupport groups, peer meet-ups, and social nights\nWorkshops, talks, and film screenings\nExhibitions, launches, and readings" ),
+				array( 'key' => 'field_nqa_evt_faq_2q', 'label' => 'FAQ 2 — question', 'name' => 'evt_faq_2_question', 'type' => 'text', 'default_value' => 'What happens after I submit?' ),
+				array( 'key' => 'field_nqa_evt_faq_2a', 'label' => 'FAQ 2 — answer',   'name' => 'evt_faq_2_answer',   'type' => 'textarea', 'rows' => 3, 'default_value' => 'Your submission goes to an archivist, who reviews the details and creates the event page. We may email you with questions. Once published, the event appears on the calendar and on the events listing, and stays online afterward as a record of what happened.' ),
+				array( 'key' => 'field_nqa_evt_faq_3q', 'label' => 'FAQ 3 — question', 'name' => 'evt_faq_3_question', 'type' => 'text', 'default_value' => 'Can I publish my own events directly?' ),
+				array( 'key' => 'field_nqa_evt_faq_3a', 'label' => 'FAQ 3 — answer',   'name' => 'evt_faq_3_answer',   'type' => 'textarea', 'rows' => 3, 'default_value' => 'Yes — if you organize events regularly. Register for an account and contact us, and we can enable direct publishing for you. Your listings then go live as soon as you submit them, as long as you\'ve included a location.' ),
+				array( 'key' => 'field_nqa_evt_faq_4q', 'label' => 'FAQ 4 — question', 'name' => 'evt_faq_4_question', 'type' => 'text', 'default_value' => 'Why does the archive list upcoming events?' ),
+				array( 'key' => 'field_nqa_evt_faq_4a', 'label' => 'FAQ 4 — answer',   'name' => 'evt_faq_4_answer',   'type' => 'textarea', 'rows' => 3, 'default_value' => 'Because today\'s event is tomorrow\'s record. Most of what we know about queer life in Niagara before the internet survives only where someone kept a flyer. Listing an event now means it can\'t go undocumented later.' ),
+				// CTA
+				array( 'key' => 'field_nqa_evt_cta_h',     'label' => 'CTA heading',      'name' => 'evt_cta_heading', 'type' => 'text',     'default_value' => 'See what\'s coming up' ),
+				array( 'key' => 'field_nqa_evt_cta_b',     'label' => 'CTA body',         'name' => 'evt_cta_body',    'type' => 'textarea', 'rows' => 2, 'default_value' => 'Browse events already listed across the Niagara region.' ),
+				array( 'key' => 'field_nqa_evt_cta_label', 'label' => 'CTA button label', 'name' => 'evt_cta_label',   'type' => 'text',     'default_value' => 'View the calendar' ),
+			),
+		) );
+
 		// ── Collections page ──────────────────────────────────────────────────
 
 		acf_add_local_field_group( array(
