@@ -47,6 +47,8 @@ $nqa_modules = array(
 	'functions/importers.php',
 	'functions/submissions.php',
 	'functions/events.php',
+	'functions/scrobbler-adapters.php',
+	'functions/scrobbler.php',
 	'functions/newsletter.php',
 	'functions/forms.php',
 	'functions/shortcodes.php',

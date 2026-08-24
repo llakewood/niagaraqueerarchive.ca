@@ -17,6 +17,10 @@
  *      converted straight to a PUBLISHED `nqa_event` (consent self-granted by the
  *      organizer). Everyone else queues as a draft for archivist review — the
  *      same path as the story stream.
+ *   2b. Scrobbled items: `scrobbler.php` writes the same submission shape from
+ *      watched calendars/feeds/social accounts, marked `_nqa_sub_origin =
+ *      scrobble`. Those can never auto-publish and convert as `staff-research`
+ *      provenance with consent Pending — see the guards in the converter.
  *   3. Converter: `nqa_create_event_from_submission()` maps the submitted fields
  *      to the event record, preserving the contributor's description verbatim and
  *      never setting the map pin (rule #8 — an archivist pins/links a Venue on
@@ -191,6 +195,15 @@ function nqa_create_event_from_submission( int $submission_id, bool $publish ) {
 		$publish = false;
 	}
 
+	// Scrobbled items (found automatically by the event scrobbler, never submitted
+	// by a person) can never take the auto-publish path, whoever is converting
+	// them: the trusted-organizer route encodes an organizer consenting to list
+	// their OWN event, and a machine reading a calendar is not that.
+	$origin = (string) $m( '_nqa_sub_origin' );
+	if ( 'scrobble' === $origin ) {
+		$publish = false;
+	}
+
 	$sub_title = $m( '_nqa_sub_title' );
 	$title     = $sub_title ?: ( 'Event submission ' . $submission_id . ' — needs a title' );
 
@@ -225,9 +238,14 @@ function nqa_create_event_from_submission( int $submission_id, bool $publish ) {
 		update_field( 'link', $link, $record_id );
 		update_field( 'source', $link, $record_id );
 	}
+	$recurrence = trim( (string) $m( '_nqa_sub_evt_recurrence' ) );
+	if ( $recurrence !== '' ) {
+		update_field( 'field_nqa_evt_recur', $recurrence, $record_id );
+	}
 
 	// Best-effort organizer match to an existing Org; note it otherwise.
 	$org_note = '';
+	$org_id   = 0;
 	if ( $org !== '' ) {
 		$org_post = get_posts(
 			array(
@@ -238,25 +256,41 @@ function nqa_create_event_from_submission( int $submission_id, bool $publish ) {
 				'post_status'    => array( 'publish', 'draft' ),
 			)
 		);
-		if ( $org_post ) {
-			update_field( 'field_nqa_evt_org', array( (int) $org_post[0] ), $record_id );
-		} else {
-			$org_note = sprintf( ' Organizer as submitted: "%s" — link to an Org record.', $org );
-		}
+		$org_id = $org_post ? (int) $org_post[0] : 0;
+	}
+	// A scrobbled item inherits the Organization its watched source belongs to
+	// when the item's own organizer text matches nothing we hold.
+	if ( ! $org_id ) {
+		$watch_org = (int) $m( '_nqa_scrobble_org_ref' );
+		$org_id    = ( $watch_org && get_post_status( $watch_org ) ) ? $watch_org : 0;
+	}
+	if ( $org_id ) {
+		update_field( 'field_nqa_evt_org', array( $org_id ), $record_id );
+	} elseif ( $org !== '' ) {
+		$org_note = sprintf( ' Organizer as published: "%s" — link to an Org record.', $org );
 	}
 
-	// Stewardship: mark origin and set consent.
-	update_field( 'field_nqa_provenance', 'community-submission', $record_id );
-	update_field( 'field_nqa_provenance_submitter', $name ?: '(anonymous)', $record_id );
+	// Stewardship: mark origin and set consent. A scrobbled item was found by the
+	// archive rather than given to it, so it is staff research, not a submission —
+	// and it is always held behind the consent gate until a person clears it.
+	$scrobbled = ( 'scrobble' === $origin );
+	update_field( 'field_nqa_provenance', $scrobbled ? 'staff-research' : 'community-submission', $record_id );
+	update_field( 'field_nqa_provenance_submitter', $scrobbled ? '' : ( $name ?: '(anonymous)' ), $record_id );
 	update_field( 'field_nqa_provenance_date', get_the_date( 'Y-m-d', $submission_id ), $record_id );
 	update_field( 'field_nqa_consent_status', $publish ? 'granted' : 'pending', $record_id );
-	update_field(
-		'field_nqa_consent_notes',
-		$publish
-			? sprintf( 'Auto-published from event submission #%d by trusted organizer (user #%d), who authorized public listing. Contact: %s.', $submission_id, (int) $m( '_nqa_sub_user' ), $email ?: 'none given' )
-			: sprintf( 'From event submission #%d. Credit preference: %s. Contact: %s. Confirm consent before publishing.', $submission_id, $credit ?: 'not specified', $email ?: 'none given' ),
-		$record_id
-	);
+
+	if ( $scrobbled ) {
+		$consent_note = sprintf(
+			'Found automatically by the event scrobbler on %s, from %s. Nothing here was verified by a person. Confirm the details against the source, and confirm the organizer is content to be listed, before publishing.',
+			(string) $m( '_nqa_scrobble_at' ),
+			$link ?: 'an unrecorded source'
+		);
+	} elseif ( $publish ) {
+		$consent_note = sprintf( 'Auto-published from event submission #%d by trusted organizer (user #%d), who authorized public listing. Contact: %s.', $submission_id, (int) $m( '_nqa_sub_user' ), $email ?: 'none given' );
+	} else {
+		$consent_note = sprintf( 'From event submission #%d. Credit preference: %s. Contact: %s. Confirm consent before publishing.', $submission_id, $credit ?: 'not specified', $email ?: 'none given' );
+	}
+	update_field( 'field_nqa_consent_notes', $consent_note, $record_id );
 
 	// Municipality from the free-text location field.
 	if ( $loc ) {
@@ -277,12 +311,19 @@ function nqa_create_event_from_submission( int $submission_id, bool $publish ) {
 	update_post_meta(
 		$record_id,
 		'_nqa_archival_note',
-		sprintf(
-			'Created from event submission #%d. The body is the contributor\'s own words — do not rewrite them. Set the map pin (or link a Venue) and verify details.%s%s',
-			$submission_id,
-			$org_note,
-			$publish ? ' Auto-published (trusted organizer).' : ' Held as draft with consent Pending.'
-		)
+		$scrobbled
+			? sprintf(
+				'Found automatically by the event scrobbler (submission #%d). The body is the publisher\'s own words — do not rewrite them. NOTHING HERE IS VERIFIED: check the dates, place, and organizer against the source, set the map pin (or link a Venue), then clear consent. %s%s',
+				$submission_id,
+				(string) $m( '_nqa_scrobble_notes' ),
+				$org_note
+			)
+			: sprintf(
+				'Created from event submission #%d. The body is the contributor\'s own words — do not rewrite them. Set the map pin (or link a Venue) and verify details.%s%s',
+				$submission_id,
+				$org_note,
+				$publish ? ' Auto-published (trusted organizer).' : ' Held as draft with consent Pending.'
+			)
 	);
 
 	// Publish last, once consent is Granted, so the stewardship gate passes cleanly.
