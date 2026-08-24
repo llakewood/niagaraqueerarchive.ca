@@ -57,10 +57,31 @@ That is the same PHP `./scripts/wp` resolves internally.
   - **`nqa-archive.php`** — the loader. Defines `NQA_VERSION` and `require`s each module listed in `$nqa_modules`, in order (support → functions → presentation). **Add a module** by dropping a file in the right subfolder and adding its path to that array.
   - **`nqa-archive/` modules** are organised into four folders:
     - **`support/`** — foundations: `palette.php` (the pinned colour palette → CSS vars), `helpers.php`, `assets.php` (enqueues `nqa.css`)
-    - **`functions/`** — logic (data model, ACF fields, admin, intake, CLI tools): `content-model.php` (the 4 CPTs + `municipality` / `nqa_collection` taxonomies), `fields.php` + `page-fields.php` (ACF field groups: record fields, page content, the **Site Copy** options page), `stewardship.php` (`provenance` + `consent_status` + publish-gate), `access.php`, `archival-note.php` (staff-only `_nqa_archival_note`), `preservation.php` (Wayback capture, source liveness, private full-text; `wp nqa capture-sources`/`check-sources`), `geocode.php` (`wp nqa geocode`), `leads.php` (`wp nqa leads` — cross-ref gaps + content leads), `importers.php` (submission→draft + `wp nqa import-csv`), `submissions.php` (form #61 → `nqa_submission`), `newsletter.php`, `forms.php`, `shortcodes.php` (homepage sections)
+    - **`functions/`** — logic (data model, ACF fields, admin, intake, CLI tools): `content-model.php` (the 4 CPTs + `municipality` / `nqa_collection` taxonomies), `fields.php` + `page-fields.php` (ACF field groups: record fields, page content, the **Site Copy** options page), `stewardship.php` (`provenance` + `consent_status` + publish-gate), `access.php`, `archival-note.php` (staff-only `_nqa_archival_note`), `preservation.php` (Wayback capture, source liveness, private full-text; `wp nqa capture-sources`/`check-sources`), `geocode.php` (`wp nqa geocode`), `leads.php` (`wp nqa leads` — cross-ref gaps + content leads), `importers.php` (submission→draft + `wp nqa import-csv`), `submissions.php` (form #61 → `nqa_submission`), `events.php` (List an Event intake + submission→`nqa_event` converter), `scrobbler.php` + `scrobbler-adapters.php` (the event scrobbler — see below), `newsletter.php`, `forms.php`, `shortcodes.php` (homepage sections)
     - **`presentation/`** — front-end views/pages/panels: `item-details.php`, `collections.php` (Collections grid + `[nqa_collections]`), `listing.php` + `listing-controls.php`, `view-toggle.php`, `map.php`, `search.php`, `tell.php`, `contact.php`, `privacy.php`
     - **`assets/`** — static `nqa.css` + JS (referenced by literal `/nqa-archive/assets/…` paths, so they're unaffected by where the PHP lives)
   - **`0-nqa-runtime-config.php`** — **not in git**; written on the server by CI to inject `NQA_GOOGLE_MAPS_KEY`. The `0-` prefix loads it before `nqa-archive.php`.
+
+### The event scrobbler
+
+`functions/scrobbler.php` (orchestration) + `functions/scrobbler-adapters.php` (fetchers) watch community calendars, event pages, news feeds, and social accounts, and drop what they find into the **same** review queue as the "List an Event" form:
+
+```text
+Watched Source (nqa_watch)  →  adapter  →  relevance filter  →  dedupe
+  →  private nqa_submission (_nqa_sub_kind=event, _nqa_sub_origin=scrobble)
+  →  archivist review  →  nqa_create_event_from_submission()  →  DRAFT nqa_event
+```
+
+- **Sources are content, not code.** Each is an `nqa_watch` post (Submissions → Watched Sources), so an editor adds a calendar without a deploy — and prod stays the source of truth for them, like all other content. Configure kind, URL/handle, filter mode, default municipality, organizer Org, active, and "org has given permission".
+- **Source kinds:** `ics` (calendar feed — by far the best), `page` (any page with schema.org Event JSON-LD: Eventbrite event pages, Squarespace, most modern CMSes), `rss`, `tribe` (The Events Calendar REST — common on Ontario community sites), `bluesky` (account feeds are public; hashtag search needs a free app password), `instagram` (Graph API, needs Meta App Review — see below).
+- **It never publishes.** Scrobbled items always convert as `staff-research` provenance with consent **Pending**, held as drafts by the stewardship gate. The trusted-organizer auto-publish path in `events.php` is explicitly blocked for them: that route encodes an organizer consenting to list their *own* event, which a robot reading a calendar is not.
+- **It never writes prose.** Titles/descriptions/dates carry over verbatim. Anything unreadable (a caption with no year, an article with no event data) is left **empty** and flagged in the archival note rather than guessed (rule #1). Ambiguous numeric dates like `08/09` are refused outright.
+- **It behaves like a neighbour.** Identifiable User-Agent (`NiagaraQueerArchiveBot/1.0`), `robots.txt` honoured (12h cache) unless the source is marked as having the organization's explicit permission, and poster images are **recorded by URL only, never copied** — rights are not ours to assume.
+- **Filter modes:** `strict` needs a queer-relevant keyword **and** something placing it in Niagara (setting a default municipality on the source satisfies the second half) — use for municipal calendars, news feeds, hashtags. `all` keeps everything from that source — use for Pride Niagara, OUTniagara, etc.
+- **Dedupe** is by source-scoped UID, by normalized-title+date key across existing submissions, and against every `nqa_event` already in the archive at any status.
+- **Bluesky** account feeds (`@handle`) work with no credentials. Hashtag search (`#tag`) does not — Bluesky closed anonymous `searchPosts` and it now 403s. Fix: create a free **app password** (Bluesky → Settings → App Passwords, on an archive-owned account, *not* the account password) and set `NQA_BSKY_HANDLE` + `NQA_BSKY_APP_PASSWORD` in `0-nqa-runtime-config.php`. Sessions are cached 90 minutes.
+- **Instagram** has no open hashtag API. Reading hashtags or other accounts needs the Instagram Graph API: an IG Business/Creator account (NQA has one), a linked Facebook Page, a Meta app, and App Review for `instagram_basic` + `instagram_manage_insights`. Once approved, set `NQA_IG_TOKEN` + `NQA_IG_USER_ID` in `0-nqa-runtime-config.php` (prod: GitHub Secrets). The adapter returns a clear "not configured" error until then. **Scraping instagram.com is against Meta's terms and is not implemented.** Note also Meta's own limits: ~24h of recent media, 30 unique hashtags per rolling 7 days. Facebook Page *events* were removed from the Graph API and cannot be read at all — ask orgs to publish an `.ics` or link an Eventbrite page.
+- **Scheduling:** a daily WP-Cron job (`nqa_scrobble_daily`, 04:00 site time) is the backstop; WP-Cron only fires on site traffic, so on prod prefer a real cron entry running `wp nqa scrobble`. `define( 'NQA_SCROBBLE_DISABLE', true )` unschedules it.
 
 ### ACF: field *groups* are code, field *values* are content
 
@@ -166,9 +187,23 @@ All via `./scripts/wp` (local) or `./scripts/wp-prod` (live):
 ./scripts/wp nqa leads --leads --min=3       # candidate new entries (>=3 records)
 ./scripts/wp nqa leads --leads --format=csv  # pipe to a spreadsheet
 
+# Event scrobbler — watch community calendars/pages/feeds/social for events
+./scripts/wp nqa watch list                  # every watched source + last result
+./scripts/wp nqa watch add --label="Pride Niagara calendar" --kind=ics \
+    --target="https://example.org/events.ics" --mode=all --org=270
+./scripts/wp nqa watch test 812              # fetch + parse + score, writes nothing
+./scripts/wp nqa scrobble --dry-run          # what would be queued, across all sources
+./scripts/wp nqa scrobble --source=812 --no-filter --dry-run   # see everything a source holds
+./scripts/wp-prod nqa scrobble               # real run — queues pending submissions only
+
 # Seed scripts (local, drafts only) — kept in the scratchpad, never committed
 ./scripts/wp eval-file /path/to/seed-script.php
 ```
+
+The scrobbler never publishes and never writes prose: everything lands in
+Submissions → Pending as `staff-research` provenance with consent Pending, for a
+person to verify and convert (rules #1 and #2). Start any new source with
+`watch test` / `--dry-run` before letting it write.
 
 `leads` is purely deterministic (no external API): `--gaps` matches existing
 record titles/aliases against every record's body + `_nqa_archive_text` and

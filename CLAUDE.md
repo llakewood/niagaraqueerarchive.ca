@@ -45,6 +45,16 @@ groups-vs-values rule are in `docs/FOR-DEVS.md`.** Highlights Claude touches oft
   with publish-gate) · `submissions.php` (Tell Your Story form #61 → private
   `nqa_submission`) · `importers.php` (submission→draft converter, preserves the
   contributor's words verbatim, + `wp nqa import-csv`)
+- **Event scrobbler** — `scrobbler.php` + `scrobbler-adapters.php` watch community
+  calendars (`ics`), event pages (`page`, schema.org JSON-LD), news feeds (`rss`),
+  The Events Calendar REST (`tribe`), and social (`bluesky`, `instagram`), and
+  queue what they find as `nqa_submission` (kind=event, origin=scrobble) for
+  review. Sources are CMS content (`nqa_watch` posts, under Submissions →
+  Watched Sources), not code. It **never publishes** (converts as
+  `staff-research` + consent Pending; the trusted-organizer auto-publish path is
+  blocked for scrobbled items) and **never invents a date** — unreadable dates
+  are left empty and flagged. Honours robots.txt; records poster image URLs but
+  never copies the files. `wp nqa watch list|add|test` · `wp nqa scrobble`
 - **`wp nqa geocode`** (`functions/geocode.php`) — bulk-fills EMPTY map pins from
   address/title (Ontario-biased; skips hand-set pins) — the one sanctioned
   exception to rule #8
@@ -266,6 +276,13 @@ Currently a solo project. Questions raised in the brainstorm that need decisions
 # Research aid (read-only): cross-reference gaps + new-entry content leads
 ./scripts/wp nqa leads --gaps               # mentioned-but-not-linked records
 ./scripts/wp nqa leads --leads --min=2      # candidate new entries in the text
+
+# Event scrobbler — watch community calendars / pages / feeds / social accounts.
+# Queues candidates for review; never publishes, never invents a date.
+./scripts/wp nqa watch list                 # sources + last run result
+./scripts/wp nqa watch test <id>            # fetch + parse + score, writes nothing
+./scripts/wp nqa scrobble --dry-run         # what would be queued
+./scripts/wp-prod nqa scrobble              # real run (prod owns the source list)
 ```
 
 Seed scripts go in the session scratchpad — never committed to git.
